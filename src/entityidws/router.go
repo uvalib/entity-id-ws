@@ -15,18 +15,44 @@ type Route struct {
 type Routes [] Route
 
 var routes = Routes{
-   Route{
-      "TokenLookup",
-      "GET",
-      "/authorize/{whom}/{what}/{token}",
-      TokenLookup,
-   },
-   Route{
-      "HealthCheck",
-      "GET",
-      "/healthcheck",
-      HealthCheck,
-   },
+    Route{
+        "IdLookup",
+        "GET",
+        "/entityid/{namespace}/{id}",
+        IdLookup,
+    },
+    Route{
+        "IdCreate",
+        "POST",
+        "/entityid",
+        IdCreate,
+    },
+    Route{
+        "IdUpdate",
+        "PUT",
+        "/entityid",
+        IdUpdate,
+    },
+    Route{
+        "IdDelete",
+        "DEL",
+        "/entityid/{namespace}/{id}",
+        IdDelete,
+    },
+
+    Route{
+        "HealthCheck",
+        "GET",
+        "/healthcheck",
+        HealthCheck,
+    },
+
+    Route{
+        "Stats",
+        "GET",
+        "/statistics",
+        Stats,
+    },
 }
 
 func NewRouter( ) *mux.Router {
