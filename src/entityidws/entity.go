@@ -1,14 +1,11 @@
 package main
 
-//import "time"
-
 type Entity struct {
-    Id             string   `json:"id"`
-    Url            string   `json:"url"`
-    Title          string   `json:"title"`
-    Publisher      string   `json:"publisher"`
-    Creator        string   `json:"creator"`
-    PubYear        string   `json:"publication_year"`
-    ResourceType   string   `json:"type"`
+    Id             string   `json:"id,omitempty"`
+    Url            string   `json:"url,omitempty"`
+    Title          string   `json:"title,omitempty"`
+    Publisher      string   `json:"publisher,omitempty"`
+    Creator        string   `json:"creator,omitempty"`
+    PubYear        string   `json:"publication_year,omitempty"`
+    ResourceType   string   `json:"type,omitempty"`
 }
-

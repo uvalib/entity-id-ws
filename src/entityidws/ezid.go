@@ -10,7 +10,7 @@ import (
 )
 
 // debug the http exchange
-var debugHttp = true
+var debugHttp = false
 
 //
 // get entity details when provided a DOI
@@ -83,7 +83,7 @@ func CreateDoi( shoulder string, entity Entity ) ( Entity, int ) {
 //
 // Update an existing DOI to match the provided entity
 //
-func UpdateDoi( entity Entity ) ( Entity, int ) {
+func UpdateDoi( entity Entity ) int {
 
     // construct target URL
     url := fmt.Sprintf( "%s/id/%s", config.EzidServiceUrl, entity.Id )
@@ -105,16 +105,16 @@ func UpdateDoi( entity Entity ) ( Entity, int ) {
     // check for errors
     if errs != nil {
         fmt.Println( "Errors:", errs )
-        return blankEntity( ), http.StatusInternalServerError
+        return http.StatusInternalServerError
     }
 
     // check the body for errors
     if !statusIsOk( body ) {
-        return blankEntity( ), http.StatusBadRequest
+        return http.StatusBadRequest
     }
 
     // all good...
-    return makeEntityFromBody( body ), http.StatusOK
+    return http.StatusOK
 }
 
 //
@@ -186,7 +186,7 @@ func GetStatus( ) int {
 //
 func makeEntityFromBody( body string ) Entity {
 
-    fmt.Println( "Response:", body )
+    //fmt.Println( "Response:", body )
 
     entity := blankEntity( )
     split := strings.Split( body, "\n" )
@@ -218,18 +218,20 @@ func makeEntityFromBody( body string ) Entity {
 
 func makeBodyFromEntity( entity Entity ) string {
     var buffer bytes.Buffer
-    addBodyTerm( buffer, "_target", entity.Url )
-    addBodyTerm( buffer, "datacite.title", entity.Title )
-    addBodyTerm( buffer, "datacite.publisher", entity.Publisher )
-    addBodyTerm( buffer, "datacite.creator", entity.Creator )
-    addBodyTerm( buffer, "datacite.publicationyear", entity.PubYear )
-    addBodyTerm( buffer, "datacite.resourcetype", entity.ResourceType )
+    addBodyTerm( &buffer, "_target", entity.Url )
+    addBodyTerm( &buffer, "datacite.title", entity.Title )
+    addBodyTerm( &buffer, "datacite.publisher", entity.Publisher )
+    addBodyTerm( &buffer, "datacite.creator", entity.Creator )
+    addBodyTerm( &buffer, "datacite.publicationyear", entity.PubYear )
+    addBodyTerm( &buffer, "datacite.resourcetype", entity.ResourceType )
     s := buffer.String( )
-    fmt.Println( "Payload:", s )
+    //fmt.Println( "Payload:", s )
     return s
 }
 
-func addBodyTerm( buffer bytes.Buffer, term string, value string ) {
+func addBodyTerm( buffer * bytes.Buffer, term string, value string ) {
+    //fmt.Printf( "[%s] -> [%s]\n", term, value )
+
     if len( value ) != 0 {
         buffer.WriteString( fmt.Sprintf( "%s: %s\n", term, value ) )
     }
@@ -240,6 +242,6 @@ func blankEntity( ) Entity {
 }
 
 func statusIsOk( body string ) bool {
-    fmt.Println( "Response:", body )
+    //fmt.Println( "Response:", body )
     return( strings.Index( body, "success:" ) == 0 )
 }

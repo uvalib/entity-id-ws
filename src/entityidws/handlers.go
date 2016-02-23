@@ -1,9 +1,9 @@
 package main
 
 import (
-   "encoding/json"
-   "net/http"
-   "github.com/gorilla/mux"
+    "encoding/json"
+    "net/http"
+    "github.com/gorilla/mux"
 //    "fmt"
 )
 
@@ -25,11 +25,17 @@ func IdCreate( w http.ResponseWriter, r *http.Request ) {
     vars := mux.Vars( r )
     shoulder := vars[ "shoulder" ]
 
+    decoder := json.NewDecoder( r.Body )
     entity := Entity{ }
 
     // update the statistics
     statistics.RequestCount++
     statistics.CreateCount++
+
+    if err := decoder.Decode( &entity ); err != nil {
+        respond( w, http.StatusBadRequest )
+        return
+    }
 
     entity, status := CreateDoi( shoulder, entity )
     respondWithDetails( w, status, entity )
@@ -40,15 +46,21 @@ func IdUpdate( w http.ResponseWriter, r *http.Request ) {
     vars := mux.Vars( r )
     doi := vars[ "doi" ]
 
+    decoder := json.NewDecoder( r.Body )
     entity := Entity{ }
-    entity.Id = doi
 
     // update the statistics
     statistics.RequestCount++
     statistics.UpdateCount++
 
-    entity, status := UpdateDoi( entity )
-    respondWithDetails( w, status, entity )
+    if err := decoder.Decode( &entity ); err != nil {
+        respond( w, http.StatusBadRequest )
+        return
+    }
+
+    entity.Id = doi
+    status := UpdateDoi( entity )
+    respond( w, status )
 }
 
 func IdDelete( w http.ResponseWriter, r *http.Request ) {
