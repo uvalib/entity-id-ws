@@ -18,25 +18,25 @@ var routes = Routes{
     Route{
         "IdLookup",
         "GET",
-        "/entityid/{namespace}/{id}",
+        "/entityid/{doi:.*}",
         IdLookup,
     },
     Route{
         "IdCreate",
         "POST",
-        "/entityid",
+        "/entityid/{shoulder:.*}",
         IdCreate,
     },
     Route{
         "IdUpdate",
         "PUT",
-        "/entityid",
+        "/entityid/{doi:.*}",
         IdUpdate,
     },
     Route{
         "IdDelete",
         "DEL",
-        "/entityid/{namespace}/{id}",
+        "/entityid/{doi:.*}",
         IdDelete,
     },
 

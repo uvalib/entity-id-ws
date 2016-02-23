@@ -4,77 +4,64 @@ import (
    "encoding/json"
    "net/http"
    "github.com/gorilla/mux"
-    "fmt"
+//    "fmt"
 )
 
 func IdLookup( w http.ResponseWriter, r *http.Request ) {
 
     vars := mux.Vars( r )
-    namespace := vars[ "namespace" ]
-    id := vars[ "id" ]
-
-    doi := fmt.Sprintf( "%s/%s", namespace, id )
+    doi := vars[ "doi" ]
 
     // update the statistics
     statistics.RequestCount++
     statistics.LookupCount++
 
-    entity, status := GetByDoi( doi )
-    respond( w, status, entity )
+    entity, status := GetDoi( doi )
+    respondWithDetails( w, status, entity )
 }
 
 func IdCreate( w http.ResponseWriter, r *http.Request ) {
-//    vars := mux.Vars( r )
-//    id := vars[ "id" ]
+
+    vars := mux.Vars( r )
+    shoulder := vars[ "shoulder" ]
+
+    entity := Entity{ }
 
     // update the statistics
     statistics.RequestCount++
     statistics.CreateCount++
 
-    w.Header().Set( "Content-Type", "application/json; charset=UTF-8" )
-
-    // If this token is not OK then 403
-    status := http.StatusForbidden
-    w.WriteHeader( status )
-    if err := json.NewEncoder(w).Encode( Response{ Status: status, Message: http.StatusText( status ) } ); err != nil {
-        panic(err)
-    }
+    entity, status := CreateDoi( shoulder, entity )
+    respondWithDetails( w, status, entity )
 }
 
 func IdUpdate( w http.ResponseWriter, r *http.Request ) {
-//    vars := mux.Vars( r )
-//    id := vars[ "id" ]
+
+    vars := mux.Vars( r )
+    doi := vars[ "doi" ]
+
+    entity := Entity{ }
+    entity.Id = doi
 
     // update the statistics
     statistics.RequestCount++
     statistics.UpdateCount++
 
-    w.Header().Set( "Content-Type", "application/json; charset=UTF-8" )
-
-    // If this token is not OK then 403
-    status := http.StatusForbidden
-    w.WriteHeader( status )
-    if err := json.NewEncoder(w).Encode( Response{ Status: status, Message: http.StatusText( status ) } ); err != nil {
-        panic(err)
-    }
+    entity, status := UpdateDoi( entity )
+    respondWithDetails( w, status, entity )
 }
 
 func IdDelete( w http.ResponseWriter, r *http.Request ) {
-//    vars := mux.Vars( r )
-//    id := vars[ "id" ]
+
+    vars := mux.Vars( r )
+    doi := vars[ "doi" ]
 
     // update the statistics
     statistics.RequestCount++
     statistics.DeleteCount++
 
-    w.Header().Set( "Content-Type", "application/json; charset=UTF-8" )
-
-    // If this token is not OK then 403
-    status := http.StatusForbidden
-    w.WriteHeader( status )
-    if err := json.NewEncoder(w).Encode( Response{ Status: status, Message: http.StatusText( status ) } ); err != nil {
-        panic(err)
-    }
+    status := DeleteDoi( doi )
+    respond( w, status )
 }
 
 func Stats( w http.ResponseWriter, r *http.Request ) {
@@ -91,19 +78,29 @@ func Stats( w http.ResponseWriter, r *http.Request ) {
 
 func HealthCheck( w http.ResponseWriter, r *http.Request ) {
 
-    healthy := true
+    status := GetStatus( )
+    healthy := status == http.StatusOK
     message := ""
 
     w.Header().Set( "Content-Type", "application/json; charset=UTF-8" )
-    w.WriteHeader( http.StatusOK )
+    w.WriteHeader( status )
 
     if err := json.NewEncoder(w).Encode( HealthCheckResponse { CheckType: HealthCheckResult{ Healthy: healthy, Message: message } } ); err != nil {
         panic(err)
     }
 }
 
-func respond( w http.ResponseWriter, status int, entity Entity ) {
-    
+func respond( w http.ResponseWriter, status int ) {
+
+    w.Header().Set( "Content-Type", "application/json; charset=UTF-8" )
+    w.WriteHeader( status )
+    if err := json.NewEncoder(w).Encode( Response{ Status: status, Message: http.StatusText( status ) } ); err != nil {
+        panic(err)
+    }
+}
+
+func respondWithDetails( w http.ResponseWriter, status int, entity Entity ) {
+
     w.Header().Set( "Content-Type", "application/json; charset=UTF-8" )
     w.WriteHeader( status )
     if status == http.StatusOK {
