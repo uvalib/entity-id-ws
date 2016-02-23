@@ -1,0 +1,1 @@
+bin/entity-id-ws
