@@ -22,11 +22,13 @@ func GetDoi( doi string ) ( Entity, int ) {
     fmt.Println( "GET URL:", url )
 
     // issue the request
+    start := time.Now( )
     _, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
         Get( url  ).
         Timeout( time.Duration( config.EzidServiceTimeout ) * time.Second ).
         End( )
+    fmt.Println( "Time:", time.Since( start ) )
 
     // check for errors
     if errs != nil {
@@ -56,6 +58,7 @@ func CreateDoi( shoulder string, entity Entity ) ( Entity, int ) {
     body := makeBodyFromEntity( entity )
 
     // issue the request
+    start := time.Now( )
     _, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
         SetBasicAuth( config.EzidUser, config.EzidPassphrase ).
@@ -64,6 +67,7 @@ func CreateDoi( shoulder string, entity Entity ) ( Entity, int ) {
         Timeout( time.Duration( config.EzidServiceTimeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
+    fmt.Println( "Time:", time.Since( start ) )
 
     // check for errors
     if errs != nil {
@@ -93,6 +97,7 @@ func UpdateDoi( entity Entity ) int {
     body := makeBodyFromEntity( entity )
 
     // issue the request
+    start := time.Now( )
     _, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
         SetBasicAuth( config.EzidUser, config.EzidPassphrase ).
@@ -101,6 +106,7 @@ func UpdateDoi( entity Entity ) int {
         Timeout( time.Duration( config.EzidServiceTimeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
+    fmt.Println( "Time:", time.Since( start ) )
 
     // check for errors
     if errs != nil {
@@ -127,12 +133,14 @@ func DeleteDoi( doi string ) int {
     fmt.Println( "DEL URL:", url )
 
     // issue the request
+    start := time.Now( )
     _, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
         SetBasicAuth( config.EzidUser, config.EzidPassphrase ).
         Delete( url  ).
         Timeout( time.Duration( config.EzidServiceTimeout ) * time.Second ).
         End( )
+    fmt.Println( "Time:", time.Since( start ) )
 
     // check for errors
     if errs != nil {
@@ -159,11 +167,13 @@ func GetStatus( ) int {
     fmt.Println( "GET URL:", url )
 
     // issue the request
+    start := time.Now( )
     _, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
         Get( url  ).
         Timeout( time.Duration( config.EzidServiceTimeout ) * time.Second ).
         End( )
+    fmt.Println( "Time:", time.Since( start ) )
 
     // check for errors
     if errs != nil {

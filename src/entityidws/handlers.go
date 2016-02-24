@@ -94,6 +94,10 @@ func HealthCheck( w http.ResponseWriter, r *http.Request ) {
     healthy := status == http.StatusOK
     message := ""
 
+    // update the statistics
+    statistics.RequestCount++
+    statistics.HeartbeatCount++
+
     w.Header().Set( "Content-Type", "application/json; charset=UTF-8" )
     w.WriteHeader( status )
 
