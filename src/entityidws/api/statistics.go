@@ -1,4 +1,4 @@
-package main
+package api
 
 type Statistics struct {
     RequestCount    int   `json:"request_count"`
@@ -8,11 +8,4 @@ type Statistics struct {
     DeleteCount     int   `json:"delete_count"`
     HeartbeatCount  int   `json:"heartbeat_count"`
 }
-
-type StatisticsResponse struct {
-    Status        int        `json:"status"`
-    Message       string     `json:"message"`
-    Details       Statistics `json:"statistics"`
-}
-
 

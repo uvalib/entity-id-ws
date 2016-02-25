@@ -4,7 +4,9 @@ import (
     "encoding/json"
     "net/http"
     "github.com/gorilla/mux"
-//    "fmt"
+    "entityidws/api"
+    "entityidws/ezid"
+    "log"
 )
 
 func IdLookup( w http.ResponseWriter, r *http.Request ) {
@@ -16,7 +18,7 @@ func IdLookup( w http.ResponseWriter, r *http.Request ) {
     statistics.RequestCount++
     statistics.LookupCount++
 
-    entity, status := GetDoi( doi )
+    entity, status := ezid.GetDoi( doi )
     respondWithDetails( w, status, entity )
 }
 
@@ -26,7 +28,7 @@ func IdCreate( w http.ResponseWriter, r *http.Request ) {
     shoulder := vars[ "shoulder" ]
 
     decoder := json.NewDecoder( r.Body )
-    entity := Entity{ }
+    entity := api.Entity{ }
 
     // update the statistics
     statistics.RequestCount++
@@ -37,7 +39,7 @@ func IdCreate( w http.ResponseWriter, r *http.Request ) {
         return
     }
 
-    entity, status := CreateDoi( shoulder, entity )
+    entity, status := ezid.CreateDoi( shoulder, entity )
     respondWithDetails( w, status, entity )
 }
 
@@ -47,7 +49,7 @@ func IdUpdate( w http.ResponseWriter, r *http.Request ) {
     doi := vars[ "doi" ]
 
     decoder := json.NewDecoder( r.Body )
-    entity := Entity{ }
+    entity := api.Entity{ }
 
     // update the statistics
     statistics.RequestCount++
@@ -59,7 +61,7 @@ func IdUpdate( w http.ResponseWriter, r *http.Request ) {
     }
 
     entity.Id = doi
-    status := UpdateDoi( entity )
+    status := ezid.UpdateDoi( entity )
     respond( w, status )
 }
 
@@ -72,7 +74,7 @@ func IdDelete( w http.ResponseWriter, r *http.Request ) {
     statistics.RequestCount++
     statistics.DeleteCount++
 
-    status := DeleteDoi( doi )
+    status := ezid.DeleteDoi( doi )
     respond( w, status )
 }
 
@@ -80,52 +82,56 @@ func Stats( w http.ResponseWriter, r *http.Request ) {
 
     status := http.StatusOK
 
-    w.Header().Set( "Content-Type", "application/json; charset=UTF-8" )
+    jsonResponse( w )
     w.WriteHeader( status )
 
-    if err := json.NewEncoder(w).Encode( StatisticsResponse { Status: status, Message: http.StatusText( status ), Details: statistics } ); err != nil {
-        panic(err)
+    if err := json.NewEncoder(w).Encode( api.StatisticsResponse { Status: status, Message: http.StatusText( status ), Details: statistics } ); err != nil {
+        log.Fatal( err )
     }
 }
 
 func HealthCheck( w http.ResponseWriter, r *http.Request ) {
 
-    status := GetStatus( )
-    healthy := status == http.StatusOK
-    message := ""
-
     // update the statistics
     statistics.RequestCount++
     statistics.HeartbeatCount++
 
-    w.Header().Set( "Content-Type", "application/json; charset=UTF-8" )
+    status := ezid.GetStatus( )
+    healthy := status == http.StatusOK
+    message := ""
+
+    jsonResponse( w )
     w.WriteHeader( status )
 
-    if err := json.NewEncoder(w).Encode( HealthCheckResponse { CheckType: HealthCheckResult{ Healthy: healthy, Message: message } } ); err != nil {
-        panic(err)
+    if err := json.NewEncoder(w).Encode( api.HealthCheckResponse { CheckType: api.HealthCheckResult{ Healthy: healthy, Message: message } } ); err != nil {
+        log.Fatal( err )
     }
 }
 
 func respond( w http.ResponseWriter, status int ) {
 
-    w.Header().Set( "Content-Type", "application/json; charset=UTF-8" )
+    jsonResponse( w )
     w.WriteHeader( status )
-    if err := json.NewEncoder(w).Encode( Response{ Status: status, Message: http.StatusText( status ) } ); err != nil {
-        panic(err)
+    if err := json.NewEncoder(w).Encode( api.StandardResponse{ Status: status, Message: http.StatusText( status ) } ); err != nil {
+        log.Fatal( err )
     }
 }
 
-func respondWithDetails( w http.ResponseWriter, status int, entity Entity ) {
+func respondWithDetails( w http.ResponseWriter, status int, entity api.Entity ) {
 
-    w.Header().Set( "Content-Type", "application/json; charset=UTF-8" )
+    jsonResponse( w )
     w.WriteHeader( status )
     if status == http.StatusOK {
-        if err := json.NewEncoder(w).Encode( Response{ Status: status, Message: http.StatusText( status ), Details: entity } ); err != nil {
-            panic(err)
+        if err := json.NewEncoder(w).Encode( api.StandardResponse{ Status: status, Message: http.StatusText( status ), Details: entity } ); err != nil {
+            log.Fatal( err )
         }
     } else {
-        if err := json.NewEncoder(w).Encode( Response{ Status: status, Message: http.StatusText( status ) } ); err != nil {
-            panic(err)
+        if err := json.NewEncoder(w).Encode( api.StandardResponse{ Status: status, Message: http.StatusText( status ) } ); err != nil {
+            log.Fatal( err )
         }
     }
+}
+
+func jsonResponse( w http.ResponseWriter ) {
+    w.Header( ).Set( "Content-Type", "application/json; charset=UTF-8" )
 }

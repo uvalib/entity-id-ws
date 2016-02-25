@@ -1,4 +1,4 @@
-package main
+package ezid
 
 import (
     "fmt"
@@ -7,6 +7,8 @@ import (
     "strings"
     "bytes"
     "github.com/parnurzeal/gorequest"
+    "entityidws/api"
+    "entityidws/config"
 )
 
 // debug the http exchange
@@ -15,10 +17,10 @@ var debugHttp = false
 //
 // get entity details when provided a DOI
 //
-func GetDoi( doi string ) ( Entity, int ) {
+func GetDoi( doi string ) ( api.Entity, int ) {
 
     // construct target URL
-    url := fmt.Sprintf( "%s/id/%s", config.EzidServiceUrl, doi )
+    url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, doi )
     fmt.Println( "GET URL:", url )
 
     // issue the request
@@ -26,7 +28,7 @@ func GetDoi( doi string ) ( Entity, int ) {
     _, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
         Get( url  ).
-        Timeout( time.Duration( config.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         End( )
     fmt.Println( "Time:", time.Since( start ) )
 
@@ -48,10 +50,10 @@ func GetDoi( doi string ) ( Entity, int ) {
 //
 // Create a new entity; we may or may not have complete entity details
 //
-func CreateDoi( shoulder string, entity Entity ) ( Entity, int ) {
+func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
 
     // construct target URL
-    url := fmt.Sprintf( "%s/shoulder/%s", config.EzidServiceUrl, shoulder )
+    url := fmt.Sprintf( "%s/shoulder/%s", config.Configuration.EzidServiceUrl, shoulder )
     fmt.Println( "POST URL:", url )
 
     // construct the payload...
@@ -61,10 +63,10 @@ func CreateDoi( shoulder string, entity Entity ) ( Entity, int ) {
     start := time.Now( )
     _, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
-        SetBasicAuth( config.EzidUser, config.EzidPassphrase ).
+        SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Post( url  ).
         Send( body ).
-        Timeout( time.Duration( config.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
     fmt.Println( "Time:", time.Since( start ) )
@@ -87,10 +89,10 @@ func CreateDoi( shoulder string, entity Entity ) ( Entity, int ) {
 //
 // Update an existing DOI to match the provided entity
 //
-func UpdateDoi( entity Entity ) int {
+func UpdateDoi( entity api.Entity ) int {
 
     // construct target URL
-    url := fmt.Sprintf( "%s/id/%s", config.EzidServiceUrl, entity.Id )
+    url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, entity.Id )
     fmt.Println( "POST URL:", url )
 
     // construct the payload...
@@ -100,10 +102,10 @@ func UpdateDoi( entity Entity ) int {
     start := time.Now( )
     _, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
-        SetBasicAuth( config.EzidUser, config.EzidPassphrase ).
+        SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Post( url  ).
         Send( body ).
-        Timeout( time.Duration( config.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
     fmt.Println( "Time:", time.Since( start ) )
@@ -129,16 +131,16 @@ func UpdateDoi( entity Entity ) int {
 func DeleteDoi( doi string ) int {
 
     // construct target URL
-    url := fmt.Sprintf( "%s/id/%s", config.EzidServiceUrl, doi )
+    url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, doi )
     fmt.Println( "DEL URL:", url )
 
     // issue the request
     start := time.Now( )
     _, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
-        SetBasicAuth( config.EzidUser, config.EzidPassphrase ).
+        SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Delete( url  ).
-        Timeout( time.Duration( config.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         End( )
     fmt.Println( "Time:", time.Since( start ) )
 
@@ -163,7 +165,7 @@ func DeleteDoi( doi string ) int {
 func GetStatus( ) int {
 
     // construct target URL
-    url := fmt.Sprintf( "%s/status", config.EzidServiceUrl )
+    url := fmt.Sprintf( "%s/status", config.Configuration.EzidServiceUrl )
     fmt.Println( "GET URL:", url )
 
     // issue the request
@@ -171,7 +173,7 @@ func GetStatus( ) int {
     _, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
         Get( url  ).
-        Timeout( time.Duration( config.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         End( )
     fmt.Println( "Time:", time.Since( start ) )
 
@@ -194,7 +196,7 @@ func GetStatus( ) int {
 // the response body consists of a set of CR separated lines containing tokens separated by
 // a colon character
 //
-func makeEntityFromBody( body string ) Entity {
+func makeEntityFromBody( body string ) api.Entity {
 
     //fmt.Println( "Response:", body )
 
@@ -226,7 +228,7 @@ func makeEntityFromBody( body string ) Entity {
 
 }
 
-func makeBodyFromEntity( entity Entity ) string {
+func makeBodyFromEntity( entity api.Entity ) string {
     var buffer bytes.Buffer
     addBodyTerm( &buffer, "_target", entity.Url )
     addBodyTerm( &buffer, "datacite.title", entity.Title )
@@ -247,8 +249,8 @@ func addBodyTerm( buffer * bytes.Buffer, term string, value string ) {
     }
 }
 
-func blankEntity( ) Entity {
-    return Entity{ }
+func blankEntity( ) api.Entity {
+    return api.Entity{ }
 }
 
 func statusIsOk( body string ) bool {
