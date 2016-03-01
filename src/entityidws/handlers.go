@@ -122,7 +122,7 @@ func respondWithDetails( w http.ResponseWriter, status int, entity api.Entity ) 
     jsonResponse( w )
     w.WriteHeader( status )
     if status == http.StatusOK {
-        if err := json.NewEncoder(w).Encode( api.StandardResponse{ Status: status, Message: http.StatusText( status ), Details: entity } ); err != nil {
+        if err := json.NewEncoder(w).Encode( api.StandardResponse{ Status: status, Message: http.StatusText( status ), Details: &entity } ); err != nil {
             log.Fatal( err )
         }
     } else {
