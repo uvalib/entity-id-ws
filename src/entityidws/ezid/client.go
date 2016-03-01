@@ -21,7 +21,6 @@ func GetDoi( doi string ) ( api.Entity, int ) {
 
     // construct target URL
     url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, doi )
-    fmt.Println( "GET URL:", url )
 
     // issue the request
     start := time.Now( )
@@ -30,7 +29,7 @@ func GetDoi( doi string ) ( api.Entity, int ) {
         Get( url  ).
         Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         End( )
-    fmt.Println( "Time:", time.Since( start ) )
+    fmt.Printf( "GET: %s (%s)\n", url, time.Since( start ) )
 
     // check for errors
     if errs != nil {
@@ -54,7 +53,6 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
 
     // construct target URL
     url := fmt.Sprintf( "%s/shoulder/%s", config.Configuration.EzidServiceUrl, shoulder )
-    fmt.Println( "POST URL:", url )
 
     // construct the payload...
     body := makeBodyFromEntity( entity )
@@ -69,7 +67,7 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
         Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
-    fmt.Println( "Time:", time.Since( start ) )
+    fmt.Printf( "POST: %s (%s)\n", url, time.Since( start ) )
 
     // check for errors
     if errs != nil {
@@ -93,7 +91,6 @@ func UpdateDoi( entity api.Entity ) int {
 
     // construct target URL
     url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, entity.Id )
-    fmt.Println( "POST URL:", url )
 
     // construct the payload...
     body := makeBodyFromEntity( entity )
@@ -108,7 +105,7 @@ func UpdateDoi( entity api.Entity ) int {
         Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
-    fmt.Println( "Time:", time.Since( start ) )
+    fmt.Printf( "POST %s (%s)\n", url, time.Since( start ) )
 
     // check for errors
     if errs != nil {
@@ -132,7 +129,6 @@ func DeleteDoi( doi string ) int {
 
     // construct target URL
     url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, doi )
-    fmt.Println( "DEL URL:", url )
 
     // issue the request
     start := time.Now( )
@@ -142,7 +138,7 @@ func DeleteDoi( doi string ) int {
         Delete( url  ).
         Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         End( )
-    fmt.Println( "Time:", time.Since( start ) )
+    fmt.Printf( "DELETE: %s (%s)\n", url, time.Since( start ) )
 
     // check for errors
     if errs != nil {
@@ -166,7 +162,6 @@ func GetStatus( ) int {
 
     // construct target URL
     url := fmt.Sprintf( "%s/status", config.Configuration.EzidServiceUrl )
-    fmt.Println( "GET URL:", url )
 
     // issue the request
     start := time.Now( )
@@ -175,7 +170,7 @@ func GetStatus( ) int {
         Get( url  ).
         Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         End( )
-    fmt.Println( "Time:", time.Since( start ) )
+    fmt.Printf( "GET: %s (%s)\n", url, time.Since( start ) )
 
     // check for errors
     if errs != nil {
@@ -208,7 +203,7 @@ func makeEntityFromBody( body string ) api.Entity {
             s := strings.TrimSpace( tokens[ 1 ] )
             switch tokens[ 0 ] {
             case "success":
-                entity.Id = s
+                entity.Id = strings.TrimSpace( strings.Split( s, "|" )[ 0 ] )
             case "_target":
                 entity.Url = s
             case "datacite.title":
@@ -230,22 +225,27 @@ func makeEntityFromBody( body string ) api.Entity {
 
 func makeBodyFromEntity( entity api.Entity ) string {
     var buffer bytes.Buffer
-    addBodyTerm( &buffer, "_target", entity.Url )
-    addBodyTerm( &buffer, "datacite.title", entity.Title )
-    addBodyTerm( &buffer, "datacite.publisher", entity.Publisher )
-    addBodyTerm( &buffer, "datacite.creator", entity.Creator )
-    addBodyTerm( &buffer, "datacite.publicationyear", entity.PubYear )
-    addBodyTerm( &buffer, "datacite.resourcetype", entity.ResourceType )
+    addBodyTerm( &buffer, "_target", entity.Url, "https://virginia.edu" )
+    addBodyTerm( &buffer, "datacite.title", entity.Title, "empty" )
+    addBodyTerm( &buffer, "datacite.publisher", entity.Publisher, "empty" )
+    addBodyTerm( &buffer, "datacite.creator", entity.Creator, "empty" )
+    addBodyTerm( &buffer, "datacite.publicationyear", entity.PubYear, "empty" )
+    addBodyTerm( &buffer, "datacite.resourcetype", entity.ResourceType, "Other" )
     s := buffer.String( )
-    //fmt.Println( "Payload:", s )
+
+    if debugHttp {
+        fmt.Println("Payload:", s)
+    }
     return s
 }
 
-func addBodyTerm( buffer * bytes.Buffer, term string, value string ) {
+func addBodyTerm( buffer * bytes.Buffer, term string, value string, defaultValue string ) {
     //fmt.Printf( "[%s] -> [%s]\n", term, value )
 
     if len( value ) != 0 {
         buffer.WriteString( fmt.Sprintf( "%s: %s\n", term, value ) )
+    } else {
+        buffer.WriteString( fmt.Sprintf( "%s: %s\n", term, defaultValue ) )
     }
 }
 
