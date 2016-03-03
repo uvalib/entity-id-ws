@@ -1,5 +1,7 @@
 .idea
 src/github.com
 src/golang.org
+src/gopkg.in
 bin
 pkg
+src/entityidws/service_test.yml
