@@ -7,16 +7,32 @@ import (
     "entityidws/api"
     "entityidws/ezid"
     "log"
+    "strings"
+    "entityidws/authtoken"
+    "entityidws/config"
 )
 
 func IdLookup( w http.ResponseWriter, r *http.Request ) {
 
     vars := mux.Vars( r )
     doi := vars[ "doi" ]
+    token := r.URL.Query( ).Get( "auth" )
 
     // update the statistics
     statistics.RequestCount++
     statistics.LookupCount++
+
+    // validate inbound parameters
+    if parameterOK( doi ) == false || parameterOK( token ) == false {
+        respond( w, http.StatusBadRequest )
+        return
+    }
+
+    // validate the token
+    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "lookup", token ) == false {
+        respond( w, http.StatusForbidden )
+        return
+    }
 
     entity, status := ezid.GetDoi( doi )
     respondWithDetails( w, status, entity )
@@ -26,13 +42,26 @@ func IdCreate( w http.ResponseWriter, r *http.Request ) {
 
     vars := mux.Vars( r )
     shoulder := vars[ "shoulder" ]
-
-    decoder := json.NewDecoder( r.Body )
-    entity := api.Entity{ }
+    token := r.URL.Query( ).Get( "auth" )
 
     // update the statistics
     statistics.RequestCount++
     statistics.CreateCount++
+
+    // validate inbound parameters
+    if parameterOK( shoulder ) == false || parameterOK( token ) == false {
+        respond( w, http.StatusBadRequest )
+        return
+    }
+
+    // validate the token
+    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "create", token ) == false {
+        respond( w, http.StatusForbidden )
+        return
+    }
+
+    decoder := json.NewDecoder( r.Body )
+    entity := api.Entity{ }
 
     if err := decoder.Decode( &entity ); err != nil {
         respond( w, http.StatusBadRequest )
@@ -47,13 +76,26 @@ func IdUpdate( w http.ResponseWriter, r *http.Request ) {
 
     vars := mux.Vars( r )
     doi := vars[ "doi" ]
-
-    decoder := json.NewDecoder( r.Body )
-    entity := api.Entity{ }
+    token := r.URL.Query( ).Get( "auth" )
 
     // update the statistics
     statistics.RequestCount++
     statistics.UpdateCount++
+
+    // validate inbound parameters
+    if parameterOK( doi ) == false || parameterOK( token ) == false {
+        respond( w, http.StatusBadRequest )
+        return
+    }
+
+    // validate the token
+    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "update", token ) == false {
+        respond( w, http.StatusForbidden )
+        return
+    }
+
+    decoder := json.NewDecoder( r.Body )
+    entity := api.Entity{ }
 
     if err := decoder.Decode( &entity ); err != nil {
         respond( w, http.StatusBadRequest )
@@ -69,10 +111,23 @@ func IdDelete( w http.ResponseWriter, r *http.Request ) {
 
     vars := mux.Vars( r )
     doi := vars[ "doi" ]
+    token := r.URL.Query( ).Get( "auth" )
 
     // update the statistics
     statistics.RequestCount++
     statistics.DeleteCount++
+
+    // validate inbound parameters
+    if parameterOK( doi ) == false || parameterOK( token ) == false {
+        respond( w, http.StatusBadRequest )
+        return
+    }
+
+    // validate the token
+    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "delete", token ) == false {
+        respond( w, http.StatusForbidden )
+        return
+    }
 
     status := ezid.DeleteDoi( doi )
     respond( w, status )
@@ -134,4 +189,8 @@ func respondWithDetails( w http.ResponseWriter, status int, entity api.Entity ) 
 
 func jsonResponse( w http.ResponseWriter ) {
     w.Header( ).Set( "Content-Type", "application/json; charset=UTF-8" )
+}
+
+func parameterOK( param string ) bool {
+    return len( strings.TrimSpace( param ) ) != 0
 }

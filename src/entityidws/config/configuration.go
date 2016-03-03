@@ -11,6 +11,7 @@ type Config struct {
     EzidServiceTimeout int
     EzidUser           string
     EzidPassphrase     string
+    AuthTokenEndpoint  string
 }
 
 var Configuration = LoadConfig( )
@@ -26,6 +27,7 @@ func LoadConfig( ) Config {
     flag.IntVar( &c.EzidServiceTimeout, "timeout", 10, "The service timeout (in seconds)")
     flag.StringVar( &c.EzidUser, "eziduser", "apitest", "The EZID service username" )
     flag.StringVar( &c.EzidPassphrase, "ezidpassword", "apitest", "The EZID service passphrase")
+    flag.StringVar( &c.AuthTokenEndpoint, "tokenauth", "http://docker1.lib.virginia.edu:8200", "The token authentication endpoint")
 
     flag.Parse( )
 
@@ -35,6 +37,7 @@ func LoadConfig( ) Config {
     log.Printf( "EzidServiceTimeout: %d", c.EzidServiceTimeout )
     log.Printf( "EzidUser:           %s", c.EzidUser )
     log.Printf( "EzidPassphrase:     %s", c.EzidPassphrase )
+    log.Printf( "AuthTokenEndpoint   %s", c.AuthTokenEndpoint )
 
     return c
 }

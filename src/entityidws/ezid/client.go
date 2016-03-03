@@ -2,6 +2,7 @@ package ezid
 
 import (
     "fmt"
+    "log"
     "time"
     "net/http"
     "strings"
@@ -24,18 +25,22 @@ func GetDoi( doi string ) ( api.Entity, int ) {
 
     // issue the request
     start := time.Now( )
-    _, body, errs := gorequest.New( ).
+    resp, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
         Get( url  ).
         Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         End( )
-    fmt.Printf( "GET: %s (%s)\n", url, time.Since( start ) )
+    duration := time.Since( start )
 
     // check for errors
     if errs != nil {
-        fmt.Println( "Errors:", errs )
+        log.Printf( "ERROR: service (%s) returns %s\n", url, errs )
         return blankEntity( ), http.StatusInternalServerError
     }
+
+    defer resp.Body.Close( )
+
+    log.Printf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration )
 
     // check the body for errors
     if !statusIsOk( body ) {
@@ -59,7 +64,7 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
 
     // issue the request
     start := time.Now( )
-    _, body, errs := gorequest.New( ).
+    resp, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
         SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Post( url  ).
@@ -67,13 +72,17 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
         Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
-    fmt.Printf( "POST: %s (%s)\n", url, time.Since( start ) )
+    duration := time.Since( start )
 
     // check for errors
     if errs != nil {
-        fmt.Println( "Errors:", errs )
+        log.Printf( "ERROR: service (%s) returns %s\n", url, errs )
         return blankEntity( ), http.StatusInternalServerError
     }
+
+    defer resp.Body.Close( )
+
+    log.Printf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration )
 
     // check the body for errors
     if !statusIsOk( body ) {
@@ -97,7 +106,7 @@ func UpdateDoi( entity api.Entity ) int {
 
     // issue the request
     start := time.Now( )
-    _, body, errs := gorequest.New( ).
+    resp, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
         SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Post( url  ).
@@ -105,13 +114,16 @@ func UpdateDoi( entity api.Entity ) int {
         Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
-    fmt.Printf( "POST %s (%s)\n", url, time.Since( start ) )
+    duration := time.Since( start )
 
     // check for errors
     if errs != nil {
-        fmt.Println( "Errors:", errs )
+        log.Printf( "ERROR: service (%s) returns %s\n", url, errs )
         return http.StatusInternalServerError
     }
+
+    defer resp.Body.Close( )
+    log.Printf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration )
 
     // check the body for errors
     if !statusIsOk( body ) {
@@ -132,19 +144,22 @@ func DeleteDoi( doi string ) int {
 
     // issue the request
     start := time.Now( )
-    _, body, errs := gorequest.New( ).
+    resp, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
         SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Delete( url  ).
         Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         End( )
-    fmt.Printf( "DELETE: %s (%s)\n", url, time.Since( start ) )
+    duration := time.Since( start )
 
     // check for errors
     if errs != nil {
-        fmt.Println( "Errors:", errs )
+        log.Printf( "ERROR: service (%s) returns %s\n", url, errs )
         return http.StatusInternalServerError
     }
+
+    defer resp.Body.Close( )
+    log.Printf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration )
 
     // check the body for errors
     if !statusIsOk( body ) {
@@ -165,18 +180,21 @@ func GetStatus( ) int {
 
     // issue the request
     start := time.Now( )
-    _, body, errs := gorequest.New( ).
+    resp, body, errs := gorequest.New( ).
         SetDebug( debugHttp ).
         Get( url  ).
         Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         End( )
-    fmt.Printf( "GET: %s (%s)\n", url, time.Since( start ) )
+    duration := time.Since( start )
 
     // check for errors
     if errs != nil {
-        fmt.Println( "Errors:", errs )
+        log.Printf( "ERROR: service (%s) returns %s\n", url, errs )
         return http.StatusInternalServerError
     }
+
+    defer resp.Body.Close( )
+    log.Printf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration )
 
     // check the body for errors
     if !statusIsOk( body ) {
