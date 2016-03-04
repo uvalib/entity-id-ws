@@ -3,7 +3,6 @@ package main
 import (
     "io/ioutil"
     "log"
-    "fmt"
     "testing"
     "entityidws/client"
     "gopkg.in/yaml.v2"
@@ -223,8 +222,8 @@ func loadConfig( ) TestConfig {
         log.Fatal( err )
     }
 
-    fmt.Printf( "endpoint [%s]\n", c.Endpoint )
-    fmt.Printf( "token    [%s]\n", c.Token )
+    log.Printf( "endpoint [%s]\n", c.Endpoint )
+    log.Printf( "token    [%s]\n", c.Token )
 
     return c
 }

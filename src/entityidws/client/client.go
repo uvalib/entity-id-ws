@@ -105,3 +105,22 @@ func Update( endpoint string, entity api.Entity, token string ) int {
     return resp.StatusCode
 }
 
+func Delete( endpoint string, doi string, token string ) int {
+
+    url := fmt.Sprintf("%s/entityid/%s?auth=%s", endpoint, doi, token )
+    //fmt.Printf( "%s\n", url )
+
+    resp, _, errs := gorequest.New( ).
+       SetDebug( false ).
+       Delete( url ).
+       Timeout( time.Duration( 5 ) * time.Second ).
+       End( )
+
+    if errs != nil {
+        return http.StatusInternalServerError
+    }
+
+    defer resp.Body.Close( )
+
+    return resp.StatusCode
+}
