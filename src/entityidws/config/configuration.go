@@ -12,6 +12,7 @@ type Config struct {
     EzidUser           string
     EzidPassphrase     string
     AuthTokenEndpoint  string
+    Debug              bool
 }
 
 var Configuration = LoadConfig( )
@@ -28,6 +29,7 @@ func LoadConfig( ) Config {
     flag.StringVar( &c.EzidUser, "eziduser", "apitest", "The EZID service username" )
     flag.StringVar( &c.EzidPassphrase, "ezidpassword", "apitest", "The EZID service passphrase")
     flag.StringVar( &c.AuthTokenEndpoint, "tokenauth", "http://docker1.lib.virginia.edu:8200", "The token authentication endpoint")
+    flag.BoolVar( &c.Debug, "debug", false, "Enable debugging")
 
     flag.Parse( )
 
@@ -38,6 +40,7 @@ func LoadConfig( ) Config {
     log.Printf( "EzidUser:           %s", c.EzidUser )
     log.Printf( "EzidPassphrase:     %s", c.EzidPassphrase )
     log.Printf( "AuthTokenEndpoint   %s", c.AuthTokenEndpoint )
+    log.Printf( "Debug               %t", c.Debug )
 
     return c
 }

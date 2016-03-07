@@ -5,6 +5,7 @@ import (
     "strings"
     "bytes"
     "entityidws/api"
+    "entityidws/config"
 )
 
 //
@@ -59,8 +60,8 @@ func makeDataciteBodyFromEntity( entity api.Entity ) string {
     addBodyTerm( &buffer, "datacite.resourcetype", entity.ResourceType, "Other" )
     s := buffer.String( )
 
-    if debugHttp {
-        fmt.Println("Payload:", s)
+    if config.Configuration.Debug {
+        fmt.Println( "Payload:", s )
     }
     return s
 }

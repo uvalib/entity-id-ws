@@ -10,9 +10,6 @@ import (
     "entityidws/config"
 )
 
-// debug the http exchange
-var debugHttp = false
-
 //
 // get entity details when provided a DOI
 //
@@ -24,7 +21,7 @@ func GetDoi( doi string ) ( api.Entity, int ) {
     // issue the request
     start := time.Now( )
     resp, body, errs := gorequest.New( ).
-        SetDebug( debugHttp ).
+        SetDebug( config.Configuration.Debug ).
         Get( url  ).
         Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         End( )
@@ -63,7 +60,7 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
     // issue the request
     start := time.Now( )
     resp, body, errs := gorequest.New( ).
-        SetDebug( debugHttp ).
+        SetDebug( config.Configuration.Debug ).
         SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Post( url  ).
         Send( body ).
@@ -105,7 +102,7 @@ func UpdateDoi( entity api.Entity ) int {
     // issue the request
     start := time.Now( )
     resp, body, errs := gorequest.New( ).
-        SetDebug( debugHttp ).
+        SetDebug( config.Configuration.Debug ).
         SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Post( url  ).
         Send( body ).
@@ -143,7 +140,7 @@ func DeleteDoi( doi string ) int {
     // issue the request
     start := time.Now( )
     resp, body, errs := gorequest.New( ).
-        SetDebug( debugHttp ).
+        SetDebug( config.Configuration.Debug ).
         SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Delete( url  ).
         Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
@@ -179,7 +176,7 @@ func GetStatus( ) int {
     // issue the request
     start := time.Now( )
     resp, body, errs := gorequest.New( ).
-        SetDebug( debugHttp ).
+        SetDebug( config.Configuration.Debug ).
         Get( url  ).
         Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
         End( )
