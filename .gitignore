@@ -5,3 +5,4 @@ src/gopkg.in
 bin
 pkg
 src/entityidws/service_test.yml
+env
