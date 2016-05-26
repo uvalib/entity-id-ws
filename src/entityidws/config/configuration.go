@@ -6,7 +6,6 @@ import (
 )
 type Config struct {
     ServicePort        string
-    AuthorizerUrl      string
     EzidServiceUrl     string
     EzidServiceTimeout int
     EzidUser           string
@@ -23,7 +22,6 @@ func LoadConfig( ) Config {
 
     // process command line flags and setup configuration
     flag.StringVar( &c.ServicePort, "port", "8080", "The service listen port" )
-    flag.StringVar( &c.AuthorizerUrl, "authurl", "docker1.lib.virginia.edu:8200", "The authorizer service hostname:port" )
     flag.StringVar( &c.EzidServiceUrl, "ezidurl", "https://ezid.cdlib.org", "The EZID service URL" )
     flag.IntVar( &c.EzidServiceTimeout, "timeout", 10, "The service timeout (in seconds)")
     flag.StringVar( &c.EzidUser, "eziduser", "apitest", "The EZID service username" )
@@ -34,7 +32,6 @@ func LoadConfig( ) Config {
     flag.Parse( )
 
     log.Printf( "ServicePort:        %s", c.ServicePort )
-    log.Printf( "AuthorizerUrl:      %s", c.AuthorizerUrl )
     log.Printf( "EzidServiceUrl:     %s", c.EzidServiceUrl )
     log.Printf( "EzidServiceTimeout: %d", c.EzidServiceTimeout )
     log.Printf( "EzidUser:           %s", c.EzidUser )
