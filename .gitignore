@@ -5,4 +5,5 @@ src/gopkg.in
 bin
 pkg
 src/entityidws/service_test.yml
-env
+env.set
+env.unset
