@@ -31,7 +31,7 @@ func HealthCheck( endpoint string ) int {
 
 func Get( endpoint string, doi string, token string ) ( int, * api.Entity ) {
 
-    url := fmt.Sprintf( "%s/entityid/%s?auth=%s", endpoint, doi, token )
+    url := fmt.Sprintf( "%s/%s?auth=%s", endpoint, doi, token )
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
@@ -57,7 +57,7 @@ func Get( endpoint string, doi string, token string ) ( int, * api.Entity ) {
 
 func Create( endpoint string, shoulder string, token string ) ( int, * api.Entity ) {
 
-    url := fmt.Sprintf("%s/entityid/%s?auth=%s", endpoint, shoulder, token)
+    url := fmt.Sprintf("%s/%s?auth=%s", endpoint, shoulder, token)
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
@@ -85,7 +85,7 @@ func Create( endpoint string, shoulder string, token string ) ( int, * api.Entit
 
 func Update( endpoint string, entity api.Entity, token string ) int {
 
-    url := fmt.Sprintf("%s/entityid/%s?auth=%s", endpoint, entity.Id, token )
+    url := fmt.Sprintf("%s/%s?auth=%s", endpoint, entity.Id, token )
     //fmt.Printf( "%s\n", url )
 
     resp, _, errs := gorequest.New( ).
@@ -107,7 +107,7 @@ func Update( endpoint string, entity api.Entity, token string ) int {
 
 func Delete( endpoint string, doi string, token string ) int {
 
-    url := fmt.Sprintf("%s/entityid/%s?auth=%s", endpoint, doi, token )
+    url := fmt.Sprintf("%s/%s?auth=%s", endpoint, doi, token )
     //fmt.Printf( "%s\n", url )
 
     resp, _, errs := gorequest.New( ).

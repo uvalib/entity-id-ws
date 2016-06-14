@@ -15,36 +15,40 @@ type Route struct {
 type Routes [] Route
 
 var routes = Routes{
-    Route{
-        "IdLookup",
-        "GET",
-        "/entityid/{doi:.*}",
-        IdLookup,
-    },
-    Route{
-        "IdCreate",
-        "POST",
-        "/entityid/{shoulder:.*}",
-        IdCreate,
-    },
-    Route{
-        "IdUpdate",
-        "PUT",
-        "/entityid/{doi:.*}",
-        IdUpdate,
-    },
-    Route{
-        "IdDelete",
-        "DEL",
-        "/entityid/{doi:.*}",
-        IdDelete,
-    },
 
     Route{
         "HealthCheck",
         "GET",
         "/healthcheck",
         HealthCheck,
+    },
+
+    Route{
+        "IdLookup",
+        "GET",
+        "/{doi:.*}",
+        IdLookup,
+    },
+
+    Route{
+        "IdCreate",
+        "POST",
+        "/{shoulder:.*}",
+        IdCreate,
+    },
+
+    Route{
+        "IdUpdate",
+        "PUT",
+        "/{doi:.*}",
+        IdUpdate,
+    },
+
+    Route{
+        "IdDelete",
+        "DEL",
+        "/{doi:.*}",
+        IdDelete,
     },
 
     Route{
