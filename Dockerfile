@@ -1,7 +1,10 @@
-FROM centos:7
+FROM alpine:3.4
+
+# Add bash cos we dont get by default
+RUN apk --update add bash
 
 # Create the run user and group
-RUN groupadd -r webservice && useradd -r -g webservice webservice
+RUN addgroup webservice && adduser webservice -G webservice -D
 
 # Specify home 
 ENV APP_HOME /entity-id-ws
