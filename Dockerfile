@@ -1,7 +1,7 @@
 FROM alpine:3.4
 
-# Add bash cos we dont get by default
-RUN apk --update add bash
+# We need bash and some certs
+RUN apk --update add bash ca-certificates
 
 # Create the run user and group
 RUN addgroup webservice && adduser webservice -G webservice -D
