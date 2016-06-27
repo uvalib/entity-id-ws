@@ -14,7 +14,9 @@ import (
 //
 func makeEntityFromBody( body string ) api.Entity {
 
-    //fmt.Println( "Response:", body )
+    if config.Configuration.Debug {
+        fmt.Println("Response:", body)
+    }
 
     entity := blankEntity( )
     split := strings.Split( body, "\n" )
@@ -47,11 +49,12 @@ func makeEntityFromBody( body string ) api.Entity {
 //
 // use the datacite schema/profile to encode the metadata into the request body
 //
-func makeDataciteBodyFromEntity( entity api.Entity ) string {
+func makeDataciteBodyFromEntity( entity api.Entity, status string ) string {
 
     var buffer bytes.Buffer
     //addBodyTerm( &buffer, "_crossref", "no", "" )
     //addBodyTerm( &buffer, "_profile", "datacite", "" )
+    addBodyTerm( &buffer, "_status", status, "reserved" )
     addBodyTerm( &buffer, "_target", entity.Url, "https://virginia.edu" )
     addBodyTerm( &buffer, "datacite.title", entity.Title, "empty" )
     addBodyTerm( &buffer, "datacite.publisher", entity.Publisher, "empty" )

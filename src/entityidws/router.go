@@ -46,7 +46,7 @@ var routes = Routes{
 
     Route{
         "IdDelete",
-        "DEL",
+        "DELETE",
         "/{doi:.*}",
         IdDelete,
     },

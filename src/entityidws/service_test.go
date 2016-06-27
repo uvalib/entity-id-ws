@@ -27,7 +27,7 @@ var badToken = "badness"
 var empty = " "
 
 //
-// happy day tests
+// healthcheck tests
 //
 
 func TestHealthCheck( t *testing.T ) {
@@ -37,6 +37,10 @@ func TestHealthCheck( t *testing.T ) {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 }
+
+//
+// DOI get tests
+//
 
 func TestGetHappyDay( t *testing.T ) {
 
@@ -62,6 +66,42 @@ func TestGetHappyDay( t *testing.T ) {
     }
 }
 
+func TestGetEmptyId( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status, _ := client.Get( cfg.Endpoint, empty, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestGetBadId( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status, _ := client.Get( cfg.Endpoint, badDoi, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestGetEmptyToken( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status, _ := client.Get( cfg.Endpoint, plausableDoi, empty )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestGetBadToken( t *testing.T ) {
+    expected := http.StatusForbidden
+    status, _ := client.Get( cfg.Endpoint, plausableDoi, badToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+//
+// DOI create tests
+//
+
 func TestCreateHappyDay( t *testing.T ) {
     expected := http.StatusOK
     status, entity := client.Create( cfg.Endpoint, goodShoulder, goodToken)
@@ -78,6 +118,26 @@ func TestCreateHappyDay( t *testing.T ) {
     }
 }
 
+func TestCreateEmptyToken( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status, _ := client.Create( cfg.Endpoint, goodShoulder, empty )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestCreateBadToken( t *testing.T ) {
+    expected := http.StatusForbidden
+    status, _ := client.Create( cfg.Endpoint, goodShoulder, badToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+//
+// DOI update tests
+//
+
 func TestUpdateHappyDay( t *testing.T ) {
 
     doi := createGoodDoi( )
@@ -86,18 +146,6 @@ func TestUpdateHappyDay( t *testing.T ) {
 
     expected := http.StatusOK
     status := client.Update( cfg.Endpoint, entity, goodToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-//
-// empty Id tests
-//
-
-func TestGetEmptyId( t *testing.T ) {
-    expected := http.StatusBadRequest
-    status, _ := client.Get( cfg.Endpoint, empty, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -113,41 +161,9 @@ func TestUpdateEmptyId( t *testing.T ) {
     }
 }
 
-//
-// bad Id tests
-//
-
-func TestGetBadId( t *testing.T ) {
-    expected := http.StatusBadRequest
-    status, _ := client.Get( cfg.Endpoint, badDoi, goodToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
 func TestUpdateBadId( t *testing.T ) {
     expected := http.StatusBadRequest
     status := client.Update( cfg.Endpoint, api.Entity{ Id: badDoi }, goodToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-//
-// empty token tests
-//
-
-func TestGetEmptyToken( t *testing.T ) {
-    expected := http.StatusBadRequest
-    status, _ := client.Get( cfg.Endpoint, plausableDoi, empty )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestCreateEmptyToken( t *testing.T ) {
-    expected := http.StatusBadRequest
-    status, _ := client.Create( cfg.Endpoint, goodShoulder, empty )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -163,26 +179,6 @@ func TestUpdateEmptyToken( t *testing.T ) {
     }
 }
 
-//
-// bad token tests
-//
-
-func TestGetBadToken( t *testing.T ) {
-    expected := http.StatusForbidden
-    status, _ := client.Get( cfg.Endpoint, plausableDoi, badToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
-func TestCreateBadToken( t *testing.T ) {
-    expected := http.StatusForbidden
-    status, _ := client.Create( cfg.Endpoint, goodShoulder, badToken )
-    if status != expected {
-        t.Fatalf( "Expected %v, got %v\n", expected, status )
-    }
-}
-
 func TestUpdateBadToken( t *testing.T ) {
     entity := testEntity( )
     entity.Id = plausableDoi
@@ -192,6 +188,46 @@ func TestUpdateBadToken( t *testing.T ) {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 }
+
+//
+// DOI delete tests
+//
+
+func TestDeleteEmptyId( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status := client.Delete( cfg.Endpoint, empty, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestDeleteBadId( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status := client.Delete( cfg.Endpoint, badDoi, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestDeleteEmptyToken( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status := client.Delete( cfg.Endpoint, plausableDoi, empty )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestDeleteBadToken( t *testing.T ) {
+    expected := http.StatusForbidden
+    status := client.Delete( cfg.Endpoint, plausableDoi, badToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+//
+// helpers
+//
 
 func emptyField( field string ) bool {
     return len( strings.TrimSpace( field ) ) == 0

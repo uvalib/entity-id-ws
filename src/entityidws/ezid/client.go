@@ -10,6 +10,9 @@ import (
     "entityidws/config"
 )
 
+const STATUS_RESERVED = "reserved"
+const STATUS_PUBLIC = "public"
+
 //
 // get entity details when provided a DOI
 //
@@ -54,8 +57,8 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
     // construct target URL
     url := fmt.Sprintf( "%s/shoulder/%s", config.Configuration.EzidServiceUrl, shoulder )
 
-    // construct the payload...
-    body := makeDataciteBodyFromEntity( entity )
+    // construct the payload, set the status to reserved
+    body := makeDataciteBodyFromEntity( entity, STATUS_RESERVED )
 
     // issue the request
     start := time.Now( )
@@ -97,7 +100,7 @@ func UpdateDoi( entity api.Entity ) int {
     url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, entity.Id )
 
     // construct the payload...
-    body := makeDataciteBodyFromEntity( entity )
+    body := makeDataciteBodyFromEntity( entity, STATUS_PUBLIC )
 
     // issue the request
     start := time.Now( )
