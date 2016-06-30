@@ -1,10 +1,15 @@
 FROM alpine:3.4
 
 # We need bash and some certs
-RUN apk --update add bash ca-certificates
+# Add bash and timezone data cos we dont get them by default; also certs
+RUN apk --update add bash tzdata ca-certificates
 
 # Create the run user and group
 RUN addgroup webservice && adduser webservice -G webservice -D
+
+# set the timezone appropriatly
+ENV TZ=EST5EDT
+RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Specify home 
 ENV APP_HOME /entity-id-ws
