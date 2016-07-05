@@ -7,3 +7,4 @@ pkg
 src/entityidws/service_test.yml
 env.set
 env.unset
+buildtag.build-0

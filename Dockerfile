@@ -29,3 +29,6 @@ CMD scripts/entry.sh
 # Move in necessary assets
 COPY scripts/entry.sh $APP_HOME/scripts/entry.sh
 COPY bin/entity-id-ws.linux $APP_HOME/bin/entity-id-ws
+
+# Add the build tag
+COPY buildtag.* $APP_HOME/
