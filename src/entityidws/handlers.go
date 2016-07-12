@@ -163,6 +163,16 @@ func HealthCheck( w http.ResponseWriter, r *http.Request ) {
     }
 }
 
+func GetVersion( w http.ResponseWriter, r *http.Request ) {
+
+    jsonResponse( w )
+    w.WriteHeader( http.StatusOK )
+
+    if err := json.NewEncoder(w).Encode( api.VersionResponse{ Version: Version( ) } ); err != nil {
+        log.Fatal( err )
+    }
+}
+
 func respond( w http.ResponseWriter, status int ) {
 
     jsonResponse( w )

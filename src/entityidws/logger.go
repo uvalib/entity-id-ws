@@ -1,9 +1,10 @@
 package main
 
 import (
-   "log"
-   "net/http"
-   "time"
+    "log"
+    "net/http"
+    "time"
+    "entityidws/config"
 )
 
 func Logger(inner http.Handler, name string) http.Handler {
@@ -16,7 +17,7 @@ func Logger(inner http.Handler, name string) http.Handler {
 
        log.Printf(
            "%s: %s (%s) -> method %s, time %s",
-           "ENTITYID",
+           config.Configuration.ServiceName,
            r.Method,
            r.RequestURI,
            name,

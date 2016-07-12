@@ -5,6 +5,7 @@ import (
     "log"
 )
 type Config struct {
+    ServiceName        string
     ServicePort        string
     EzidServiceUrl     string
     EzidServiceTimeout int
@@ -18,7 +19,7 @@ var Configuration = LoadConfig( )
 
 func LoadConfig( ) Config {
 
-    c := Config{ }
+    c := Config{ ServiceName: "ENTITYID" }
 
     // process command line flags and setup configuration
     flag.StringVar( &c.ServicePort, "port", "8080", "The service listen port" )

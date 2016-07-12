@@ -24,6 +24,13 @@ var routes = Routes{
     },
 
     Route{
+        "GetVersion",
+        "GET",
+        "/version",
+        GetVersion,
+    },
+
+    Route{
         "IdLookup",
         "GET",
         "/{doi:.*}",
