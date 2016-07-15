@@ -31,6 +31,13 @@ var routes = Routes{
     },
 
     Route{
+        "Stats",
+        "GET",
+        "/statistics",
+        Stats,
+    },
+
+    Route{
         "IdLookup",
         "GET",
         "/{doi:.*}",
@@ -56,13 +63,6 @@ var routes = Routes{
         "DELETE",
         "/{doi:.*}",
         IdDelete,
-    },
-
-    Route{
-        "Stats",
-        "GET",
-        "/statistics",
-        Stats,
     },
 }
 

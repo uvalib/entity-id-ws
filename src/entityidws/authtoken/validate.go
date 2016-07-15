@@ -17,12 +17,12 @@ func Validate( endpoint string, activity string, token string ) bool {
     resp, _, errs := gorequest.New( ).
        SetDebug( false ).
        Get( url  ).
-       Timeout( time.Duration( 2 ) * time.Second ).
+       Timeout( time.Duration( 5 ) * time.Second ).
        End( )
     duration := time.Since( start )
 
     if errs != nil {
-        log.Printf( "ERROR: token auth (%s) returns %s\n", url, errs )
+        log.Printf( "ERROR: token auth (%s) returns %s in %s\n", url, errs, duration )
         return false
     }
 

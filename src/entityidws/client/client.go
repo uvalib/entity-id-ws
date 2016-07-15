@@ -55,6 +55,32 @@ func VersionCheck( endpoint string ) ( int, string ) {
     return resp.StatusCode, r.Version
 }
 
+func Statistics( endpoint string ) ( int, * api.Statistics ) {
+
+    url := fmt.Sprintf( "%s/statistics", endpoint )
+    //fmt.Printf( "%s\n", url )
+
+    resp, body, errs := gorequest.New( ).
+       SetDebug( false ).
+       Get( url ).
+       Timeout( time.Duration( 5 ) * time.Second ).
+       End( )
+
+    if errs != nil {
+        return http.StatusInternalServerError, nil
+    }
+
+    defer resp.Body.Close( )
+
+    r := api.StatisticsResponse{ }
+    err := json.Unmarshal( []byte( body ), &r )
+    if err != nil {
+        return http.StatusInternalServerError, nil
+    }
+
+    return resp.StatusCode, &r.Details
+}
+
 func Get( endpoint string, doi string, token string ) ( int, * api.Entity ) {
 
     url := fmt.Sprintf( "%s/%s?auth=%s", endpoint, doi, token )

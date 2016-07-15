@@ -32,7 +32,7 @@ func GetDoi( doi string ) ( api.Entity, int ) {
 
     // check for errors
     if errs != nil {
-        log.Printf( "ERROR: service (%s) returns %s\n", url, errs )
+        log.Printf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration )
         return blankEntity( ), http.StatusInternalServerError
     }
 
@@ -74,7 +74,7 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
 
     // check for errors
     if errs != nil {
-        log.Printf( "ERROR: service (%s) returns %s\n", url, errs )
+        log.Printf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration )
         return blankEntity( ), http.StatusInternalServerError
     }
 
@@ -116,7 +116,7 @@ func UpdateDoi( entity api.Entity ) int {
 
     // check for errors
     if errs != nil {
-        log.Printf( "ERROR: service (%s) returns %s\n", url, errs )
+        log.Printf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration )
         return http.StatusInternalServerError
     }
 
@@ -152,7 +152,7 @@ func DeleteDoi( doi string ) int {
 
     // check for errors
     if errs != nil {
-        log.Printf( "ERROR: service (%s) returns %s\n", url, errs )
+        log.Printf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration )
         return http.StatusInternalServerError
     }
 
@@ -187,7 +187,7 @@ func GetStatus( ) int {
 
     // check for errors
     if errs != nil {
-        log.Printf( "ERROR: service (%s) returns %s\n", url, errs )
+        log.Printf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration )
         return http.StatusInternalServerError
     }
 
