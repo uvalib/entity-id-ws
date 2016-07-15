@@ -3,6 +3,7 @@ EZIDURL_OPT=""
 EZIDUSER_OPT=""
 EZIDPASSWD_OPT=""
 TOKENURL_OPT=""
+TIMEOUT_OPT=""
 
 # EZID endpoint URL
 if [ -n "$EZID_URL" ]; then
@@ -24,7 +25,12 @@ if [ -n "$TOKENAUTH_URL" ]; then
    TOKENURL_OPT="--tokenauth $TOKENAUTH_URL"
 fi
 
-bin/entity-id-ws $EZIDURL_OPT $EZIDUSER_OPT $EZIDPASSWD_OPT $TOKENURL_OPT
+# EZID service timeout
+if [ -n "$EZID_TIMEOUT" ]; then
+   TIMEOUT_OPT="--timeout $EZID_TIMEOUT"
+fi
+
+bin/entity-id-ws $EZIDURL_OPT $EZIDUSER_OPT $EZIDPASSWD_OPT $TOKENURL_OPT $TIMEOUT_OPT
 
 #
 # end of file
