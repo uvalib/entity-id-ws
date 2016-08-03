@@ -2,12 +2,12 @@ package ezid
 
 import (
     "fmt"
-    "log"
     "time"
     "net/http"
     "github.com/parnurzeal/gorequest"
     "entityidws/api"
     "entityidws/config"
+    "entityidws/logger"
 )
 
 const STATUS_RESERVED = "reserved"
@@ -32,13 +32,13 @@ func GetDoi( doi string ) ( api.Entity, int ) {
 
     // check for errors
     if errs != nil {
-        log.Printf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration )
+        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration ) )
         return blankEntity( ), http.StatusInternalServerError
     }
 
     defer resp.Body.Close( )
 
-    log.Printf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration )
+    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration ) )
 
     // check the body for errors
     if !statusIsOk( body ) {
@@ -74,13 +74,13 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
 
     // check for errors
     if errs != nil {
-        log.Printf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration )
+        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration ) )
         return blankEntity( ), http.StatusInternalServerError
     }
 
     defer resp.Body.Close( )
 
-    log.Printf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration )
+    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration ) )
 
     // check the body for errors
     if !statusIsOk( body ) {
@@ -116,12 +116,12 @@ func UpdateDoi( entity api.Entity ) int {
 
     // check for errors
     if errs != nil {
-        log.Printf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration )
+        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration ) )
         return http.StatusInternalServerError
     }
 
     defer resp.Body.Close( )
-    log.Printf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration )
+    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration ) )
 
     // check the body for errors
     if !statusIsOk( body ) {
@@ -152,12 +152,12 @@ func DeleteDoi( doi string ) int {
 
     // check for errors
     if errs != nil {
-        log.Printf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration )
+        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration ) )
         return http.StatusInternalServerError
     }
 
     defer resp.Body.Close( )
-    log.Printf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration )
+    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration ) )
 
     // check the body for errors
     if !statusIsOk( body ) {
@@ -187,12 +187,12 @@ func GetStatus( ) int {
 
     // check for errors
     if errs != nil {
-        log.Printf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration )
+        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration ) )
         return http.StatusInternalServerError
     }
 
     defer resp.Body.Close( )
-    log.Printf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration )
+    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration ) )
 
     // check the body for errors
     if !statusIsOk( body ) {

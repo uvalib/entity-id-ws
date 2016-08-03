@@ -2,10 +2,11 @@ package config
 
 import (
     "flag"
-    "log"
+    "fmt"
+    "entityidws/logger"
 )
+
 type Config struct {
-    ServiceName        string
     ServicePort        string
     EzidServiceUrl     string
     EzidServiceTimeout int
@@ -19,7 +20,7 @@ var Configuration = LoadConfig( )
 
 func LoadConfig( ) Config {
 
-    c := Config{ ServiceName: "ENTITYID" }
+    c := Config{ }
 
     // process command line flags and setup configuration
     flag.StringVar( &c.ServicePort, "port", "8080", "The service listen port" )
@@ -32,13 +33,13 @@ func LoadConfig( ) Config {
 
     flag.Parse( )
 
-    log.Printf( "ServicePort:        %s", c.ServicePort )
-    log.Printf( "EzidServiceUrl:     %s", c.EzidServiceUrl )
-    log.Printf( "EzidServiceTimeout: %d", c.EzidServiceTimeout )
-    log.Printf( "EzidUser:           %s", c.EzidUser )
-    log.Printf( "EzidPassphrase:     %s", c.EzidPassphrase )
-    log.Printf( "AuthTokenEndpoint   %s", c.AuthTokenEndpoint )
-    log.Printf( "Debug               %t", c.Debug )
+    logger.Log( fmt.Sprintf( "ServicePort:        %s", c.ServicePort ) )
+    logger.Log( fmt.Sprintf( "EzidServiceUrl:     %s", c.EzidServiceUrl ) )
+    logger.Log( fmt.Sprintf( "EzidServiceTimeout: %d", c.EzidServiceTimeout ) )
+    logger.Log( fmt.Sprintf( "EzidUser:           %s", c.EzidUser ) )
+    logger.Log( fmt.Sprintf( "EzidPassphrase:     %s", c.EzidPassphrase ) )
+    logger.Log( fmt.Sprintf( "AuthTokenEndpoint   %s", c.AuthTokenEndpoint ) )
+    logger.Log( fmt.Sprintf( "Debug               %t", c.Debug ) )
 
     return c
 }

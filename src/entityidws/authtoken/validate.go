@@ -2,10 +2,10 @@ package authtoken
 
 import (
     "fmt"
-    "log"
     "time"
     "net/http"
     "github.com/parnurzeal/gorequest"
+    "entityidws/logger"
 )
 
 func Validate( endpoint string, activity string, token string ) bool {
@@ -22,12 +22,12 @@ func Validate( endpoint string, activity string, token string ) bool {
     duration := time.Since( start )
 
     if errs != nil {
-        log.Printf( "ERROR: token auth (%s) returns %s in %s\n", url, errs, duration )
+        logger.Log( fmt.Sprintf( "ERROR: token auth (%s) returns %s in %s\n", url, errs, duration ) )
         return false
     }
 
     defer resp.Body.Close( )
 
-    log.Printf( "Token auth (%s) returns http %d in %s\n", url, resp.StatusCode, duration )
+    logger.Log( fmt.Sprintf( "Token auth (%s) returns http %d in %s\n", url, resp.StatusCode, duration ) )
     return resp.StatusCode == http.StatusOK
 }
