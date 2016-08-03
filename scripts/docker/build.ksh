@@ -3,6 +3,10 @@ if [ -z "$DOCKER_HOST" ]; then
    exit 1
 fi
 
+echo "*****************************************"
+echo "building on $DOCKER_HOST"
+echo "*****************************************"
+
 # set the definitions
 INSTANCE=entity-id-ws
 NAMESPACE=uvadave
