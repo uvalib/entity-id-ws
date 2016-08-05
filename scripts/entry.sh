@@ -4,6 +4,7 @@ EZIDUSER_OPT=""
 EZIDPASSWD_OPT=""
 TOKENURL_OPT=""
 TIMEOUT_OPT=""
+DEBUG_OPT=""
 
 # EZID endpoint URL
 if [ -n "$EZID_URL" ]; then
@@ -30,7 +31,12 @@ if [ -n "$EZID_TIMEOUT" ]; then
    TIMEOUT_OPT="--timeout $EZID_TIMEOUT"
 fi
 
-bin/entity-id-ws $EZIDURL_OPT $EZIDUSER_OPT $EZIDPASSWD_OPT $TOKENURL_OPT $TIMEOUT_OPT
+# service debugging
+if [ -n "$ENTITYID_DEBUG" ]; then
+   DEBUG_OPT="--debug"
+fi
+
+bin/entity-id-ws $EZIDURL_OPT $EZIDUSER_OPT $EZIDPASSWD_OPT $TOKENURL_OPT $TIMEOUT_OPT $DEBUG_OPT
 
 #
 # end of file
