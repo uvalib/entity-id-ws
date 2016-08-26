@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<dissertation>
+
+    <person_name>
+      {{ with .Params.firstname }}
+      <given_name>{{ . }}</given_name>
+      {{ end }}
+      {{ with .Params.lastname }}
+      <surname>{{ . }}</surname>
+      {{ end }}
+      {{ with .Params.institution }}
+      <affiliation>{{ . }}</affiliation>
+      {{ end }}
+   </person_name>
+
+   <titles>
+      {{ with .Params.firstname }}
+      <title>{{ . }}</title>
+      {{ end }}
+   </titles>
+
+<!—- this is not publication date, like we have, but do we still send the date we do have?? -->
+   <approval_date>
+      <month>MM</month>
+      <day>DD</day>
+      <year>YYYY</year>
+   </approval_date>
+
+   <institution>
+      <institution_name>University of Virginia</institution_name>
+      <institution_acronym>UVA</institution_acronym>
+      <institution_place>Charlottesville, VA</institution_place>
+      {{ with .Params.department }}
+      <institution_department>{{ . }}</institution_department>
+      {{ end }}
+   </institution>
+
+   <degree>PHD OR MS</degree>
+
+   <doi_data>
+      {{ with .Params.identifier }}
+      <doi>{{ . }}</doi>
+      {{ end }}
+      {{ with .Params.public_url }}
+      <resource>{{ . }}</resource>
+      {{ end }}
+   </doi_data>
+
+</dissertation> 
