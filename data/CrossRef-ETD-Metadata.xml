@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<dissertation>
+<!-- Cap words are place holders for variable elements  -->
+	 <person_name>
+		<given_name>FIRSTNAME</given_name>
+		<surname>LASTNAME</surname>
+		<affiliation>INSTITUTION</affiliation>
+	</person_name>
+
+	<titles>
+		<title>TITLE</title>
+	</titles>
+
+<!—- this is not publication date, like we have, but do we still send the date we do have?? -->
+	<approval_date>
+		<month>MM</month>
+		<day>DD</day>
+		<year>YYYY</year>
+	</approval_date>
+
+	<institution>
+		<institution_name>University of Virginia</institution_name>
+<!-- here UVA is "UVA", no place holder  -->
+		<institution_acronym>UVA</institution_acronym>
+		<institution_place>Charlottesville, VA</institution_place>
+		<institution_department>AUTHOR'S DEPARTMENT</institution_department>
+	</institution>
+
+	<degree>PHD OR MS</degree>
+
+	<doi_data>
+		<doi>LIKE THIS JUST THE DOI:  10.18130/V3X02F</doi>
+		<resource>Full—DOI-URL-LIKE-THIS:  http://dx.doi.org/10.18130/V3X02F  </resource>
+	</doi_data>
+
+
+</dissertation> 
