@@ -1,49 +1,58 @@
 <?xml version="1.0"?>
-<dissertation>
+<dissertation xmlns="http://www.crossref.org/schema/4.3.4"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://www.crossref.org/schema/4.3.4 http://www.crossref.org/schema/deposit/crossref4.3.4.xsd">
 
     <person_name>
-      {{ with .Params.firstname }}
+      {{- with .FirstName }}
       <given_name>{{ . }}</given_name>
-      {{ end }}
-      {{ with .Params.lastname }}
+      {{- end }}
+      {{- with .LastName }}
       <surname>{{ . }}</surname>
-      {{ end }}
-      {{ with .Params.institution }}
+      {{- end }}
+      {{- with .Institution }}
       <affiliation>{{ . }}</affiliation>
-      {{ end }}
+      {{- end }}
    </person_name>
 
    <titles>
-      {{ with .Params.firstname }}
+      {{- with .Title }}
       <title>{{ . }}</title>
-      {{ end }}
+      {{- end }}
    </titles>
 
-<!—- this is not publication date, like we have, but do we still send the date we do have?? -->
    <approval_date>
-      <month>MM</month>
-      <day>DD</day>
-      <year>YYYY</year>
+      {{- with .PubMonth }}
+      <month>{{ . }}</month>
+      {{- end }}
+      {{- with .PubDay }}
+      <day>{{ . }}</day>
+      {{- end }}
+      {{- with .PubYear }}
+      <year>{{ . }}</year>
+      {{- end }}
    </approval_date>
 
    <institution>
       <institution_name>University of Virginia</institution_name>
       <institution_acronym>UVA</institution_acronym>
       <institution_place>Charlottesville, VA</institution_place>
-      {{ with .Params.department }}
+      {{- with .Department }}
       <institution_department>{{ . }}</institution_department>
-      {{ end }}
+      {{- end }}
    </institution>
 
-   <degree>PHD OR MS</degree>
+    {{- with .Degree }}
+   <degree>PHD</degree>
+    {{- end }}
 
    <doi_data>
-      {{ with .Params.identifier }}
+      {{- with .Identifier }}
       <doi>{{ . }}</doi>
-      {{ end }}
-      {{ with .Params.public_url }}
+      {{- end }}
+      {{- with .PublicUrl }}
       <resource>{{ . }}</resource>
-      {{ end }}
+      {{- end }}
    </doi_data>
 
-</dissertation> 
+</dissertation>

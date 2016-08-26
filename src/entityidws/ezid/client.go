@@ -32,13 +32,13 @@ func GetDoi( doi string ) ( api.Entity, int ) {
 
     // check for errors
     if errs != nil {
-        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration ) )
+        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s", url, errs, duration ) )
         return blankEntity( ), http.StatusInternalServerError
     }
 
     defer resp.Body.Close( )
 
-    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration ) )
+    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
     // check the body for errors
     if !statusIsOk( body ) {
@@ -58,7 +58,14 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
     url := fmt.Sprintf( "%s/shoulder/%s", config.Configuration.EzidServiceUrl, shoulder )
 
     // construct the payload, set the status to reserved
-    body := makeDataciteBodyFromEntity( entity, STATUS_RESERVED )
+    body, err := makeDataciteBodyFromEntity( entity, STATUS_RESERVED )
+//    body, err := makeCrossRefBodyFromEntity( entity, STATUS_RESERVED )
+
+    // check for errors
+    if err != nil {
+        logger.Log( fmt.Sprintf( "ERROR: creating service payload %s", err ) )
+        return blankEntity( ), http.StatusInternalServerError
+    }
 
     // issue the request
     start := time.Now( )
@@ -74,13 +81,13 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
 
     // check for errors
     if errs != nil {
-        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration ) )
+        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s", url, errs, duration ) )
         return blankEntity( ), http.StatusInternalServerError
     }
 
     defer resp.Body.Close( )
 
-    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration ) )
+    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
     // check the body for errors
     if !statusIsOk( body ) {
@@ -100,7 +107,14 @@ func UpdateDoi( entity api.Entity ) int {
     url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, entity.Id )
 
     // construct the payload...
-    body := makeDataciteBodyFromEntity( entity, STATUS_PUBLIC )
+    body, err := makeDataciteBodyFromEntity( entity, STATUS_PUBLIC )
+//    body, err := makeCrossRefBodyFromEntity( entity, STATUS_PUBLIC )
+
+    // check for errors
+    if err != nil {
+        logger.Log( fmt.Sprintf( "ERROR: creating service payload %s", err ) )
+        return http.StatusInternalServerError
+    }
 
     // issue the request
     start := time.Now( )
@@ -116,12 +130,12 @@ func UpdateDoi( entity api.Entity ) int {
 
     // check for errors
     if errs != nil {
-        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration ) )
+        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s", url, errs, duration ) )
         return http.StatusInternalServerError
     }
 
     defer resp.Body.Close( )
-    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration ) )
+    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
     // check the body for errors
     if !statusIsOk( body ) {
@@ -152,12 +166,12 @@ func DeleteDoi( doi string ) int {
 
     // check for errors
     if errs != nil {
-        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration ) )
+        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s", url, errs, duration ) )
         return http.StatusInternalServerError
     }
 
     defer resp.Body.Close( )
-    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration ) )
+    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
     // check the body for errors
     if !statusIsOk( body ) {
@@ -187,12 +201,12 @@ func GetStatus( ) int {
 
     // check for errors
     if errs != nil {
-        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s\n", url, errs, duration ) )
+        logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s", url, errs, duration ) )
         return http.StatusInternalServerError
     }
 
     defer resp.Body.Close( )
-    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s\n", url, resp.StatusCode, duration ) )
+    logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
     // check the body for errors
     if !statusIsOk( body ) {
