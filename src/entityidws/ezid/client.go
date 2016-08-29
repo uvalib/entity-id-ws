@@ -13,6 +13,8 @@ import (
 const STATUS_RESERVED = "reserved"
 const STATUS_PUBLIC = "public"
 
+const USE_CROSS_REF_PROFILE = true
+
 //
 // get entity details when provided a DOI
 //
@@ -57,9 +59,14 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
     // construct target URL
     url := fmt.Sprintf( "%s/shoulder/%s", config.Configuration.EzidServiceUrl, shoulder )
 
+    var body string
+    var err error
     // construct the payload, set the status to reserved
-    body, err := makeDataciteBodyFromEntity( entity, STATUS_RESERVED )
-//    body, err := makeCrossRefBodyFromEntity( entity, STATUS_RESERVED )
+    if USE_CROSS_REF_PROFILE == true {
+        body, err = makeCrossRefBodyFromEntity(entity, STATUS_RESERVED)
+    } else {
+        body, err = makeDataciteBodyFromEntity( entity, STATUS_RESERVED )
+    }
 
     // check for errors
     if err != nil {
@@ -106,9 +113,14 @@ func UpdateDoi( entity api.Entity ) int {
     // construct target URL
     url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, entity.Id )
 
+    var body string
+    var err error
     // construct the payload...
-    body, err := makeDataciteBodyFromEntity( entity, STATUS_PUBLIC )
-//    body, err := makeCrossRefBodyFromEntity( entity, STATUS_PUBLIC )
+    if USE_CROSS_REF_PROFILE == true {
+        body, err = makeCrossRefBodyFromEntity(entity, STATUS_PUBLIC)
+    } else {
+        body, err = makeDataciteBodyFromEntity( entity, STATUS_PUBLIC )
+    }
 
     // check for errors
     if err != nil {

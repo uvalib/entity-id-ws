@@ -8,7 +8,10 @@ import (
     "entityidws/api"
     "entityidws/config"
     "entityidws/logger"
+    "gopkg.in/xmlpath.v1"
 )
+
+const PLACEHOLDER_TBA = "(:tba)"
 
 //
 // the response body consists of a set of CR separated lines containing tokens separated by
@@ -35,12 +38,15 @@ func makeEntityFromBody( body string ) api.Entity {
                 entity.Title = s
             case "datacite.publisher":
                 entity.Publisher = s
-            case "datacite.creator":
-                entity.Creator = s
+            //case "datacite.creator":
+            //    entity.Creator = s  TODO
             case "datacite.publicationyear":
-                entity.PubYear = s
+                entity.PublicationDate = s
             case "datacite.resourcetype":
                 entity.ResourceType = s
+            case "crossref":
+                // our payload is a CrossRef XML schema, process as appropriate
+                extractCrossRefData( &entity, s )
             }
         }
     }
@@ -53,6 +59,11 @@ func makeEntityFromBody( body string ) api.Entity {
 //
 func makeDataciteBodyFromEntity( entity api.Entity, status string ) ( string, error ) {
 
+    // parse the publication date
+    YYYY, _, _ := splitDate( entity.PublicationDate )
+
+    creator := fmt.Sprintf( "%s, %s", entity.CreatorLastName, entity.CreatorFirstName )
+
     var buffer bytes.Buffer
     //addBodyTerm( &buffer, "_crossref", "no", "" )
     //addBodyTerm( &buffer, "_profile", "datacite", "" )
@@ -60,8 +71,8 @@ func makeDataciteBodyFromEntity( entity api.Entity, status string ) ( string, er
     addBodyTerm( &buffer, "_target", entity.Url, "https://virginia.edu" )
     addBodyTerm( &buffer, "datacite.title", entity.Title, "empty" )
     addBodyTerm( &buffer, "datacite.publisher", entity.Publisher, "empty" )
-    addBodyTerm( &buffer, "datacite.creator", entity.Creator, "empty" )
-    addBodyTerm( &buffer, "datacite.publicationyear", entity.PubYear, "empty" )
+    addBodyTerm( &buffer, "datacite.creator", creator, "empty" )
+    addBodyTerm( &buffer, "datacite.publicationyear", YYYY, "empty" )
     addBodyTerm( &buffer, "datacite.resourcetype", entity.ResourceType, "Other" )
     s := buffer.String( )
 
@@ -109,9 +120,12 @@ func createCrossRefSchema( entity api.Entity, status string ) ( string, error ) 
 
     // add placeholders if we are reserving a DOI
     if status == STATUS_RESERVED {
-        //entity.Doi = "(:tba)"
-        entity.Url = "(:tba)"
+        entity.Id = PLACEHOLDER_TBA
+        entity.Url = PLACEHOLDER_TBA
     }
+
+    // parse the publication date
+    YYYY, MM, DD := splitDate( entity.PublicationDate )
 
     // create our template data structure
     data := struct {
@@ -126,16 +140,16 @@ func createCrossRefSchema( entity api.Entity, status string ) ( string, error ) 
         Degree      string
         Identifier  string
         PublicUrl   string
-    } { "Dave",
-        "Goldstein",
-        "UVA",
+    } { entity.CreatorFirstName,
+        entity.CreatorLastName,
+        entity.CreatorInstitution,
         entity.Title,
-        entity.PubYear,
-        "MM",
-        "DD",
-        "Department",
-        "PHD",
-        "(:tba)",
+        YYYY,
+        MM,
+        DD,
+        entity.CreatorDepartment,
+        entity.PublicationMilestone,
+        entity.Id,
         entity.Url }
 
     var buffer bytes.Buffer
@@ -150,6 +164,49 @@ func createCrossRefSchema( entity api.Entity, status string ) ( string, error ) 
         fmt.Printf( "XML:\n%s\n", s )
     }
     return s, nil
+}
+
+//
+// extract data from the CrossRef schema
+//
+func extractCrossRefData( e * api.Entity, xref string ) {
+
+    reader := strings.NewReader( xref )
+    xmlroot, err := xmlpath.Parse( reader )
+    if err != nil {
+        logger.Log( fmt.Sprintf( "ERROR: parsing response XML: %s", err ) )
+        return
+    }
+
+    //
+    // pull out the data from the XML schema
+    //
+    val := extractFromSchema( xmlroot, "/dissertation/doi_data/doi" )
+    if val != PLACEHOLDER_TBA {
+        e.Id = val
+    }
+    val = extractFromSchema( xmlroot, "/dissertation/doi_data/resource" )
+    if val != PLACEHOLDER_TBA {
+        e.Url = val
+    }
+    e.Title = extractFromSchema( xmlroot, "/dissertation/titles/title" )
+//    e.Publisher = extractFromSchema( xmlroot, "/dissertation/xxx" )
+    e.CreatorFirstName = extractFromSchema( xmlroot, "/dissertation/person_name/given_name" )
+    e.CreatorLastName = extractFromSchema( xmlroot, "/dissertation/person_name/surname" )
+    e.CreatorDepartment = extractFromSchema( xmlroot, "/dissertation/institution/institution_department" )
+    e.CreatorInstitution = extractFromSchema( xmlroot, "/dissertation/person_name/affiliation" )
+
+    e.PublicationDate = extractFromSchema( xmlroot, "/dissertation/approval_date/year" )
+    MM := extractFromSchema( xmlroot, "/dissertation/approval_date/month" )
+    if len( MM ) > 0 {
+        e.PublicationDate = fmt.Sprintf( "%s-%s", e.PublicationDate, MM )
+    }
+    DD := extractFromSchema( xmlroot, "/dissertation/approval_date/day" )
+    if len( DD ) > 0 {
+        e.PublicationDate = fmt.Sprintf( "%s-%s", e.PublicationDate, DD )
+    }
+
+    e.PublicationMilestone = extractFromSchema( xmlroot, "/dissertation/degree" )
 }
 
 func addBodyTerm( buffer * bytes.Buffer, term string, value string, defaultValue string ) {
@@ -170,8 +227,23 @@ func specialEncode( value string ) string {
     return value
 }
 
+//
+// create a blank entity
+//
 func blankEntity( ) api.Entity {
     return api.Entity{ }
+}
+
+//
+// extract from schema
+//
+func extractFromSchema( xmlroot * xmlpath.Node, xpath string ) string {
+    path := xmlpath.MustCompile( xpath )
+    if value, ok := path.String( xmlroot ); ok {
+        return value
+    }
+
+    return ""
 }
 
 //
@@ -180,4 +252,24 @@ func blankEntity( ) api.Entity {
 func statusIsOk( body string ) bool {
     //fmt.Println( "Response:", body )
     return( strings.Index( body, "success:" ) == 0 )
+}
+
+//
+// Split a date in the form YYYY-MM-DD into its components
+//
+func splitDate( date string ) ( string, string, string ) {
+    tokens := strings.Split( date, "-" )
+    var YYYY, MM, DD string
+    if len( tokens ) > 0 {
+        YYYY = tokens[ 0 ]
+    }
+
+    if len( tokens ) > 1 {
+        MM = tokens[ 1 ]
+    }
+
+    if len( tokens ) > 2 {
+        DD = tokens[ 2 ]
+    }
+    return YYYY, MM, DD
 }
