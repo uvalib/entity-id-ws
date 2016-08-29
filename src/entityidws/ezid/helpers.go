@@ -38,8 +38,14 @@ func makeEntityFromBody( body string ) api.Entity {
                 entity.Title = s
             case "datacite.publisher":
                 entity.Publisher = s
-            //case "datacite.creator":
-            //    entity.Creator = s  TODO
+            case "datacite.creator":
+                t := strings.Split( s, "," )
+                if len( t ) > 0 {
+                    entity.CreatorLastName = t[ 0 ]
+                }
+                if len( t ) > 1 {
+                    entity.CreatorFirstName = t[ 1 ]
+                }
             case "datacite.publicationyear":
                 entity.PublicationDate = s
             case "datacite.resourcetype":
