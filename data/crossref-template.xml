@@ -43,7 +43,7 @@
    </institution>
 
     {{- with .Degree }}
-   <degree>PHD</degree>
+   <degree>{{ . }}</degree>
     {{- end }}
 
    <doi_data>
