@@ -3,7 +3,7 @@
               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
               xsi:schemaLocation="http://www.crossref.org/schema/4.3.4 http://www.crossref.org/schema/deposit/crossref4.3.4.xsd">
 
-    <person_name>
+    <person_name contributor_role="author" sequence="first">
       {{- with .FirstName }}
       <given_name>{{ . }}</given_name>
       {{- end }}
