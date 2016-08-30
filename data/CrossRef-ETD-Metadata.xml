@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <dissertation>
 <!-- Cap words are place holders for variable elements  -->
-	 <person_name>
+	 <person_name contributor_role=“author” sequence=“first”>
 		<given_name>FIRSTNAME</given_name>
 		<surname>LASTNAME</surname>
 		<affiliation>INSTITUTION</affiliation>
