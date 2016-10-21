@@ -98,6 +98,7 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
 
     // check the body for errors
     if !statusIsOk( body ) {
+        logger.Log( fmt.Sprintf( "Error response body: [%s]", body ) )
         return blankEntity( ), http.StatusBadRequest
     }
 
@@ -151,6 +152,7 @@ func UpdateDoi( entity api.Entity ) int {
 
     // check the body for errors
     if !statusIsOk( body ) {
+        logger.Log( fmt.Sprintf( "Error response body: [%s]", body ) )
         return http.StatusBadRequest
     }
 
@@ -187,6 +189,7 @@ func DeleteDoi( doi string ) int {
 
     // check the body for errors
     if !statusIsOk( body ) {
+        logger.Log( fmt.Sprintf( "Error response body: [%s]", body ) )
         return http.StatusBadRequest
     }
 
@@ -222,6 +225,7 @@ func GetStatus( ) int {
 
     // check the body for errors
     if !statusIsOk( body ) {
+        logger.Log( fmt.Sprintf( "Error response body: [%s]", body ) )
         return http.StatusBadRequest
     }
 
