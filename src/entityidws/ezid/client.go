@@ -44,6 +44,7 @@ func GetDoi( doi string ) ( api.Entity, int ) {
 
     // check the body for errors
     if !statusIsOk( body ) {
+        logger.Log( fmt.Sprintf( "Error response body: [%s]", body ) )
         return blankEntity( ), http.StatusBadRequest
     }
 
