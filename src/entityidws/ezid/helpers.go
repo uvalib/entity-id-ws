@@ -9,6 +9,7 @@ import (
     "entityidws/config"
     "entityidws/logger"
     "gopkg.in/xmlpath.v1"
+    "html"
 )
 
 const PLACEHOLDER_TBA = "(:tba)"
@@ -146,15 +147,15 @@ func createCrossRefSchema( entity api.Entity, status string ) ( string, error ) 
         Degree      string
         Identifier  string
         PublicUrl   string
-    } { entity.CreatorFirstName,
-        entity.CreatorLastName,
-        entity.CreatorInstitution,
-        entity.Title,
+    } { htmlEncode( entity.CreatorFirstName ),
+        htmlEncode( entity.CreatorLastName ),
+        htmlEncode( entity.CreatorInstitution ),
+        htmlEncode( entity.Title ),
         YYYY,
         MM,
         DD,
-        entity.CreatorDepartment,
-        entity.PublicationMilestone,
+        htmlEncode( entity.CreatorDepartment ),
+        htmlEncode( entity.PublicationMilestone ),
         entity.Id,
         entity.Url }
 
@@ -224,13 +225,22 @@ func addBodyTerm( buffer * bytes.Buffer, term string, value string, defaultValue
 }
 
 //
-// the EZID service requires that embedded newlines and carriage returns be percent encoded
+// the EZID service requires that embedded newlines and carriage returns be percent encoded.
 //
 func specialEncode( value string ) string {
 
+    // EZID structural element encoding
     value = strings.Replace( value, "\n", "%0A", -1 )
     value = strings.Replace( value, "\r", "%0B", -1 )
     return value
+}
+
+//
+// when including content embedded in XML, we should HTML encode it.
+//
+func htmlEncode( value string ) string {
+    // HTML encoding
+    return html.EscapeString( value )
 }
 
 //
