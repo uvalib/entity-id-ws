@@ -1,0 +1,6 @@
+.git
+.idea
+env.*
+pkg/*
+src/*
+LICENSE.md
