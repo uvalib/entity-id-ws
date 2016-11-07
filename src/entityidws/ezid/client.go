@@ -10,8 +10,10 @@ import (
     "entityidws/logger"
 )
 
-const STATUS_RESERVED = "reserved"
+// status for the EZID objects
 const STATUS_PUBLIC = "public"
+const STATUS_RESERVED = "reserved"
+const STATUS_UNAVAILABLE = "unavailable"
 
 const USE_CROSS_REF_PROFILE = true
 
@@ -55,7 +57,10 @@ func GetDoi( doi string ) ( api.Entity, int ) {
 //
 // Create a new entity; we may or may not have complete entity details
 //
-func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
+func CreateDoi( shoulder string, entity api.Entity, status string ) ( api.Entity, int ) {
+
+    // log if necessary
+    logEntity( entity )
 
     // construct target URL
     url := fmt.Sprintf( "%s/shoulder/%s", config.Configuration.EzidServiceUrl, shoulder )
@@ -64,9 +69,9 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
     var err error
     // construct the payload, set the status to reserved
     if USE_CROSS_REF_PROFILE == true {
-        body, err = makeCrossRefBodyFromEntity(entity, STATUS_RESERVED)
+        body, err = makeCrossRefBodyFromEntity(entity, status )
     } else {
-        body, err = makeDataciteBodyFromEntity( entity, STATUS_RESERVED )
+        body, err = makeDataciteBodyFromEntity( entity, status )
     }
 
     // check for errors
@@ -110,7 +115,10 @@ func CreateDoi( shoulder string, entity api.Entity ) ( api.Entity, int ) {
 //
 // Update an existing DOI to match the provided entity
 //
-func UpdateDoi( entity api.Entity ) int {
+func UpdateDoi( entity api.Entity, status string ) int {
+
+    // log if necessary
+    logEntity( entity )
 
     // construct target URL
     url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, entity.Id )
@@ -119,9 +127,9 @@ func UpdateDoi( entity api.Entity ) int {
     var err error
     // construct the payload...
     if USE_CROSS_REF_PROFILE == true {
-        body, err = makeCrossRefBodyFromEntity(entity, STATUS_PUBLIC)
+        body, err = makeCrossRefBodyFromEntity(entity, status )
     } else {
-        body, err = makeDataciteBodyFromEntity( entity, STATUS_PUBLIC )
+        body, err = makeDataciteBodyFromEntity( entity, status )
     }
 
     // check for errors

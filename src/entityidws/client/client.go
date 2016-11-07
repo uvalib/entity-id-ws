@@ -9,13 +9,15 @@ import (
     "encoding/json"
 )
 
+const API_DEBUG = false
+
 func HealthCheck( endpoint string ) int {
 
     url := fmt.Sprintf( "%s/healthcheck", endpoint )
     //fmt.Printf( "%s\n", url )
 
     resp, _, errs := gorequest.New( ).
-       SetDebug( false ).
+       SetDebug( API_DEBUG ).
        Get( url ).
        Timeout( time.Duration( 5 ) * time.Second ).
        End( )
@@ -35,7 +37,7 @@ func VersionCheck( endpoint string ) ( int, string ) {
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
-    SetDebug( false ).
+    SetDebug( API_DEBUG ).
     Get( url ).
     Timeout( time.Duration( 5 ) * time.Second ).
     End( )
@@ -61,7 +63,7 @@ func Statistics( endpoint string ) ( int, * api.Statistics ) {
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
-       SetDebug( false ).
+       SetDebug( API_DEBUG ).
        Get( url ).
        Timeout( time.Duration( 5 ) * time.Second ).
        End( )
@@ -87,7 +89,7 @@ func Get( endpoint string, doi string, token string ) ( int, * api.Entity ) {
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
-       SetDebug( false ).
+       SetDebug( API_DEBUG ).
        Get( url ).
        Timeout( time.Duration( 5 ) * time.Second ).
        End( )
@@ -112,10 +114,12 @@ func Create( endpoint string, shoulder string, token string ) ( int, * api.Entit
     url := fmt.Sprintf("%s/%s?auth=%s", endpoint, shoulder, token)
     //fmt.Printf( "%s\n", url )
 
+    entity := api.Entity{ Title : "my title", Url: "http://google.com" }
+
     resp, body, errs := gorequest.New( ).
-       SetDebug( false ).
+       SetDebug( API_DEBUG ).
        Post( url ).
-       Send( api.Entity{ Title : "my title" } ).
+       Send( entity ).
        Timeout( time.Duration( 5 ) * time.Second ).
        Set( "Content-Type", "application/json" ).
        End( )
@@ -141,7 +145,7 @@ func Update( endpoint string, entity api.Entity, token string ) int {
     //fmt.Printf( "%s\n", url )
 
     resp, _, errs := gorequest.New( ).
-       SetDebug( false ).
+       SetDebug( API_DEBUG ).
        Put( url ).
        Send( entity ).
        Timeout( time.Duration( 5 ) * time.Second ).
@@ -163,8 +167,32 @@ func Delete( endpoint string, doi string, token string ) int {
     //fmt.Printf( "%s\n", url )
 
     resp, _, errs := gorequest.New( ).
-       SetDebug( false ).
+       SetDebug( API_DEBUG ).
        Delete( url ).
+       Timeout( time.Duration( 5 ) * time.Second ).
+       End( )
+
+    if errs != nil {
+        return http.StatusInternalServerError
+    }
+
+    defer resp.Body.Close( )
+
+    return resp.StatusCode
+}
+
+//
+// revoke an entity when provided a DOI
+//
+func Revoke( endpoint string, doi string, token string ) int {
+
+    // construct target URL
+    url := fmt.Sprintf("%s/revoke/%s?auth=%s", endpoint, doi, token )
+    //fmt.Printf( "%s\n", url )
+
+    resp, _, errs := gorequest.New( ).
+       SetDebug( API_DEBUG ).
+       Put( url ).
        Timeout( time.Duration( 5 ) * time.Second ).
        End( )
 

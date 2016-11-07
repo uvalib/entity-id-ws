@@ -10,6 +10,7 @@ import (
     "strings"
     "entityidws/authtoken"
     "entityidws/config"
+    "fmt"
 )
 
 func IdLookup( w http.ResponseWriter, r *http.Request ) {
@@ -68,7 +69,7 @@ func IdCreate( w http.ResponseWriter, r *http.Request ) {
         return
     }
 
-    entity, status := ezid.CreateDoi( shoulder, entity )
+    entity, status := ezid.CreateDoi( shoulder, entity, ezid.STATUS_RESERVED )
     respondWithDetails( w, status, entity )
 }
 
@@ -103,7 +104,7 @@ func IdUpdate( w http.ResponseWriter, r *http.Request ) {
     }
 
     entity.Id = doi
-    status := ezid.UpdateDoi( entity )
+    status := ezid.UpdateDoi( entity, ezid.STATUS_PUBLIC )
     respond( w, status )
 }
 
@@ -130,6 +131,42 @@ func IdDelete( w http.ResponseWriter, r *http.Request ) {
     }
 
     status := ezid.DeleteDoi( doi )
+    respond( w, status )
+}
+
+func IdRevoke( w http.ResponseWriter, r *http.Request ) {
+
+    vars := mux.Vars( r )
+    doi := vars[ "doi" ]
+    token := r.URL.Query( ).Get( "auth" )
+
+    fmt.Printf( "NEW REVOKE: %s\n", doi )
+
+    // update the statistics
+    statistics.RequestCount++
+    statistics.RevokeCount++
+
+    // validate inbound parameters
+    if parameterOK( doi ) == false || parameterOK( token ) == false {
+        respond( w, http.StatusBadRequest )
+        return
+    }
+
+    // validate the token
+    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "delete", token ) == false {
+        respond( w, http.StatusForbidden )
+        return
+    }
+
+    // get the existing metadata
+    entity, status := ezid.GetDoi( doi )
+    if status == http.StatusOK {
+
+        // update the status
+        entity.Id = doi
+        status = ezid.UpdateDoi( entity, ezid.STATUS_UNAVAILABLE )
+    }
+
     respond( w, status )
 }
 

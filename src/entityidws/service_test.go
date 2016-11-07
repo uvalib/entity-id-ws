@@ -9,6 +9,7 @@ import (
     "net/http"
     "strings"
     "entityidws/api"
+    //"fmt"
 )
 
 type TestConfig struct {
@@ -76,7 +77,7 @@ func TestStatistics( t *testing.T ) {
 
 func TestGetHappyDay( t *testing.T ) {
 
-    doi := createGoodDoi( )
+    doi := createGoodDoi( t )
     expected := http.StatusOK
     status, entity := client.Get( cfg.Endpoint, doi, goodToken )
     if status != expected {
@@ -89,11 +90,15 @@ func TestGetHappyDay( t *testing.T ) {
 
     if emptyField( entity.Id ) ||
        emptyField( entity.Url ) ||
-       emptyField( entity.Title ) ||
-       emptyField( entity.Publisher ) ||
-       emptyField( entity.Creator ) ||
-       emptyField( entity.PubYear ) ||
-       emptyField( entity.ResourceType ) {
+       emptyField( entity.Title ) {
+       //emptyField( entity.Publisher ) ||
+       //emptyField( entity.CreatorFirstName ) ||
+       //emptyField( entity.CreatorLastName ) ||
+       //emptyField( entity.CreatorDepartment ) ||
+       //emptyField( entity.CreatorInstitution ) ||
+       //emptyField( entity.PublicationDate ) ||
+       //emptyField( entity.ResourceType ) {
+       // fmt.Printf( "%t\n", entity )
         t.Fatalf( "Expected non-empty field but one is empty\n" )
     }
 }
@@ -172,7 +177,7 @@ func TestCreateBadToken( t *testing.T ) {
 
 func TestUpdateHappyDay( t *testing.T ) {
 
-    doi := createGoodDoi( )
+    doi := createGoodDoi( t )
     entity := testEntity( )
     entity.Id = doi
 
@@ -225,6 +230,15 @@ func TestUpdateBadToken( t *testing.T ) {
 // DOI delete tests
 //
 
+func TestDeleteHappyDay( t *testing.T ) {
+    expected := http.StatusOK
+    doi := createGoodDoi( t )
+    status := client.Delete( cfg.Endpoint, doi, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
 func TestDeleteEmptyId( t *testing.T ) {
     expected := http.StatusBadRequest
     status := client.Delete( cfg.Endpoint, empty, goodToken )
@@ -258,6 +272,60 @@ func TestDeleteBadToken( t *testing.T ) {
 }
 
 //
+// DOI revoke tests
+//
+
+func TestRevokeHappyDay( t *testing.T ) {
+
+    expected := http.StatusOK
+    doi := createGoodDoi( t )
+    entity := testEntity( )
+    entity.Id = doi
+
+    status := client.Update( cfg.Endpoint, entity, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+
+    status = client.Revoke( cfg.Endpoint, entity.Id, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestRevokeEmptyId( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status := client.Revoke( cfg.Endpoint, empty, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestRevokeBadId( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status := client.Revoke( cfg.Endpoint, badDoi, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestRevokeEmptyToken( t *testing.T ) {
+    expected := http.StatusBadRequest
+    status := client.Revoke( cfg.Endpoint, plausableDoi, empty )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestRevokeBadToken( t *testing.T ) {
+    expected := http.StatusForbidden
+    status := client.Revoke( cfg.Endpoint, plausableDoi, badToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+//
 // helpers
 //
 
@@ -266,15 +334,16 @@ func emptyField( field string ) bool {
 }
 
 func testEntity( ) api.Entity {
-    return api.Entity{ Title: "my special title" }
+    return api.Entity{ Title: "my special title", Url: "http://google.com" }
 }
 
-func createGoodDoi( ) string {
+func createGoodDoi( t *testing.T ) string {
     status, entity := client.Create( cfg.Endpoint, goodShoulder, goodToken )
     if status == http.StatusOK {
         return entity.Id
     }
 
+    t.Fatalf( "Unable to create new DOI\n" )
     return ""
 }
 

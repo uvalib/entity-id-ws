@@ -15,6 +15,26 @@ import (
 const PLACEHOLDER_TBA = "(:tba)"
 
 //
+// log the contents of an entity record
+//
+func logEntity( entity api.Entity ) {
+
+    if config.Configuration.Debug {
+        fmt.Println( "Id:", entity.Id )
+        fmt.Println( "Url:", entity.Url )
+        fmt.Println( "Title:", entity.Title )
+        fmt.Println( "Publisher:", entity.Publisher )
+        fmt.Println( "CreatorFirstName:", entity.CreatorFirstName )
+        fmt.Println( "CreatorLastName:", entity.CreatorLastName )
+        fmt.Println( "CreatorDepartment:", entity.CreatorDepartment )
+        fmt.Println( "CreatorInstitution:", entity.CreatorInstitution )
+        fmt.Println( "PublicationDate:", entity.PublicationDate )
+        fmt.Println( "PublicationMilestone:", entity.PublicationMilestone )
+        fmt.Println( "ResourceType:", entity.ResourceType )
+    }
+}
+
+//
 // the response body consists of a set of CR separated lines containing tokens separated by
 // a colon character
 //

@@ -52,6 +52,13 @@ var routes = Routes{
     },
 
     Route{
+        "IdRevoke",
+        "PUT",
+        "/revoke/{doi:.*}",
+        IdRevoke,
+    },
+
+    Route{
         "IdUpdate",
         "PUT",
         "/{doi:.*}",
