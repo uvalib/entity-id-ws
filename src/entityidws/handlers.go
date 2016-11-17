@@ -10,7 +10,7 @@ import (
     "strings"
     "entityidws/authtoken"
     "entityidws/config"
-    "fmt"
+    //"fmt"
 )
 
 func IdLookup( w http.ResponseWriter, r *http.Request ) {
