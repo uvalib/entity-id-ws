@@ -140,8 +140,6 @@ func IdRevoke( w http.ResponseWriter, r *http.Request ) {
     doi := vars[ "doi" ]
     token := r.URL.Query( ).Get( "auth" )
 
-    fmt.Printf( "NEW REVOKE: %s\n", doi )
-
     // update the statistics
     statistics.RequestCount++
     statistics.RevokeCount++
