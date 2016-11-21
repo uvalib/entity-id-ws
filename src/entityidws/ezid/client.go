@@ -13,7 +13,7 @@ import (
 // status for the EZID objects
 const STATUS_PUBLIC = "public"
 const STATUS_RESERVED = "reserved"
-const STATUS_UNAVAILABLE = "unavailable"
+const STATUS_UNAVAILABLE = "unavailable|withdrawn by Library"
 
 const USE_CROSS_REF_PROFILE = true
 
