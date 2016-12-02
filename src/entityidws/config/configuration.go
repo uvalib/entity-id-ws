@@ -4,6 +4,7 @@ import (
     "flag"
     "fmt"
     "entityidws/logger"
+    "strings"
 )
 
 type Config struct {
@@ -37,7 +38,7 @@ func LoadConfig( ) Config {
     logger.Log( fmt.Sprintf( "EzidServiceUrl:     %s", c.EzidServiceUrl ) )
     logger.Log( fmt.Sprintf( "EzidServiceTimeout: %d", c.EzidServiceTimeout ) )
     logger.Log( fmt.Sprintf( "EzidUser:           %s", c.EzidUser ) )
-    logger.Log( fmt.Sprintf( "EzidPassphrase:     %s", c.EzidPassphrase ) )
+    logger.Log( fmt.Sprintf( "EzidPassphrase:     %s", strings.Repeat( "*", len( c.EzidPassphrase ) ) ) )
     logger.Log( fmt.Sprintf( "AuthTokenEndpoint   %s", c.AuthTokenEndpoint ) )
     logger.Log( fmt.Sprintf( "Debug               %t", c.Debug ) )
 
