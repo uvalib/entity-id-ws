@@ -8,6 +8,8 @@ import (
     "entityidws/api"
     "entityidws/config"
     "entityidws/logger"
+    "io"
+    "io/ioutil"
 )
 
 // status for the EZID objects
@@ -40,6 +42,7 @@ func GetDoi( doi string ) ( api.Entity, int ) {
         return blankEntity( ), http.StatusInternalServerError
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
@@ -98,6 +101,7 @@ func CreateDoi( shoulder string, entity api.Entity, status string ) ( api.Entity
         return blankEntity( ), http.StatusInternalServerError
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
@@ -156,7 +160,9 @@ func UpdateDoi( entity api.Entity, status string ) int {
         return http.StatusInternalServerError
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
+
     logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
     // check the body for errors
@@ -193,7 +199,9 @@ func DeleteDoi( doi string ) int {
         return http.StatusInternalServerError
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
+
     logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
     // check the body for errors
@@ -229,7 +237,9 @@ func GetStatus( ) int {
         return http.StatusInternalServerError
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
+
     logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
     // check the body for errors

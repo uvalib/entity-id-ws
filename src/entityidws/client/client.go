@@ -7,6 +7,8 @@ import (
     "net/http"
     "entityidws/api"
     "encoding/json"
+    "io"
+    "io/ioutil"
 )
 
 const API_DEBUG = false
@@ -26,6 +28,7 @@ func HealthCheck( endpoint string ) int {
         return http.StatusInternalServerError
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     return resp.StatusCode
@@ -46,6 +49,7 @@ func VersionCheck( endpoint string ) ( int, string ) {
         return http.StatusInternalServerError, ""
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     r := api.VersionResponse{ }
@@ -72,6 +76,7 @@ func Statistics( endpoint string ) ( int, * api.Statistics ) {
         return http.StatusInternalServerError, nil
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     r := api.StatisticsResponse{ }
@@ -98,6 +103,7 @@ func Get( endpoint string, doi string, token string ) ( int, * api.Entity ) {
        return http.StatusInternalServerError, nil
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     r := api.StandardResponse{ }
@@ -128,6 +134,7 @@ func Create( endpoint string, shoulder string, token string ) ( int, * api.Entit
         return http.StatusInternalServerError, nil
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     r := api.StandardResponse{ }
@@ -156,6 +163,7 @@ func Update( endpoint string, entity api.Entity, token string ) int {
         return http.StatusInternalServerError
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     return resp.StatusCode
@@ -176,6 +184,7 @@ func Delete( endpoint string, doi string, token string ) int {
         return http.StatusInternalServerError
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     return resp.StatusCode
@@ -200,6 +209,7 @@ func Revoke( endpoint string, doi string, token string ) int {
         return http.StatusInternalServerError
     }
 
+    defer io.Copy( ioutil.Discard, resp.Body )
     defer resp.Body.Close( )
 
     return resp.StatusCode
