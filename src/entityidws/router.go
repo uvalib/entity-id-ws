@@ -3,6 +3,7 @@ package main
 import (
    "net/http"
    "github.com/gorilla/mux"
+        "entityidws/handlers"
 )
 
 type Route struct {
@@ -20,56 +21,56 @@ var routes = Routes{
         "HealthCheck",
         "GET",
         "/healthcheck",
-        HealthCheck,
+        handlers.HealthCheck,
     },
 
     Route{
-        "GetVersion",
+        "VersionInfo",
         "GET",
         "/version",
-        GetVersion,
+        handlers.VersionInfo,
     },
 
     Route{
-        "Stats",
+        "StatsGet",
         "GET",
         "/statistics",
-        Stats,
+        handlers.StatsGet,
     },
 
     Route{
         "IdLookup",
         "GET",
         "/{doi:.*}",
-        IdLookup,
+        handlers.IdLookup,
     },
 
     Route{
         "IdCreate",
         "POST",
         "/{shoulder:.*}",
-        IdCreate,
+        handlers.IdCreate,
     },
 
     Route{
         "IdRevoke",
         "PUT",
         "/revoke/{doi:.*}",
-        IdRevoke,
+        handlers.IdRevoke,
     },
 
     Route{
         "IdUpdate",
         "PUT",
         "/{doi:.*}",
-        IdUpdate,
+        handlers.IdUpdate,
     },
 
     Route{
         "IdDelete",
         "DELETE",
         "/{doi:.*}",
-        IdDelete,
+        handlers.IdDelete,
     },
 }
 

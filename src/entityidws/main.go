@@ -7,13 +7,14 @@ import (
     "entityidws/api"
     "entityidws/config"
     "entityidws/logger"
+    "entityidws/handlers"
 )
 
 var statistics = api.Statistics{ }
 
 func main( ) {
 
-    logger.Log( fmt.Sprintf( "===> version: '%s' <===", Version( ) ) )
+    logger.Log( fmt.Sprintf( "===> version: '%s' <===", handlers.Version( ) ) )
 
 	// setup router and serve...
     router := NewRouter( )
