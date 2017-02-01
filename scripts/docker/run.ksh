@@ -19,7 +19,7 @@ docker rmi $NAMESPACE/$INSTANCE:current
 # tag the latest as the current
 docker tag -f $NAMESPACE/$INSTANCE:latest $NAMESPACE/$INSTANCE:current
 
-docker run -d -p 8210:8080 --name $INSTANCE $NAMESPACE/$INSTANCE:latest
+docker run -d -p 8210:8080 --log-opt tag=$INSTANCE --name $INSTANCE $NAMESPACE/$INSTANCE:latest
 
 # return status
 exit $?
