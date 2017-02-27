@@ -5,5 +5,5 @@ import (
 )
 
 func Log( msg string ) {
-    log.Printf( "ENTITYID: %s", msg )
+    log.Printf( "%s", msg )
 }
