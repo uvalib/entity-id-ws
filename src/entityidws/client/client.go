@@ -11,7 +11,8 @@ import (
     "io/ioutil"
 )
 
-const API_DEBUG = false
+var debugHttp = false
+var serviceTimeout = 5
 
 func HealthCheck( endpoint string ) int {
 
@@ -19,9 +20,9 @@ func HealthCheck( endpoint string ) int {
     //fmt.Printf( "%s\n", url )
 
     resp, _, errs := gorequest.New( ).
-       SetDebug( API_DEBUG ).
+       SetDebug( debugHttp ).
        Get( url ).
-       Timeout( time.Duration( 5 ) * time.Second ).
+       Timeout( time.Duration( serviceTimeout ) * time.Second ).
        End( )
 
     if errs != nil {
@@ -40,9 +41,9 @@ func VersionCheck( endpoint string ) ( int, string ) {
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
-    SetDebug( API_DEBUG ).
+    SetDebug( debugHttp ).
     Get( url ).
-    Timeout( time.Duration( 5 ) * time.Second ).
+    Timeout( time.Duration( serviceTimeout ) * time.Second ).
     End( )
 
     if errs != nil {
@@ -69,7 +70,7 @@ func RuntimeCheck( endpoint string ) ( int, * api.RuntimeResponse ) {
     resp, body, errs := gorequest.New( ).
             SetDebug( false ).
             Get( url  ).
-            Timeout( time.Duration( 5 ) * time.Second ).
+            Timeout( time.Duration( serviceTimeout ) * time.Second ).
             End( )
 
     if errs != nil {
@@ -94,9 +95,9 @@ func Statistics( endpoint string ) ( int, * api.Statistics ) {
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
-       SetDebug( API_DEBUG ).
+       SetDebug( debugHttp ).
        Get( url ).
-       Timeout( time.Duration( 5 ) * time.Second ).
+       Timeout( time.Duration( serviceTimeout ) * time.Second ).
        End( )
 
     if errs != nil {
@@ -121,9 +122,9 @@ func Get( endpoint string, doi string, token string ) ( int, * api.Entity ) {
     //fmt.Printf( "%s\n", url )
 
     resp, body, errs := gorequest.New( ).
-       SetDebug( API_DEBUG ).
+       SetDebug( debugHttp ).
        Get( url ).
-       Timeout( time.Duration( 5 ) * time.Second ).
+       Timeout( time.Duration( serviceTimeout ) * time.Second ).
        End( )
 
     if errs != nil {
@@ -150,10 +151,10 @@ func Create( endpoint string, shoulder string, token string ) ( int, * api.Entit
     entity := api.Entity{ Title : "my title", Url: "http://google.com" }
 
     resp, body, errs := gorequest.New( ).
-       SetDebug( API_DEBUG ).
+       SetDebug( debugHttp ).
        Post( url ).
        Send( entity ).
-       Timeout( time.Duration( 5 ) * time.Second ).
+       Timeout( time.Duration( serviceTimeout ) * time.Second ).
        Set( "Content-Type", "application/json" ).
        End( )
 
@@ -179,10 +180,10 @@ func Update( endpoint string, entity api.Entity, token string ) int {
     //fmt.Printf( "%s\n", url )
 
     resp, _, errs := gorequest.New( ).
-       SetDebug( API_DEBUG ).
+       SetDebug( debugHttp ).
        Put( url ).
        Send( entity ).
-       Timeout( time.Duration( 5 ) * time.Second ).
+       Timeout( time.Duration( serviceTimeout ) * time.Second ).
        Set( "Content-Type", "application/json" ).
        End( )
 
@@ -202,9 +203,9 @@ func Delete( endpoint string, doi string, token string ) int {
     //fmt.Printf( "%s\n", url )
 
     resp, _, errs := gorequest.New( ).
-       SetDebug( API_DEBUG ).
+       SetDebug( debugHttp ).
        Delete( url ).
-       Timeout( time.Duration( 5 ) * time.Second ).
+       Timeout( time.Duration( serviceTimeout ) * time.Second ).
        End( )
 
     if errs != nil {
@@ -227,9 +228,9 @@ func Revoke( endpoint string, doi string, token string ) int {
     //fmt.Printf( "%s\n", url )
 
     resp, _, errs := gorequest.New( ).
-       SetDebug( API_DEBUG ).
+       SetDebug( debugHttp ).
        Put( url ).
-       Timeout( time.Duration( 5 ) * time.Second ).
+       Timeout( time.Duration( serviceTimeout ) * time.Second ).
        End( )
 
     if errs != nil {
