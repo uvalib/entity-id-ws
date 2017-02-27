@@ -26,9 +26,9 @@ if [ -n "$TOKENAUTH_URL" ]; then
    TOKENURL_OPT="--tokenauth $TOKENAUTH_URL"
 fi
 
-# EZID service timeout
-if [ -n "$EZID_TIMEOUT" ]; then
-   TIMEOUT_OPT="--timeout $EZID_TIMEOUT"
+# service timeout
+if [ -n "$SERVICE_TIMEOUT" ]; then
+   TIMEOUT_OPT="--timeout $SERVICE_TIMEOUT"
 fi
 
 # service debugging

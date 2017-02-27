@@ -25,7 +25,7 @@ func IdDelete( w http.ResponseWriter, r *http.Request ) {
     }
 
     // validate the token
-    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "delete", token ) == false {
+    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "delete", token, config.Configuration.Timeout ) == false {
         encodeStandardResponse( w, http.StatusForbidden )
         return
     }

@@ -27,7 +27,7 @@ func IdUpdate( w http.ResponseWriter, r *http.Request ) {
     }
 
     // validate the token
-    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "update", token ) == false {
+    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "update", token, config.Configuration.Timeout ) == false {
         encodeStandardResponse( w, http.StatusForbidden )
         return
     }

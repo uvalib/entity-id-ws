@@ -32,7 +32,7 @@ func GetDoi( doi string ) ( api.Entity, int ) {
     resp, body, errs := gorequest.New( ).
         SetDebug( config.Configuration.Debug ).
         Get( url  ).
-        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.Timeout ) * time.Second ).
         End( )
     duration := time.Since( start )
 
@@ -90,7 +90,7 @@ func CreateDoi( shoulder string, entity api.Entity, status string ) ( api.Entity
         SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Post( url  ).
         Send( body ).
-        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.Timeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
     duration := time.Since( start )
@@ -149,7 +149,7 @@ func UpdateDoi( entity api.Entity, status string ) int {
         SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Post( url  ).
         Send( body ).
-        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.Timeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
     duration := time.Since( start )
@@ -189,7 +189,7 @@ func DeleteDoi( doi string ) int {
         SetDebug( config.Configuration.Debug ).
         SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Delete( url  ).
-        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.Timeout ) * time.Second ).
         End( )
     duration := time.Since( start )
 
@@ -227,7 +227,7 @@ func GetStatus( ) int {
     resp, body, errs := gorequest.New( ).
         SetDebug( config.Configuration.Debug ).
         Get( url  ).
-        Timeout( time.Duration( config.Configuration.EzidServiceTimeout ) * time.Second ).
+        Timeout( time.Duration( config.Configuration.Timeout ) * time.Second ).
         End( )
     duration := time.Since( start )
 

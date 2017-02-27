@@ -25,7 +25,7 @@ func IdLookup( w http.ResponseWriter, r *http.Request ) {
     }
 
     // validate the token
-    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "lookup", token ) == false {
+    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "lookup", token, config.Configuration.Timeout ) == false {
         encodeStandardResponse( w, http.StatusForbidden )
         return
     }
