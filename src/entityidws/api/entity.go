@@ -12,4 +12,5 @@ type Entity struct {
     PublicationDate       string   `json:"publication_date,omitempty"`
     PublicationMilestone  string   `json:"publication_milestone,omitempty"`
     ResourceType          string   `json:"type,omitempty"`
+    Schema                string   `json:"schema,omitempty"`
 }

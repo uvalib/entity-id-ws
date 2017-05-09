@@ -17,8 +17,6 @@ const STATUS_PUBLIC = "public"
 const STATUS_RESERVED = "reserved"
 const STATUS_UNAVAILABLE = "unavailable|withdrawn by Library"
 
-const USE_CROSS_REF_PROFILE = true
-
 //
 // get entity details when provided a DOI
 //
@@ -68,19 +66,13 @@ func CreateDoi( shoulder string, entity api.Entity, status string ) ( api.Entity
     // construct target URL
     url := fmt.Sprintf( "%s/shoulder/%s", config.Configuration.EzidServiceUrl, shoulder )
 
-    var body string
-    var err error
-    // construct the payload, set the status to reserved
-    if USE_CROSS_REF_PROFILE == true {
-        body, err = makeCrossRefBodyFromEntity(entity, status )
-    } else {
-        body, err = makeDataciteBodyFromEntity( entity, status )
-    }
+    // build the request body
+    body, err := makeBodyFromEntity( entity, status )
 
     // check for errors
     if err != nil {
         logger.Log( fmt.Sprintf( "ERROR: creating service payload %s", err ) )
-        return blankEntity( ), http.StatusInternalServerError
+        return blankEntity( ), http.StatusBadRequest
     }
 
     // issue the request
@@ -127,19 +119,13 @@ func UpdateDoi( entity api.Entity, status string ) int {
     // construct target URL
     url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, entity.Id )
 
-    var body string
-    var err error
-    // construct the payload...
-    if USE_CROSS_REF_PROFILE == true {
-        body, err = makeCrossRefBodyFromEntity(entity, status )
-    } else {
-        body, err = makeDataciteBodyFromEntity( entity, status )
-    }
+    // build the request body
+    body, err := makeBodyFromEntity( entity, status )
 
     // check for errors
     if err != nil {
         logger.Log( fmt.Sprintf( "ERROR: creating service payload %s", err ) )
-        return http.StatusInternalServerError
+        return http.StatusBadRequest
     }
 
     // issue the request

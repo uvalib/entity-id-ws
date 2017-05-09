@@ -143,12 +143,10 @@ func Get( endpoint string, doi string, token string ) ( int, * api.Entity ) {
     return resp.StatusCode, r.Details
 }
 
-func Create( endpoint string, shoulder string, token string ) ( int, * api.Entity ) {
+func Create( endpoint string, shoulder string, entity api.Entity, token string ) ( int, * api.Entity ) {
 
     url := fmt.Sprintf("%s/%s?auth=%s", endpoint, shoulder, token)
     //fmt.Printf( "%s\n", url )
-
-    entity := api.Entity{ Title : "my title", Url: "http://google.com" }
 
     resp, body, errs := gorequest.New( ).
        SetDebug( debugHttp ).

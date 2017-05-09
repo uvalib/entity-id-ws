@@ -10,9 +10,12 @@ import (
     "entityidws/logger"
     "gopkg.in/xmlpath.v1"
     "html"
+    "errors"
 )
 
 const PLACEHOLDER_TBA = "(:tba)"
+const CROSSREF_SCHEMA = "crossref"
+const DATACITE_SCHEMA = "datacite"
 
 //
 // log the contents of an entity record
@@ -55,6 +58,8 @@ func makeEntityFromBody( body string ) api.Entity {
                 entity.Id = strings.TrimSpace( strings.Split( s, "|" )[ 0 ] )
             case "_target":
                 entity.Url = s
+            case "_profile":
+                entity.Schema = s
             case "datacite.title":
                 entity.Title = s
             case "datacite.publisher":
@@ -82,6 +87,35 @@ func makeEntityFromBody( body string ) api.Entity {
 }
 
 //
+// encode the data into the request body
+//
+func makeBodyFromEntity( entity api.Entity, status string ) ( string, error ) {
+
+    var body string
+    var err error
+
+    // check the schema type and build the body as appropriate
+    switch entity.Schema {
+    case CROSSREF_SCHEMA:
+        body, err = makeCrossRefBodyFromEntity( entity, status )
+    case DATACITE_SCHEMA:
+        body, err = makeDataciteBodyFromEntity( entity, status )
+    default:
+        return "", errors.New( fmt.Sprintf( "unregognized schema name: %s", entity.Schema ) )
+    }
+
+    if err != nil {
+        return "", err
+    }
+
+    if config.Configuration.Debug {
+        fmt.Println( "Payload:", body )
+    }
+
+    return body, nil
+}
+
+//
 // use the datacite schema/profile to encode the metadata into the request body
 //
 func makeDataciteBodyFromEntity( entity api.Entity, status string ) ( string, error ) {
@@ -93,7 +127,7 @@ func makeDataciteBodyFromEntity( entity api.Entity, status string ) ( string, er
 
     var buffer bytes.Buffer
     //addBodyTerm( &buffer, "_crossref", "no", "" )
-    //addBodyTerm( &buffer, "_profile", "datacite", "" )
+    addBodyTerm( &buffer, "_profile", "datacite", "" )
     addBodyTerm( &buffer, "_status", status, "reserved" )
     addBodyTerm( &buffer, "_target", entity.Url, "https://virginia.edu" )
     addBodyTerm( &buffer, "datacite.title", entity.Title, "empty" )
@@ -102,10 +136,6 @@ func makeDataciteBodyFromEntity( entity api.Entity, status string ) ( string, er
     addBodyTerm( &buffer, "datacite.publicationyear", YYYY, "empty" )
     addBodyTerm( &buffer, "datacite.resourcetype", entity.ResourceType, "Other" )
     s := buffer.String( )
-
-    if config.Configuration.Debug {
-        fmt.Println( "Payload:", s )
-    }
     return s, nil
 }
 
@@ -127,10 +157,6 @@ func makeCrossRefBodyFromEntity( entity api.Entity, status string ) ( string, er
     addBodyTerm( &buffer, "_target", entity.Url, "https://virginia.edu" )
     addBodyTerm( &buffer, "crossref", xref, "" )
     s := buffer.String( )
-
-    if config.Configuration.Debug {
-        fmt.Println( "Payload:", s )
-    }
     return s, nil
 }
 
@@ -234,6 +260,8 @@ func extractCrossRefData( e * api.Entity, xref string ) {
     }
 
     e.PublicationMilestone = extractFromSchema( xmlroot, "/dissertation/degree" )
+
+    e.Schema = CROSSREF_SCHEMA
 }
 
 func addBodyTerm( buffer * bytes.Buffer, term string, value string, defaultValue string ) {

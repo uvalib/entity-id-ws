@@ -26,6 +26,9 @@ var badShoulder = "abc:/blablabla"
 var goodToken = cfg.Token
 var badToken = "badness"
 var empty = " "
+var crossRefSchema = "crossref"
+var dataciteSchema = "datacite"
+var badSchema = "badschema"
 
 //
 // healthcheck tests
@@ -100,7 +103,7 @@ func TestStatistics( t *testing.T ) {
 
 func TestGetHappyDay( t *testing.T ) {
 
-    doi := createGoodDoi( t )
+    doi := createGoodDoi( crossRefSchema, t )
     expected := http.StatusOK
     status, entity := client.Get( cfg.Endpoint, doi, goodToken )
     if status != expected {
@@ -162,9 +165,10 @@ func TestGetBadToken( t *testing.T ) {
 // DOI create tests
 //
 
-func TestCreateHappyDay( t *testing.T ) {
+func TestCreateCrossRef( t *testing.T ) {
     expected := http.StatusOK
-    status, entity := client.Create( cfg.Endpoint, goodShoulder, goodToken)
+
+    status, entity := client.Create( cfg.Endpoint, goodShoulder, testEntity( crossRefSchema ), goodToken)
     if status != expected {
         t.Fatalf("Expected %v, got %v\n", expected, status)
     }
@@ -178,9 +182,36 @@ func TestCreateHappyDay( t *testing.T ) {
     }
 }
 
+func TestCreateDataCite( t *testing.T ) {
+    expected := http.StatusOK
+
+    status, entity := client.Create( cfg.Endpoint, goodShoulder, testEntity( dataciteSchema ), goodToken)
+    if status != expected {
+        t.Fatalf("Expected %v, got %v\n", expected, status)
+    }
+
+    if entity == nil {
+        t.Fatalf("Expected to create entity successfully and did not\n" )
+    }
+
+    if emptyField( entity.Id ) {
+        t.Fatalf( "Expected non-empty ID field but it is empty\n" )
+    }
+}
+
+func TestCreateBadSchema( t *testing.T ) {
+    expected := http.StatusBadRequest
+
+    status, _ := client.Create( cfg.Endpoint, goodShoulder, testEntity( badSchema ), goodToken)
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
 func TestCreateEmptyToken( t *testing.T ) {
     expected := http.StatusBadRequest
-    status, _ := client.Create( cfg.Endpoint, goodShoulder, empty )
+
+    status, _ := client.Create( cfg.Endpoint, goodShoulder, testEntity( crossRefSchema ), empty )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -188,7 +219,8 @@ func TestCreateEmptyToken( t *testing.T ) {
 
 func TestCreateBadToken( t *testing.T ) {
     expected := http.StatusForbidden
-    status, _ := client.Create( cfg.Endpoint, goodShoulder, badToken )
+
+    status, _ := client.Create( cfg.Endpoint, goodShoulder, testEntity( crossRefSchema ), badToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
@@ -198,10 +230,10 @@ func TestCreateBadToken( t *testing.T ) {
 // DOI update tests
 //
 
-func TestUpdateHappyDay( t *testing.T ) {
+func TestUpdateCrossRef( t *testing.T ) {
 
-    doi := createGoodDoi( t )
-    entity := testEntity( )
+    doi := createGoodDoi( crossRefSchema, t )
+    entity := testEntity( crossRefSchema )
     entity.Id = doi
 
     expected := http.StatusOK
@@ -211,8 +243,34 @@ func TestUpdateHappyDay( t *testing.T ) {
     }
 }
 
+func TestUpdateDataCite( t *testing.T ) {
+
+    doi := createGoodDoi( dataciteSchema, t )
+    entity := testEntity( dataciteSchema )
+    entity.Id = doi
+
+    expected := http.StatusOK
+    status := client.Update( cfg.Endpoint, entity, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestUpdateBadSchema( t *testing.T ) {
+
+    doi := createGoodDoi( crossRefSchema, t )
+    entity := testEntity( badSchema )
+    entity.Id = doi
+
+    expected := http.StatusBadRequest
+    status := client.Update( cfg.Endpoint, entity, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
 func TestUpdateEmptyId( t *testing.T ) {
-    entity := testEntity( )
+    entity := testEntity( crossRefSchema )
     entity.Id = empty
     expected := http.StatusBadRequest
     status := client.Update( cfg.Endpoint, entity, goodToken )
@@ -222,15 +280,17 @@ func TestUpdateEmptyId( t *testing.T ) {
 }
 
 func TestUpdateBadId( t *testing.T ) {
+    entity := testEntity( crossRefSchema )
+    entity.Id = badDoi
     expected := http.StatusBadRequest
-    status := client.Update( cfg.Endpoint, api.Entity{ Id: badDoi }, goodToken )
+    status := client.Update( cfg.Endpoint, entity, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
     }
 }
 
 func TestUpdateEmptyToken( t *testing.T ) {
-    entity := testEntity( )
+    entity := testEntity( crossRefSchema )
     entity.Id = plausableDoi
     expected := http.StatusBadRequest
     status := client.Update( cfg.Endpoint, entity, empty )
@@ -240,7 +300,7 @@ func TestUpdateEmptyToken( t *testing.T ) {
 }
 
 func TestUpdateBadToken( t *testing.T ) {
-    entity := testEntity( )
+    entity := testEntity( crossRefSchema )
     entity.Id = plausableDoi
     expected := http.StatusForbidden
     status := client.Update( cfg.Endpoint, entity, badToken )
@@ -255,7 +315,7 @@ func TestUpdateBadToken( t *testing.T ) {
 
 func TestDeleteHappyDay( t *testing.T ) {
     expected := http.StatusOK
-    doi := createGoodDoi( t )
+    doi := createGoodDoi( crossRefSchema, t )
     status := client.Delete( cfg.Endpoint, doi, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
@@ -301,8 +361,8 @@ func TestDeleteBadToken( t *testing.T ) {
 func TestRevokeHappyDay( t *testing.T ) {
 
     expected := http.StatusOK
-    doi := createGoodDoi( t )
-    entity := testEntity( )
+    doi := createGoodDoi( crossRefSchema, t )
+    entity := testEntity( crossRefSchema )
     entity.Id = doi
 
     status := client.Update( cfg.Endpoint, entity, goodToken )
@@ -356,12 +416,13 @@ func emptyField( field string ) bool {
     return len( strings.TrimSpace( field ) ) == 0
 }
 
-func testEntity( ) api.Entity {
-    return api.Entity{ Title: "my special title", Url: "http://google.com" }
+func testEntity( schema string ) api.Entity {
+    return api.Entity{ Title: "my special title", Url: "http://google.com", Schema: schema }
 }
 
-func createGoodDoi( t *testing.T ) string {
-    status, entity := client.Create( cfg.Endpoint, goodShoulder, goodToken )
+func createGoodDoi( schema string, t *testing.T ) string {
+
+    status, entity := client.Create( cfg.Endpoint, goodShoulder, testEntity( schema ), goodToken )
     if status == http.StatusOK {
         return entity.Id
     }
