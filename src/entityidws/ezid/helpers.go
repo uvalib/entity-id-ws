@@ -18,36 +18,58 @@ const CROSSREF_SCHEMA = "crossref"
 const DATACITE_SCHEMA = "datacite"
 
 //
-// log the contents of an entity record
+// log the contents of a request record
 //
-func logEntity( entity api.Entity ) {
+func logRequest( request api.Request) {
 
     if config.Configuration.Debug {
-        fmt.Println( "Id:", entity.Id )
-        fmt.Println( "Url:", entity.Url )
-        fmt.Println( "Title:", entity.Title )
-        fmt.Println( "Publisher:", entity.Publisher )
-        fmt.Println( "CreatorFirstName:", entity.CreatorFirstName )
-        fmt.Println( "CreatorLastName:", entity.CreatorLastName )
-        fmt.Println( "CreatorDepartment:", entity.CreatorDepartment )
-        fmt.Println( "CreatorInstitution:", entity.CreatorInstitution )
-        fmt.Println( "PublicationDate:", entity.PublicationDate )
-        fmt.Println( "PublicationMilestone:", entity.PublicationMilestone )
-        fmt.Println( "ResourceType:", entity.ResourceType )
+        fmt.Println( "Id:", request.Id )
+
+        if request.Schema == CROSSREF_SCHEMA {
+            logCrossRefRequest( request.CrossRef )
+        }
+        if request.Schema == DATACITE_SCHEMA {
+            logDataCiteRequest( request.DataCite )
+        }
     }
+}
+
+//
+// log the contents of a crossref schema request
+//
+func logCrossRefRequest( request api.CrossRefSchema ) {
+
+    fmt.Println( "Url:", request.Url )
+    fmt.Println( "Title:", request.Title )
+    fmt.Println( "Publisher:", request.Publisher )
+    fmt.Println( "CreatorFirstName:", request.CreatorFirstName )
+    fmt.Println( "CreatorLastName:", request.CreatorLastName )
+    fmt.Println( "CreatorDepartment:", request.CreatorDepartment )
+    fmt.Println( "CreatorInstitution:", request.CreatorInstitution )
+    fmt.Println( "PublicationDate:", request.PublicationDate )
+    fmt.Println( "PublicationMilestone:", request.PublicationMilestone )
+    fmt.Println( "ResourceType:", request.ResourceType )
+}
+
+//
+// log the contents of a datacite schema request
+//
+func logDataCiteRequest( request api.DataCiteSchema ) {
+
+    fmt.Println( "ResourceType:", request.ResourceType )
 }
 
 //
 // the response body consists of a set of CR separated lines containing tokens separated by
 // a colon character
 //
-func makeEntityFromBody( body string ) api.Entity {
+func makeEntityFromBody( body string ) api.Request {
 
     if config.Configuration.Debug {
         fmt.Println("Response:", body)
     }
 
-    entity := blankEntity( )
+    response := blankResponse( )
     split := strings.Split( body, "\n" )
     for i := range split {
         tokens := strings.SplitN( split[ i ], ":", 2 )
@@ -55,53 +77,58 @@ func makeEntityFromBody( body string ) api.Entity {
             s := strings.TrimSpace( tokens[ 1 ] )
             switch tokens[ 0 ] {
             case "success":
-                entity.Id = strings.TrimSpace( strings.Split( s, "|" )[ 0 ] )
+                response.Id = strings.TrimSpace( strings.Split( s, "|" )[ 0 ] )
             case "_target":
-                entity.Url = s
+            //    entity.Url = s
             case "_profile":
-                entity.Schema = s
+                response.Schema = s
             case "datacite.title":
-                entity.Title = s
+            //    entity.Title = s
             case "datacite.publisher":
-                entity.Publisher = s
+            //    entity.Publisher = s
             case "datacite.creator":
                 t := strings.Split( s, "," )
                 if len( t ) > 0 {
-                    entity.CreatorLastName = t[ 0 ]
+            //        entity.CreatorLastName = t[ 0 ]
                 }
                 if len( t ) > 1 {
-                    entity.CreatorFirstName = t[ 1 ]
+            //        entity.CreatorFirstName = t[ 1 ]
                 }
             case "datacite.publicationyear":
-                entity.PublicationDate = s
+            //    entity.PublicationDate = s
             case "datacite.resourcetype":
-                entity.ResourceType = s
-            case "crossref":
+            //    entity.ResourceType = s
+            case DATACITE_SCHEMA:
+                // our payload is a DataCite XML schema, process as appropriate
+                response.Schema = DATACITE_SCHEMA
+                extractDataCitePayload( &response, s )
+            case CROSSREF_SCHEMA:
                 // our payload is a CrossRef XML schema, process as appropriate
-                extractCrossRefData( &entity, s )
+                response.Schema = CROSSREF_SCHEMA
+                extractCrossRefPayload( &response, s )
             }
         }
     }
-    return entity
+    return response
 
 }
 
 //
 // encode the data into the request body
 //
-func makeBodyFromEntity( entity api.Entity, status string ) ( string, error ) {
+func makeBodyFromRequest( request api.Request, status string ) ( string, error ) {
 
     var body string
     var err error
 
     // check the schema type and build the body as appropriate
-    switch entity.Schema {
+    switch request.Schema {
     case CROSSREF_SCHEMA:
-        body, err = makeCrossRefBodyFromEntity( entity, status )
+        body, err = makeCrossRefBodyFromEntity( request, status )
     case DATACITE_SCHEMA:
-        body, err = makeDataciteBodyFromEntity( entity, status )
+        body, err = makeDataCiteBodyFromEntity( request, status )
     default:
-        return "", errors.New( fmt.Sprintf( "unregognized schema name: %s", entity.Schema ) )
+        return "", errors.New( fmt.Sprintf( "unregognized schema name: %s", request.Schema ) )
     }
 
     if err != nil {
@@ -118,23 +145,20 @@ func makeBodyFromEntity( entity api.Entity, status string ) ( string, error ) {
 //
 // use the datacite schema/profile to encode the metadata into the request body
 //
-func makeDataciteBodyFromEntity( entity api.Entity, status string ) ( string, error ) {
+func makeDataCiteBodyFromEntity( request api.Request, status string ) ( string, error ) {
 
-    // parse the publication date
-    YYYY, _, _ := splitDate( entity.PublicationDate )
-
-    creator := fmt.Sprintf( "%s, %s", entity.CreatorLastName, entity.CreatorFirstName )
+    // create the XML payload
+    xml, err := createDataCiteSchema( request, status )
+    if err != nil {
+        return "", err
+    }
 
     var buffer bytes.Buffer
     //addBodyTerm( &buffer, "_crossref", "no", "" )
     addBodyTerm( &buffer, "_profile", "datacite", "" )
     addBodyTerm( &buffer, "_status", status, "reserved" )
-    addBodyTerm( &buffer, "_target", entity.Url, "https://virginia.edu" )
-    addBodyTerm( &buffer, "datacite.title", entity.Title, "empty" )
-    addBodyTerm( &buffer, "datacite.publisher", entity.Publisher, "empty" )
-    addBodyTerm( &buffer, "datacite.creator", creator, "empty" )
-    addBodyTerm( &buffer, "datacite.publicationyear", YYYY, "empty" )
-    addBodyTerm( &buffer, "datacite.resourcetype", entity.ResourceType, "Other" )
+    addBodyTerm( &buffer, "_target", request.DataCite.Url, "https://virginia.edu" )
+    addBodyTerm( &buffer, "datacite", xml, "" )
     s := buffer.String( )
     return s, nil
 }
@@ -142,10 +166,10 @@ func makeDataciteBodyFromEntity( entity api.Entity, status string ) ( string, er
 //
 // use the crossref schema/profile to encode the metadata into the request body
 //
-func makeCrossRefBodyFromEntity( entity api.Entity, status string ) ( string, error ) {
+func makeCrossRefBodyFromEntity( request api.Request, status string ) ( string, error ) {
 
     // create the XML payload
-    xref, err := createCrossRefSchema( entity, status )
+    xml, err := createCrossRefSchema( request, status )
     if err != nil {
         return "", err
     }
@@ -154,56 +178,62 @@ func makeCrossRefBodyFromEntity( entity api.Entity, status string ) ( string, er
     addBodyTerm( &buffer, "_crossref", "yes", "" )
     addBodyTerm( &buffer, "_profile", "crossref", "" )
     addBodyTerm( &buffer, "_status", status, "reserved" )
-    addBodyTerm( &buffer, "_target", entity.Url, "https://virginia.edu" )
-    addBodyTerm( &buffer, "crossref", xref, "" )
+    addBodyTerm( &buffer, "_target", request.CrossRef.Url, "https://virginia.edu" )
+    addBodyTerm( &buffer, "crossref", xml, "" )
     s := buffer.String( )
     return s, nil
 }
 
 //
-// use the crossref template to encode the metadata
+// use the datacite template to encode the metadata
 //
-func createCrossRefSchema( entity api.Entity, status string ) ( string, error ) {
+func createDataCiteSchema( request api.Request, status string ) ( string, error ) {
 
-    t, err := template.ParseFiles( "data/crossref-template.xml" )
+    t, err := template.ParseFiles("data/datacite-template.xml")
     if err != nil {
-        logger.Log( fmt.Sprintf( "ERROR: template parse error: %s", err ) )
+        logger.Log(fmt.Sprintf("ERROR: template parse error: %s", err))
         return "", err
     }
 
     // add placeholders if we are reserving a DOI
     if status == STATUS_RESERVED {
-        entity.Id = PLACEHOLDER_TBA
-        entity.Url = PLACEHOLDER_TBA
+        request.Id = PLACEHOLDER_TBA
+        request.DataCite.Url = PLACEHOLDER_TBA
     }
 
     // parse the publication date
-    YYYY, MM, DD := splitDate( entity.PublicationDate )
+    YYYY, _, _ := splitDate( request.DataCite.PublicationDate )
 
+    //xx := [] {"this", "that" }
     // create our template data structure
     data := struct {
-        FirstName   string
-        LastName    string
-        Institution string
-        Title       string
-        PubYear     string
-        PubMonth    string
-        PubDay      string
-        Department  string
-        Degree      string
-        Identifier  string
-        PublicUrl   string
-    } { htmlEncode( entity.CreatorFirstName ),
-        htmlEncode( entity.CreatorLastName ),
-        htmlEncode( entity.CreatorInstitution ),
-        htmlEncode( entity.Title ),
+        Identifier       string
+        Title            string
+        Abstract         string
+        Creators      [] api.Person
+        Contributors  [] api.Person
+        Rights           string
+        Publisher        string
+        PublicationDate  string
+        PublicationYear  string
+        Keywords      [] string
+        Sponsors      [] string
+        ResourceType     string
+
+    } {
+        request.Id,
+        htmlEncode( request.DataCite.Title ),
+        htmlEncode( request.DataCite.Abstract ),
+        request.DataCite.Creators,
+        request.DataCite.Contributors,
+        htmlEncode( request.DataCite.Rights ),
+        htmlEncode( request.DataCite.Publisher ),
+        request.DataCite.PublicationDate,
         YYYY,
-        MM,
-        DD,
-        htmlEncode( entity.CreatorDepartment ),
-        htmlEncode( entity.PublicationMilestone ),
-        entity.Id,
-        entity.Url }
+        htmlEncodeArray( request.DataCite.Keywords ),
+        htmlEncodeArray( request.DataCite.Sponsors ),
+        request.DataCite.ResourceType,
+    }
 
     var buffer bytes.Buffer
     err = t.Execute( &buffer, data )
@@ -220,11 +250,91 @@ func createCrossRefSchema( entity api.Entity, status string ) ( string, error ) 
 }
 
 //
+// use the crossref template to encode the metadata
+//
+func createCrossRefSchema( request api.Request, status string ) ( string, error ) {
+
+    t, err := template.ParseFiles( "data/crossref-template.xml" )
+    if err != nil {
+        logger.Log( fmt.Sprintf( "ERROR: template parse error: %s", err ) )
+        return "", err
+    }
+
+    // add placeholders if we are reserving a DOI
+    if status == STATUS_RESERVED {
+        request.Id = PLACEHOLDER_TBA
+        request.CrossRef.Url = PLACEHOLDER_TBA
+    }
+
+    // parse the publication date
+    YYYY, MM, DD := splitDate( request.CrossRef.PublicationDate )
+
+    // create our template data structure
+    data := struct {
+        FirstName   string
+        LastName    string
+        Institution string
+        Title       string
+        PubYear     string
+        PubMonth    string
+        PubDay      string
+        Department  string
+        Degree      string
+        Identifier  string
+        PublicUrl   string
+    } { htmlEncode( request.CrossRef.CreatorFirstName ),
+        htmlEncode( request.CrossRef.CreatorLastName ),
+        htmlEncode( request.CrossRef.CreatorInstitution ),
+        htmlEncode( request.CrossRef.Title ),
+        YYYY,
+        MM,
+        DD,
+        htmlEncode( request.CrossRef.CreatorDepartment ),
+        htmlEncode( request.CrossRef.PublicationMilestone ),
+        request.Id,
+        request.CrossRef.Url }
+
+    var buffer bytes.Buffer
+    err = t.Execute( &buffer, data )
+    if err != nil {
+        logger.Log( fmt.Sprintf( "ERROR: template execute error: %s", err ) )
+        return "", err
+    }
+
+    s := buffer.String( )
+    if config.Configuration.Debug {
+        fmt.Printf( "XML:\n%s\n", s )
+    }
+    return s, nil
+}
+
+//
+// extract data from the DataCite schema
+//
+func extractDataCitePayload( payload * api.Request, xml string ) {
+
+    reader := strings.NewReader(xml)
+    xmlroot, err := xmlpath.Parse(reader)
+    if err != nil {
+        logger.Log(fmt.Sprintf("ERROR: parsing response XML: %s", err))
+        return
+    }
+
+    //
+    // pull out the data from the XML schema
+    //
+    val := extractFromSchema( xmlroot, "/resource/identifier" )
+    if val != PLACEHOLDER_TBA {
+        payload.Id = val
+    }
+}
+
+//
 // extract data from the CrossRef schema
 //
-func extractCrossRefData( e * api.Entity, xref string ) {
+func extractCrossRefPayload( payload * api.Request, xml string ) {
 
-    reader := strings.NewReader( xref )
+    reader := strings.NewReader( xml )
     xmlroot, err := xmlpath.Parse( reader )
     if err != nil {
         logger.Log( fmt.Sprintf( "ERROR: parsing response XML: %s", err ) )
@@ -236,32 +346,29 @@ func extractCrossRefData( e * api.Entity, xref string ) {
     //
     val := extractFromSchema( xmlroot, "/dissertation/doi_data/doi" )
     if val != PLACEHOLDER_TBA {
-        e.Id = val
+        payload.Id = val
     }
     val = extractFromSchema( xmlroot, "/dissertation/doi_data/resource" )
     if val != PLACEHOLDER_TBA {
-        e.Url = val
+        payload.CrossRef.Url = val
     }
-    e.Title = extractFromSchema( xmlroot, "/dissertation/titles/title" )
-//    e.Publisher = extractFromSchema( xmlroot, "/dissertation/xxx" )
-    e.CreatorFirstName = extractFromSchema( xmlroot, "/dissertation/person_name/given_name" )
-    e.CreatorLastName = extractFromSchema( xmlroot, "/dissertation/person_name/surname" )
-    e.CreatorDepartment = extractFromSchema( xmlroot, "/dissertation/institution/institution_department" )
-    e.CreatorInstitution = extractFromSchema( xmlroot, "/dissertation/person_name/affiliation" )
+    payload.CrossRef.Title = extractFromSchema( xmlroot, "/dissertation/titles/title" )
+    payload.CrossRef.CreatorFirstName = extractFromSchema( xmlroot, "/dissertation/person_name/given_name" )
+    payload.CrossRef.CreatorLastName = extractFromSchema( xmlroot, "/dissertation/person_name/surname" )
+    payload.CrossRef.CreatorDepartment = extractFromSchema( xmlroot, "/dissertation/institution/institution_department" )
+    payload.CrossRef.CreatorInstitution = extractFromSchema( xmlroot, "/dissertation/person_name/affiliation" )
 
-    e.PublicationDate = extractFromSchema( xmlroot, "/dissertation/approval_date/year" )
+    payload.CrossRef.PublicationDate = extractFromSchema( xmlroot, "/dissertation/approval_date/year" )
     MM := extractFromSchema( xmlroot, "/dissertation/approval_date/month" )
     if len( MM ) > 0 {
-        e.PublicationDate = fmt.Sprintf( "%s-%s", e.PublicationDate, MM )
+        payload.CrossRef.PublicationDate = fmt.Sprintf( "%s-%s", payload.CrossRef.PublicationDate, MM )
     }
     DD := extractFromSchema( xmlroot, "/dissertation/approval_date/day" )
     if len( DD ) > 0 {
-        e.PublicationDate = fmt.Sprintf( "%s-%s", e.PublicationDate, DD )
+        payload.CrossRef.PublicationDate = fmt.Sprintf( "%s-%s", payload.CrossRef.PublicationDate, DD )
     }
 
-    e.PublicationMilestone = extractFromSchema( xmlroot, "/dissertation/degree" )
-
-    e.Schema = CROSSREF_SCHEMA
+    payload.CrossRef.PublicationMilestone = extractFromSchema( xmlroot, "/dissertation/degree" )
 }
 
 func addBodyTerm( buffer * bytes.Buffer, term string, value string, defaultValue string ) {
@@ -286,6 +393,15 @@ func specialEncode( value string ) string {
 //
 // when including content embedded in XML, we should HTML encode it.
 //
+func htmlEncodeArray( array [] string ) [] string {
+
+    encoded := make([] string, len( array ), len( array ) )
+    for ix, value := range array {
+        encoded[ ix ] = html.EscapeString( value )
+    }
+    return encoded
+}
+
 func htmlEncode( value string ) string {
     // HTML encoding
     return html.EscapeString( value )
@@ -294,8 +410,8 @@ func htmlEncode( value string ) string {
 //
 // create a blank entity
 //
-func blankEntity( ) api.Entity {
-    return api.Entity{ }
+func blankResponse( ) api.Request {
+    return api.Request{ }
 }
 
 //

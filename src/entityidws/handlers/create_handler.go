@@ -33,13 +33,13 @@ func IdCreate( w http.ResponseWriter, r *http.Request ) {
     }
 
     decoder := json.NewDecoder( r.Body )
-    entity := api.Entity{ }
+    request := api.Request{ }
 
-    if err := decoder.Decode( &entity ); err != nil {
+    if err := decoder.Decode( &request ); err != nil {
         encodeStandardResponse( w, http.StatusBadRequest )
         return
     }
 
-    entity, status := ezid.CreateDoi( shoulder, entity, ezid.STATUS_RESERVED )
+    entity, status := ezid.CreateDoi( shoulder, request, ezid.STATUS_RESERVED )
     encodeDetailsResponse( w, status, entity )
 }

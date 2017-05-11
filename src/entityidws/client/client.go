@@ -116,7 +116,7 @@ func Statistics( endpoint string ) ( int, * api.Statistics ) {
     return resp.StatusCode, &r.Details
 }
 
-func Get( endpoint string, doi string, token string ) ( int, * api.Entity ) {
+func Get( endpoint string, doi string, token string ) ( int, * api.Request) {
 
     url := fmt.Sprintf( "%s/%s?auth=%s", endpoint, doi, token )
     //fmt.Printf( "%s\n", url )
@@ -143,7 +143,7 @@ func Get( endpoint string, doi string, token string ) ( int, * api.Entity ) {
     return resp.StatusCode, r.Details
 }
 
-func Create( endpoint string, shoulder string, entity api.Entity, token string ) ( int, * api.Entity ) {
+func Create( endpoint string, shoulder string, entity api.Request, token string ) ( int, * api.Request) {
 
     url := fmt.Sprintf("%s/%s?auth=%s", endpoint, shoulder, token)
     //fmt.Printf( "%s\n", url )
@@ -172,7 +172,7 @@ func Create( endpoint string, shoulder string, entity api.Entity, token string )
     return resp.StatusCode, r.Details
 }
 
-func Update( endpoint string, entity api.Entity, token string ) int {
+func Update( endpoint string, entity api.Request, token string ) int {
 
     url := fmt.Sprintf("%s/%s?auth=%s", endpoint, entity.Id, token )
     //fmt.Printf( "%s\n", url )

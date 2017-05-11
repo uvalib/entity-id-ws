@@ -33,14 +33,14 @@ func IdUpdate( w http.ResponseWriter, r *http.Request ) {
     }
 
     decoder := json.NewDecoder( r.Body )
-    entity := api.Entity{ }
+    request := api.Request{ }
 
-    if err := decoder.Decode( &entity ); err != nil {
+    if err := decoder.Decode( &request ); err != nil {
         encodeStandardResponse( w, http.StatusBadRequest )
         return
     }
 
-    entity.Id = doi
-    status := ezid.UpdateDoi( entity, ezid.STATUS_PUBLIC )
+    request.Id = doi
+    status := ezid.UpdateDoi( request, ezid.STATUS_PUBLIC )
     encodeStandardResponse( w, status )
 }

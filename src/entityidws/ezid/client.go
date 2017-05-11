@@ -20,7 +20,7 @@ const STATUS_UNAVAILABLE = "unavailable|withdrawn by Library"
 //
 // get entity details when provided a DOI
 //
-func GetDoi( doi string ) ( api.Entity, int ) {
+func GetDoi( doi string ) ( api.Request, int ) {
 
     // construct target URL
     url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, doi )
@@ -37,7 +37,7 @@ func GetDoi( doi string ) ( api.Entity, int ) {
     // check for errors
     if errs != nil {
         logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s", url, errs, duration ) )
-        return blankEntity( ), http.StatusInternalServerError
+        return blankResponse( ), http.StatusInternalServerError
     }
 
     defer io.Copy( ioutil.Discard, resp.Body )
@@ -48,7 +48,7 @@ func GetDoi( doi string ) ( api.Entity, int ) {
     // check the body for errors
     if !statusIsOk( body ) {
         logger.Log( fmt.Sprintf( "Error response body: [%s]", body ) )
-        return blankEntity( ), http.StatusBadRequest
+        return blankResponse( ), http.StatusBadRequest
     }
 
     // all good...
@@ -58,21 +58,21 @@ func GetDoi( doi string ) ( api.Entity, int ) {
 //
 // Create a new entity; we may or may not have complete entity details
 //
-func CreateDoi( shoulder string, entity api.Entity, status string ) ( api.Entity, int ) {
+func CreateDoi( shoulder string, request api.Request, status string ) ( api.Request, int ) {
 
     // log if necessary
-    logEntity( entity )
+    logRequest( request )
 
     // construct target URL
     url := fmt.Sprintf( "%s/shoulder/%s", config.Configuration.EzidServiceUrl, shoulder )
 
     // build the request body
-    body, err := makeBodyFromEntity( entity, status )
+    body, err := makeBodyFromRequest( request, status )
 
     // check for errors
     if err != nil {
         logger.Log( fmt.Sprintf( "ERROR: creating service payload %s", err ) )
-        return blankEntity( ), http.StatusBadRequest
+        return blankResponse( ), http.StatusBadRequest
     }
 
     // issue the request
@@ -90,7 +90,7 @@ func CreateDoi( shoulder string, entity api.Entity, status string ) ( api.Entity
     // check for errors
     if errs != nil {
         logger.Log( fmt.Sprintf( "ERROR: service (%s) returns %s in %s", url, errs, duration ) )
-        return blankEntity( ), http.StatusInternalServerError
+        return blankResponse( ), http.StatusInternalServerError
     }
 
     defer io.Copy( ioutil.Discard, resp.Body )
@@ -101,7 +101,7 @@ func CreateDoi( shoulder string, entity api.Entity, status string ) ( api.Entity
     // check the body for errors
     if !statusIsOk( body ) {
         logger.Log( fmt.Sprintf( "Error response body: [%s]", body ) )
-        return blankEntity( ), http.StatusBadRequest
+        return blankResponse( ), http.StatusBadRequest
     }
 
     // all good...
@@ -111,16 +111,16 @@ func CreateDoi( shoulder string, entity api.Entity, status string ) ( api.Entity
 //
 // Update an existing DOI to match the provided entity
 //
-func UpdateDoi( entity api.Entity, status string ) int {
+func UpdateDoi( request api.Request, status string ) int {
 
     // log if necessary
-    logEntity( entity )
+    logRequest( request )
 
     // construct target URL
-    url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, entity.Id )
+    url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, request.Id )
 
     // build the request body
-    body, err := makeBodyFromEntity( entity, status )
+    body, err := makeBodyFromRequest( request, status )
 
     // check for errors
     if err != nil {

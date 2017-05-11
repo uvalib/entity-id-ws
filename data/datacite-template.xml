@@ -1,0 +1,124 @@
+<resource xmlns="http://datacite.org/schema/kernel-4"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd">
+
+    {{if .Identifier }}
+    {{- with .Identifier }}
+    <identifier identifierType="DOI">{{ . }}</identifier>
+    {{- end }}
+    {{ end }}
+
+    {{if .Creators }}
+    <creators>
+       {{range $element := .Creators }}
+       <creator>
+          {{if $element.FirstName | and $element.LastName }}
+          <creatorName>{{ $element.LastName }}, {{ $element.FirstName }}</creatorName>
+          {{ end }}
+          {{if $element.FirstName }}
+          <givenName>{{ $element.FirstName }}</givenName>
+          {{ end }}
+          {{if $element.LastName }}
+          <familyName>{{ $element.LastName }}</familyName>
+          {{ end }}
+          {{if false }}
+          <nameIdentifier schemeURI="http://orcid.org/" nameIdentifierScheme="ORCID">{{ $element.Orcid }}</nameIdentifier>
+          {{ end }}
+          {{if $element.Department | and $element.Institution }}
+          <affiliation>{{ $element.Department }}, {{ $element.Institution }}</affiliation>
+          {{ end }}
+       </creator>
+       {{ end }}
+    </creators>
+    {{ end }}
+
+    {{if .Title }}
+    {{- with .Title }}
+    <titles>
+       <title>{{ . }}</title>
+    </titles>
+    {{- end }}
+    {{ end }}
+
+    {{if .Publisher }}
+    {{- with .Publisher }}
+    <publisher>{{ . }}</publisher>
+    {{- end }}
+    {{ end }}
+
+    {{if .PublicationYear }}
+    {{- with .PublicationYear }}
+    <publicationYear>{{ . }}</publicationYear>
+    {{- end }}
+    {{ end }}
+
+    {{if .Keywords }}
+    <subjects>
+        {{range $element := .Keywords }}
+           <subject>{{ $element }}</subject>
+        {{ end }}
+    </subjects>
+    {{ end }}
+
+    {{if .Contributors }}
+    <contributors>
+      {{range $element := .Contributors }}
+       <contributor contributorType="Other">
+          {{if $element.FirstName | and $element.LastName }}
+          <contributorName>{{ $element.LastName }}, {{ $element.FirstName }}</contributorName>
+          {{ end }}
+          {{if $element.FirstName }}
+          <givenName>{{ $element.FirstName }}</givenName>
+          {{ end }}
+          {{if $element.LastName }}
+          <familyName>{{ $element.LastName }}</familyName>
+          {{ end }}
+          {{if $element.Institution }}
+          <affiliation>{{ $element.Institution }}</affiliation>
+          {{ end }}
+       </contributor>
+       {{ end }}
+    </contributors>
+    {{ end }}
+
+    {{if .PublicationDate }}
+    {{- with .PublicationDate }}
+    <dates>
+       <date dateType="Issued">{{ . }}</date>
+    </dates>
+    {{- end }}
+    {{ end }}
+
+    {{if .ResourceType }}
+    {{- with .ResourceType }}
+    <resourceType resourceTypeGeneral="Text">{{ . }}</resourceType>
+    {{- end }}
+    {{ end }}
+
+    {{if .Rights }}
+    {{- with .Rights }}
+    <rightsList>
+       <rights>{{ . }}</rights>
+    </rightsList>
+    {{- end }}
+    {{ end }}
+
+    {{if .Abstract }}
+    {{- with .Abstract }}
+    <descriptions>
+       <description descriptionType="Abstract">{{ . }}</description>
+    </descriptions>
+    {{- end }}
+    {{ end }}
+
+    {{if .Sponsors }}
+    <fundingReferences>
+      {{range $element := .Sponsors }}
+       <fundingReference>
+          <funderName>{{ $element }}</funderName>
+       </fundingReference>
+      {{ end }}
+    </fundingReferences>
+    {{ end }}
+
+</resource>

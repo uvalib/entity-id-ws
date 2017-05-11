@@ -17,7 +17,7 @@ func encodeStandardResponse( w http.ResponseWriter, status int ) {
     }
 }
 
-func encodeDetailsResponse( w http.ResponseWriter, status int, entity api.Entity ) {
+func encodeDetailsResponse( w http.ResponseWriter, status int, entity api.Request) {
 
     jsonAttributes( w )
     w.WriteHeader( status )

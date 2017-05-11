@@ -1,0 +1,76 @@
+
+<resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-4" xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd">
+
+<identifier identifierType="DOI">(:tba)</identifier>
+
+
+<creators>
+<!—- creator block is repeatable  —->
+<creator>   
+<creatorName>LASTNAME, FIRSTNAME</creatorName>
+<givenName> FIRSTNAME </givenName>
+<familyName> LASTNAME </familyName>
+<!—- nameIdentifier is optional —->
+<nameIdentifier schemeURI="http://orcid.org/" nameIdentifierScheme="ORCID">ORCID - if exists</nameIdentifier>
+<!—- affiliation is optional —->
+<affiliation>DEPARTMENT, INSTITUTION</affiliation>
+</creator>
+</creators>
+
+
+<titles>
+<title>TITLE</title>
+</titles>
+
+<publisher>PUBLISHER</publisher>
+<publicationYear>PUBLICATIONDATE, just YYYY</publicationYear>
+
+<!—- subjects block is optional —->
+<subjects>
+<!—- subject is repeatable  —->
+<subject>KEYWORD</subject>
+</subjects>
+
+
+<!—- contributors block is optional —->
+<contributors>
+<!—- contributor block is repeatable  —->
+<contributor contributorType=“Other”>
+<contributorName>LASTNAME, FIRSTNAME</contributorName>
+<givenName>FIRSTNAME</givenName>
+<familyName>LASTNAME</familyName>
+
+<!—- affiliation is optional —->
+<affiliation>California Digital Library</affiliation>
+</contributor>
+</contributors>
+
+
+<dates>
+<!—- date format YYYY-MM-DD, only YYYY is required —->
+<date dateType=“Issued”>PUBLISHED DATE</date>
+</dates>
+
+
+<resourceType resourceTypeGeneral=“Text”>RESOURCE TYPE (need to map LibraOC types to the “general” types)</resourceType>
+
+<rightsList>
+<rights>RIGHTS</rights>
+</rightsList>
+
+
+<descriptions>
+<description descriptionType="Abstract">
+ABSTRACT
+</description>
+</descriptions>
+
+<!—- fundingReferences block is optional —->
+<fundingReferences>
+<!—- fundingReference block is repeatable  —->
+<fundingReference>
+<funderName>SPONSORING AGENCY</funderName>
+</fundingReference>
+</fundingReferences>
+
+</resource>
