@@ -23,6 +23,7 @@ const DATACITE_SCHEMA = "datacite"
 func logRequest( request api.Request) {
 
     if config.Configuration.Debug {
+        fmt.Println( "Schema:", request.Schema )
         fmt.Println( "Id:", request.Id )
 
         if request.Schema == CROSSREF_SCHEMA {
@@ -56,6 +57,16 @@ func logCrossRefRequest( request api.CrossRefSchema ) {
 //
 func logDataCiteRequest( request api.DataCiteSchema ) {
 
+    fmt.Println( "Url:", request.Url )
+    fmt.Println( "Title:", request.Title )
+    fmt.Println( "Abstract:", request.Abstract )
+    fmt.Println( "Creators:", request.Creators )
+    fmt.Println( "Contributors:", request.Contributors )
+    fmt.Println( "Rights:", request.Rights )
+    fmt.Println( "Keywords:", request.Keywords )
+    fmt.Println( "Sponsors:", request.Sponsors )
+    fmt.Println( "Publisher:", request.Publisher )
+    fmt.Println( "PublicationDate:", request.PublicationDate )
     fmt.Println( "ResourceType:", request.ResourceType )
 }
 
@@ -224,8 +235,8 @@ func createDataCiteSchema( request api.Request, status string ) ( string, error 
         request.Id,
         htmlEncode( request.DataCite.Title ),
         htmlEncode( request.DataCite.Abstract ),
-        request.DataCite.Creators,
-        request.DataCite.Contributors,
+        api.SortPeople( request.DataCite.Creators ),
+        api.SortPeople( request.DataCite.Contributors ),
         htmlEncode( request.DataCite.Rights ),
         htmlEncode( request.DataCite.Publisher ),
         request.DataCite.PublicationDate,

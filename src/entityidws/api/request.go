@@ -1,8 +1,13 @@
 package api
 
+import (
+    "fmt"
+    "sort"
+)
+
 type Request struct {
     Schema                string           `json:"schema,omitempty"`
-    Id                    string           // placeholder, all requests have an ID
+    Id                    string           `json:"id,omitempty"`
     CrossRef              CrossRefSchema   `json:"crossref,omitempty"`
     DataCite              DataCiteSchema   `json:"datacite,omitempty"`
 }
@@ -11,7 +16,6 @@ type Request struct {
 // the schema used for CrossRef requests
 //
 type CrossRefSchema struct {
-    //Id                    string   // placeholder, all requests have an ID
     Url                   string   `json:"url,omitempty"`
     Title                 string   `json:"title,omitempty"`
     Publisher             string   `json:"publisher,omitempty"`
@@ -28,7 +32,6 @@ type CrossRefSchema struct {
 // the schema used for DataCite requests
 //
 type DataCiteSchema struct {
-    //Id                    string   // placeholder, all requests have an ID
     Url                   string   `json:"url,omitempty"`
     Title                 string   `json:"title,omitempty"`
     Abstract              string   `json:"abstract,omitempty"`
@@ -52,3 +55,21 @@ type Person struct {
     Department            string   `json:"department,omitempty"`
     Institution           string   `json:"institution,omitempty"`
 }
+
+//
+// helpers to sort the people lists
+//
+
+func SortPeople( people [] Person ) [] Person {
+    sorted_people := make( [] Person, len( people ) )
+    copy( sorted_people, people )
+    fmt.Printf( "SORTING PEOPLE..." )
+    sort.Sort( PeopleSorter( sorted_people ) )
+    return sorted_people
+}
+
+// PeopleSorter sorts people by index
+type PeopleSorter [] Person
+func ( people PeopleSorter ) Len( ) int            { return len( people ) }
+func ( people PeopleSorter ) Swap( i, j int )      { people[ i ], people[ j ] = people[ j ], people[ i ] }
+func ( people PeopleSorter ) Less( i, j int ) bool { return people[ i ].Index < people[ j ].Index }
