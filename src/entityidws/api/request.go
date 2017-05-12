@@ -1,7 +1,6 @@
 package api
 
 import (
-    "fmt"
     "sort"
 )
 
@@ -63,7 +62,6 @@ type Person struct {
 func SortPeople( people [] Person ) [] Person {
     sorted_people := make( [] Person, len( people ) )
     copy( sorted_people, people )
-    fmt.Printf( "SORTING PEOPLE..." )
     sort.Sort( PeopleSorter( sorted_people ) )
     return sorted_people
 }
