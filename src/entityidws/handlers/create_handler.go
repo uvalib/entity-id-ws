@@ -8,6 +8,8 @@ import (
     "entityidws/ezid"
     "entityidws/authtoken"
     "entityidws/config"
+    "entityidws/logger"
+    "fmt"
 )
 
 func IdCreate( w http.ResponseWriter, r *http.Request ) {
@@ -36,6 +38,7 @@ func IdCreate( w http.ResponseWriter, r *http.Request ) {
     request := api.Request{ }
 
     if err := decoder.Decode( &request ); err != nil {
+        logger.Log( fmt.Sprintf( "ERROR: decoding request payload %s", err ) )
         encodeStandardResponse( w, http.StatusBadRequest )
         return
     }
