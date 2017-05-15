@@ -30,6 +30,7 @@ COPY scripts/entry.sh $APP_HOME/scripts/entry.sh
 COPY data/container_bash_profile /home/webservice/.profile
 COPY bin/entity-id-ws.linux $APP_HOME/bin/entity-id-ws
 COPY data/crossref-template.xml $APP_HOME/data/crossref-template.xml
+COPY data/datacite-template.xml $APP_HOME/data/datacite-template.xml
 
 # Add the build tag
 COPY buildtag.* $APP_HOME/
