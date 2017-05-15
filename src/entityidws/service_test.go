@@ -101,7 +101,7 @@ func TestStatistics( t *testing.T ) {
 // DOI get tests
 //
 
-func TestGetHappyDay( t *testing.T ) {
+func TestGetCrossRef( t *testing.T ) {
 
     doi := createGoodDoi( crossrefSchema, t )
     expected := http.StatusOK
@@ -114,19 +114,35 @@ func TestGetHappyDay( t *testing.T ) {
         t.Fatalf( "Expected to find entity %v and did not\n", doi )
     }
 
-    if emptyField( response.Schema ) ||
-       emptyField( response.Id ) {
-//       emptyField( response.Title ) {
-       //emptyField( entity.Publisher ) ||
-       //emptyField( entity.CreatorFirstName ) ||
-       //emptyField( entity.CreatorLastName ) ||
-       //emptyField( entity.CreatorDepartment ) ||
-       //emptyField( entity.CreatorInstitution ) ||
-       //emptyField( entity.PublicationDate ) ||
-       //emptyField( entity.ResourceType ) {
-       // fmt.Printf( "%t\n", entity )
-        t.Fatalf( "Expected non-empty field but one is empty\n" )
+    if response.Schema != crossrefSchema {
+        t.Fatalf( "Received unexpected schema in response\n" )
     }
+    if emptyField( response.Id ) {
+        t.Fatalf( "Received blank ID in response\n" )
+    }
+    verifyCrossRefSchema( response.CrossRef, t )
+}
+
+func TestGetDataCite( t *testing.T ) {
+
+    doi := createGoodDoi( dataciteSchema, t )
+    expected := http.StatusOK
+    status, response := client.Get( cfg.Endpoint, doi, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+
+    if response == nil {
+        t.Fatalf( "Expected to find entity %v and did not\n", doi )
+    }
+
+    if response.Schema != dataciteSchema {
+        t.Fatalf( "Received unexpected schema in response\n" )
+    }
+    if emptyField( response.Id ) {
+        t.Fatalf( "Received blank ID in response\n" )
+    }
+    verifyDataCiteSchema( response.DataCite, t )
 }
 
 func TestGetEmptyId( t *testing.T ) {
@@ -313,9 +329,18 @@ func TestUpdateBadToken( t *testing.T ) {
 // DOI delete tests
 //
 
-func TestDeleteHappyDay( t *testing.T ) {
+func TestDeleteCrossRef( t *testing.T ) {
     expected := http.StatusOK
     doi := createGoodDoi(crossrefSchema, t )
+    status := client.Delete( cfg.Endpoint, doi, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestDeleteDataCite( t *testing.T ) {
+    expected := http.StatusOK
+    doi := createGoodDoi(dataciteSchema, t )
     status := client.Delete( cfg.Endpoint, doi, goodToken )
     if status != expected {
         t.Fatalf( "Expected %v, got %v\n", expected, status )
@@ -358,11 +383,47 @@ func TestDeleteBadToken( t *testing.T ) {
 // DOI revoke tests
 //
 
-func TestRevokeHappyDay( t *testing.T ) {
+func TestRevokeCrossRef( t *testing.T ) {
 
     expected := http.StatusOK
     doi := createGoodDoi(crossrefSchema, t )
     entity := createTestRequest(crossrefSchema)
+    entity.Id = doi
+
+    status := client.Update( cfg.Endpoint, entity, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+
+    status = client.Revoke( cfg.Endpoint, entity.Id, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestRevokeDataSite( t *testing.T ) {
+
+    expected := http.StatusOK
+    doi := createGoodDoi(dataciteSchema, t )
+    entity := createTestRequest(dataciteSchema)
+    entity.Id = doi
+
+    status := client.Update( cfg.Endpoint, entity, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+
+    status = client.Revoke( cfg.Endpoint, entity.Id, goodToken )
+    if status != expected {
+        t.Fatalf( "Expected %v, got %v\n", expected, status )
+    }
+}
+
+func TestRevokeBadSchema( t *testing.T ) {
+
+    expected := http.StatusBadRequest
+    doi := createGoodDoi(crossrefSchema, t )
+    entity := createTestRequest(badSchema)
     entity.Id = doi
 
     status := client.Update( cfg.Endpoint, entity, goodToken )
@@ -414,6 +475,14 @@ func TestRevokeBadToken( t *testing.T ) {
 
 func emptyField( field string ) bool {
     return len( strings.TrimSpace( field ) ) == 0
+}
+
+func emptyPersonArray( array [] api.Person ) bool {
+    return len( array ) == 0
+}
+
+func emptyStringArray( array [] string ) bool {
+    return len( array ) == 0
 }
 
 //
@@ -472,6 +541,41 @@ func buildDataCiteSchema( ) api.DataCiteSchema {
         Publisher: "UVa Press",
         PublicationDate: "2002-02-02",
         ResourceType: "Text",
+    }
+}
+
+func verifyCrossRefSchema( schema api.CrossRefSchema, t *testing.T ) {
+
+    if emptyField( schema.Title ) ||
+       //emptyField( schema.Url ) ||
+       //emptyField( schema.Publisher ) ||
+       emptyField( schema.CreatorFirstName ) ||
+       emptyField( schema.CreatorLastName ) ||
+       emptyField( schema.CreatorDepartment ) ||
+       emptyField( schema.CreatorInstitution ) ||
+       emptyField( schema.PublicationDate ) {
+       //emptyField( schema.ResourceType ) {
+
+       t.Fatalf( "Received incorrectly blank field in %v\n", schema )
+    }
+}
+
+func verifyDataCiteSchema( schema api.DataCiteSchema, t *testing.T ) {
+
+    if emptyField( schema.Title ) ||
+       //emptyField( schema.Url ) ||
+       emptyField( schema.Publisher ) ||
+       emptyField( schema.Abstract ) ||
+       //emptyPersonArray( schema.Creators ) ||
+       //emptyPersonArray( schema.Contributors ) ||
+       emptyField( schema.Rights ) ||
+       emptyStringArray( schema.Keywords ) ||
+       emptyStringArray( schema.Sponsors ) ||
+       emptyField( schema.Publisher ) ||
+       emptyField( schema.PublicationDate ) ||
+       emptyField( schema.ResourceType ) {
+
+       t.Fatalf( "Received incorrectly blank field in %v\n", schema )
     }
 }
 

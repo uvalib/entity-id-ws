@@ -48,7 +48,7 @@ type DataCiteSchema struct {
 // the basic person details used for datacite creators and contributors
 //
 type Person struct {
-    Index                 int      `json:"index,omitempty"`
+    Index                 int      `json:"index"`
     FirstName             string   `json:"first_name,omitempty"`
     LastName              string   `json:"last_name,omitempty"`
     Department            string   `json:"department,omitempty"`

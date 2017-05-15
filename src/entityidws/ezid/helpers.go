@@ -11,6 +11,7 @@ import (
     "gopkg.in/xmlpath.v1"
     "html"
     "errors"
+    //"path"
 )
 
 const PLACEHOLDER_TBA = "(:tba)"
@@ -233,16 +234,16 @@ func createDataCiteSchema( request api.Request, status string ) ( string, error 
 
     } {
         request.Id,
-        htmlEncode( request.DataCite.Title ),
-        htmlEncode( request.DataCite.Abstract ),
-        api.SortPeople( request.DataCite.Creators ),
-        api.SortPeople( request.DataCite.Contributors ),
-        htmlEncode( request.DataCite.Rights ),
-        htmlEncode( request.DataCite.Publisher ),
+        htmlEncodeString( request.DataCite.Title ),
+        htmlEncodeString( request.DataCite.Abstract ),
+        htmlEncodePersonArray( api.SortPeople( request.DataCite.Creators ) ),
+        htmlEncodePersonArray( api.SortPeople( request.DataCite.Contributors ) ),
+        htmlEncodeString( request.DataCite.Rights ),
+        htmlEncodeString( request.DataCite.Publisher ),
         request.DataCite.PublicationDate,
         YYYY,
-        htmlEncodeArray( request.DataCite.Keywords ),
-        htmlEncodeArray( request.DataCite.Sponsors ),
+        htmlEncodeStringArray( request.DataCite.Keywords ),
+        htmlEncodeStringArray( request.DataCite.Sponsors ),
         request.DataCite.ResourceType,
     }
 
@@ -293,15 +294,15 @@ func createCrossRefSchema( request api.Request, status string ) ( string, error 
         Degree      string
         Identifier  string
         PublicUrl   string
-    } { htmlEncode( request.CrossRef.CreatorFirstName ),
-        htmlEncode( request.CrossRef.CreatorLastName ),
-        htmlEncode( request.CrossRef.CreatorInstitution ),
-        htmlEncode( request.CrossRef.Title ),
+    } { htmlEncodeString( request.CrossRef.CreatorFirstName ),
+        htmlEncodeString( request.CrossRef.CreatorLastName ),
+        htmlEncodeString( request.CrossRef.CreatorInstitution ),
+        htmlEncodeString( request.CrossRef.Title ),
         YYYY,
         MM,
         DD,
-        htmlEncode( request.CrossRef.CreatorDepartment ),
-        htmlEncode( request.CrossRef.PublicationMilestone ),
+        htmlEncodeString( request.CrossRef.CreatorDepartment ),
+        htmlEncodeString( request.CrossRef.PublicationMilestone ),
         request.Id,
         request.CrossRef.Url }
 
@@ -334,10 +335,22 @@ func extractDataCitePayload( payload * api.Request, xml string ) {
     //
     // pull out the data from the XML schema
     //
-    val := extractFromSchema( xmlroot, "/resource/identifier" )
+    val := extractStringFromSchema( xmlroot, "/resource/identifier" )
     if val != PLACEHOLDER_TBA {
         payload.Id = val
     }
+
+    payload.DataCite.Title = extractStringFromSchema( xmlroot, "/resource/titles/title" )
+    payload.DataCite.Abstract = extractStringFromSchema( xmlroot, "/resource/descriptions/description" )
+
+    payload.DataCite.Creators = extractPersonListFromSchema( xmlroot, "/resource/creators/creator" )
+    payload.DataCite.Contributors = extractPersonListFromSchema( xmlroot, "/resource/contributors/contributor" )
+    payload.DataCite.Rights = extractStringFromSchema( xmlroot, "/resource/rightsList/rights" )
+    payload.DataCite.Keywords = extractStringListFromSchema( xmlroot, "/resource/subjects/subject" )
+    payload.DataCite.Sponsors = extractStringListFromSchema( xmlroot, "/resource/fundingReferences/fundingReference/funderName" )
+    payload.DataCite.Publisher = extractStringFromSchema( xmlroot, "/resource/publisher" )
+    payload.DataCite.PublicationDate = extractStringFromSchema( xmlroot, "/resource/dates/date" )
+    payload.DataCite.ResourceType = extractStringFromSchema( xmlroot, "/resource/resourceType" )
 }
 
 //
@@ -355,31 +368,31 @@ func extractCrossRefPayload( payload * api.Request, xml string ) {
     //
     // pull out the data from the XML schema
     //
-    val := extractFromSchema( xmlroot, "/dissertation/doi_data/doi" )
+    val := extractStringFromSchema( xmlroot, "/dissertation/doi_data/doi" )
     if val != PLACEHOLDER_TBA {
         payload.Id = val
     }
-    val = extractFromSchema( xmlroot, "/dissertation/doi_data/resource" )
+    val = extractStringFromSchema( xmlroot, "/dissertation/doi_data/resource" )
     if val != PLACEHOLDER_TBA {
         payload.CrossRef.Url = val
     }
-    payload.CrossRef.Title = extractFromSchema( xmlroot, "/dissertation/titles/title" )
-    payload.CrossRef.CreatorFirstName = extractFromSchema( xmlroot, "/dissertation/person_name/given_name" )
-    payload.CrossRef.CreatorLastName = extractFromSchema( xmlroot, "/dissertation/person_name/surname" )
-    payload.CrossRef.CreatorDepartment = extractFromSchema( xmlroot, "/dissertation/institution/institution_department" )
-    payload.CrossRef.CreatorInstitution = extractFromSchema( xmlroot, "/dissertation/person_name/affiliation" )
+    payload.CrossRef.Title = extractStringFromSchema( xmlroot, "/dissertation/titles/title" )
+    payload.CrossRef.CreatorFirstName = extractStringFromSchema( xmlroot, "/dissertation/person_name/given_name" )
+    payload.CrossRef.CreatorLastName = extractStringFromSchema( xmlroot, "/dissertation/person_name/surname" )
+    payload.CrossRef.CreatorDepartment = extractStringFromSchema( xmlroot, "/dissertation/institution/institution_department" )
+    payload.CrossRef.CreatorInstitution = extractStringFromSchema( xmlroot, "/dissertation/person_name/affiliation" )
 
-    payload.CrossRef.PublicationDate = extractFromSchema( xmlroot, "/dissertation/approval_date/year" )
-    MM := extractFromSchema( xmlroot, "/dissertation/approval_date/month" )
+    payload.CrossRef.PublicationDate = extractStringFromSchema( xmlroot, "/dissertation/approval_date/year" )
+    MM := extractStringFromSchema( xmlroot, "/dissertation/approval_date/month" )
     if len( MM ) > 0 {
         payload.CrossRef.PublicationDate = fmt.Sprintf( "%s-%s", payload.CrossRef.PublicationDate, MM )
     }
-    DD := extractFromSchema( xmlroot, "/dissertation/approval_date/day" )
+    DD := extractStringFromSchema( xmlroot, "/dissertation/approval_date/day" )
     if len( DD ) > 0 {
         payload.CrossRef.PublicationDate = fmt.Sprintf( "%s-%s", payload.CrossRef.PublicationDate, DD )
     }
 
-    payload.CrossRef.PublicationMilestone = extractFromSchema( xmlroot, "/dissertation/degree" )
+    payload.CrossRef.PublicationMilestone = extractStringFromSchema( xmlroot, "/dissertation/degree" )
 }
 
 func addBodyTerm( buffer * bytes.Buffer, term string, value string, defaultValue string ) {
@@ -404,18 +417,39 @@ func specialEncode( value string ) string {
 //
 // when including content embedded in XML, we should HTML encode it.
 //
-func htmlEncodeArray( array [] string ) [] string {
+func htmlEncodePersonArray( array [] api.Person ) [] api.Person {
 
-    encoded := make([] string, len( array ), len( array ) )
+    encoded := make([] api.Person, len( array ), len( array ) )
     for ix, value := range array {
-        encoded[ ix ] = html.EscapeString( value )
+
+        p := api.Person{
+            Index:       value.Index,
+            FirstName:   htmlEncodeString( value.FirstName ),
+            LastName:    htmlEncodeString( value.LastName ),
+            Department:  htmlEncodeString( value.Department ),
+            Institution: htmlEncodeString( value.Institution ),
+        }
+        encoded[ ix ] = p
     }
     return encoded
 }
 
-func htmlEncode( value string ) string {
+func htmlEncodeStringArray( array [] string ) [] string {
+
+    encoded := make([] string, len( array ), len( array ) )
+    for ix, value := range array {
+        encoded[ ix ] = htmlEncodeString( value )
+    }
+    return encoded
+}
+
+func htmlEncodeString( value string ) string {
     // HTML encoding
-    return html.EscapeString( value )
+    encoded := html.EscapeString( value )
+
+    // encode percent characters
+    encoded = strings.Replace( encoded, "%", "%25", -1 )
+    return encoded
 }
 
 //
@@ -426,15 +460,53 @@ func blankResponse( ) api.Request {
 }
 
 //
-// extract from schema
+// extract a string from the schema
 //
-func extractFromSchema( xmlroot * xmlpath.Node, xpath string ) string {
+func extractStringFromSchema( xmlroot * xmlpath.Node, xpath string ) string {
     path := xmlpath.MustCompile( xpath )
     if value, ok := path.String( xmlroot ); ok {
         return value
     }
 
     return ""
+}
+
+//
+// extract a list of strings from the schema
+//
+func extractStringListFromSchema( xmlroot * xmlpath.Node, xpath string ) [] string {
+    var result []string
+    path := xmlpath.MustCompile( xpath )
+    iter := path.Iter( xmlroot )
+    for iter.Next() {
+        result = append( result, iter.Node( ).String( ) )
+    }
+    return result
+}
+
+//
+// extract a list of strings from the schema
+//
+func extractPersonListFromSchema( xmlroot * xmlpath.Node, xpath string ) [] api.Person {
+    var result []api.Person
+    found := 0
+
+    path := xmlpath.MustCompile( xpath )
+    iter := path.Iter( xmlroot )
+    for iter.Next() {
+        found += 1
+    }
+    if found > 0 {
+        for i := 0; i < found; i++ {
+            gn := extractStringFromSchema( xmlroot, fmt.Sprintf("%s[%d]/givenName", xpath, i + 1 ) )
+            fn := extractStringFromSchema( xmlroot, fmt.Sprintf("%s[%d]/familyName", xpath, i + 1 ) )
+            af := extractStringFromSchema( xmlroot, fmt.Sprintf("%s[%d]/affiliation", xpath, i + 1 ) )
+            p := api.Person{ Index: i, FirstName: gn, LastName: fn, Institution: af }
+            result = append( result, p )
+        }
+    }
+
+    return result
 }
 
 //
