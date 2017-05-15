@@ -90,26 +90,8 @@ func makeEntityFromBody( body string ) api.Request {
             switch tokens[ 0 ] {
             case "success":
                 response.Id = strings.TrimSpace( strings.Split( s, "|" )[ 0 ] )
-            case "_target":
-            //    entity.Url = s
             case "_profile":
                 response.Schema = s
-            case "datacite.title":
-            //    entity.Title = s
-            case "datacite.publisher":
-            //    entity.Publisher = s
-            case "datacite.creator":
-                t := strings.Split( s, "," )
-                if len( t ) > 0 {
-            //        entity.CreatorLastName = t[ 0 ]
-                }
-                if len( t ) > 1 {
-            //        entity.CreatorFirstName = t[ 1 ]
-                }
-            case "datacite.publicationyear":
-            //    entity.PublicationDate = s
-            case "datacite.resourcetype":
-            //    entity.ResourceType = s
             case DATACITE_SCHEMA:
                 // our payload is a DataCite XML schema, process as appropriate
                 response.Schema = DATACITE_SCHEMA
