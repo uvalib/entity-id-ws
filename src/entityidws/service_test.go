@@ -535,12 +535,13 @@ func buildDataCiteSchema( ) api.DataCiteSchema {
         Abstract: "my interesting abstract",
         Creators: [] api.Person{ person1 },
         Contributors: [] api.Person{ person2 },
-        Rights: "None",
+        Rights: "All rights reserved",
         Keywords: []string{ "keyword1", "keyword2" },
         Sponsors: []string{ "sponsor1", "sponsor2" },
         Publisher: "UVa Press",
         PublicationDate: "2002-02-02",
-        ResourceType: "Text",
+        GeneralType: "Sound",
+        ResourceType: "Audio",
     }
 }
 

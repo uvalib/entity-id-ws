@@ -68,6 +68,7 @@ func logDataCiteRequest( request api.DataCiteSchema ) {
     fmt.Println( "Sponsors:", request.Sponsors )
     fmt.Println( "Publisher:", request.Publisher )
     fmt.Println( "PublicationDate:", request.PublicationDate )
+    fmt.Println( "GeneralType:", request.GeneralType )
     fmt.Println( "ResourceType:", request.ResourceType )
 }
 
@@ -212,6 +213,7 @@ func createDataCiteSchema( request api.Request, status string ) ( string, error 
         PublicationYear  string
         Keywords      [] string
         Sponsors      [] string
+        GeneralType      string
         ResourceType     string
 
     } {
@@ -226,6 +228,7 @@ func createDataCiteSchema( request api.Request, status string ) ( string, error 
         YYYY,
         htmlEncodeStringArray( request.DataCite.Keywords ),
         htmlEncodeStringArray( request.DataCite.Sponsors ),
+        request.DataCite.GeneralType,
         request.DataCite.ResourceType,
     }
 

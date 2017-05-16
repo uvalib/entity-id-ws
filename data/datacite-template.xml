@@ -3,9 +3,7 @@
           xsi:schemaLocation="http://datacite.org/schema/kernel-4 http://schema.datacite.org/meta/kernel-4/metadata.xsd">
 
     {{if .Identifier }}
-    {{- with .Identifier }}
-    <identifier identifierType="DOI">{{ . }}</identifier>
-    {{- end }}
+    <identifier identifierType="DOI">{{ .Identifier }}</identifier>
     {{ end }}
 
     {{if .Creators }}
@@ -33,23 +31,17 @@
     {{ end }}
 
     {{if .Title }}
-    {{- with .Title }}
     <titles>
-       <title>{{ . }}</title>
+       <title>{{ .Title }}</title>
     </titles>
-    {{- end }}
     {{ end }}
 
     {{if .Publisher }}
-    {{- with .Publisher }}
-    <publisher>{{ . }}</publisher>
-    {{- end }}
+    <publisher>{{ .Publisher }}</publisher>
     {{ end }}
 
     {{if .PublicationYear }}
-    {{- with .PublicationYear }}
-    <publicationYear>{{ . }}</publicationYear>
-    {{- end }}
+    <publicationYear>{{ .PublicationYear }}</publicationYear>
     {{ end }}
 
     {{if .Keywords }}
@@ -82,33 +74,25 @@
     {{ end }}
 
     {{if .PublicationDate }}
-    {{- with .PublicationDate }}
     <dates>
-       <date dateType="Issued">{{ . }}</date>
+       <date dateType="Issued">{{ .PublicationDate }}</date>
     </dates>
-    {{- end }}
     {{ end }}
 
-    {{if .ResourceType }}
-    {{- with .ResourceType }}
-    <resourceType resourceTypeGeneral="Text">{{ . }}</resourceType>
-    {{- end }}
+    {{if .GeneralType | and .ResourceType }}
+    <resourceType resourceTypeGeneral="{{ .GeneralType }}">{{ .ResourceType }}</resourceType>
     {{ end }}
 
     {{if .Rights }}
-    {{- with .Rights }}
     <rightsList>
-       <rights>{{ . }}</rights>
+       <rights>{{ .Rights }}</rights>
     </rightsList>
-    {{- end }}
     {{ end }}
 
     {{if .Abstract }}
-    {{- with .Abstract }}
     <descriptions>
-       <description descriptionType="Abstract">{{ . }}</description>
+       <description descriptionType="Abstract">{{ .Abstract }}</description>
     </descriptions>
-    {{- end }}
     {{ end }}
 
     {{if .Sponsors }}

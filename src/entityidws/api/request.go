@@ -41,7 +41,8 @@ type DataCiteSchema struct {
     Sponsors           [] string   `json:"sponsors,omitempty"`
     Publisher             string   `json:"publisher,omitempty"`
     PublicationDate       string   `json:"publication_date,omitempty"`
-    ResourceType          string   `json:"type,omitempty"`
+    GeneralType           string   `json:"general_type,omitempty"`
+    ResourceType          string   `json:"resource_type,omitempty"`
 }
 
 //
