@@ -149,7 +149,6 @@ func makeDataCiteBodyFromEntity( request api.Request, status string ) ( string, 
     }
 
     var buffer bytes.Buffer
-    //addBodyTerm( &buffer, "_crossref", "no", "" )
     addBodyTerm( &buffer, "_profile", "datacite", "" )
     addBodyTerm( &buffer, "_status", status, "reserved" )
     addBodyTerm( &buffer, "_target", request.DataCite.Url, "https://virginia.edu" )
@@ -335,6 +334,7 @@ func extractDataCitePayload( payload * api.Request, xml string ) {
     payload.DataCite.Sponsors = extractStringListFromSchema( xmlroot, "/resource/fundingReferences/fundingReference/funderName" )
     payload.DataCite.Publisher = extractStringFromSchema( xmlroot, "/resource/publisher" )
     payload.DataCite.PublicationDate = extractStringFromSchema( xmlroot, "/resource/dates/date" )
+    payload.DataCite.GeneralType = extractStringFromSchema( xmlroot, "/resource/resourceType/@resourceTypeGeneral" )
     payload.DataCite.ResourceType = extractStringFromSchema( xmlroot, "/resource/resourceType" )
 }
 

@@ -574,6 +574,7 @@ func verifyDataCiteSchema( schema api.DataCiteSchema, t *testing.T ) {
        emptyStringArray( schema.Sponsors ) ||
        emptyField( schema.Publisher ) ||
        emptyField( schema.PublicationDate ) ||
+       emptyField( schema.GeneralType ) ||
        emptyField( schema.ResourceType ) {
 
        t.Fatalf( "Received incorrectly blank field in %v\n", schema )
