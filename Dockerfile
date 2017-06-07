@@ -1,4 +1,4 @@
-FROM alpine:3.5
+FROM alpine:3.6
 
 # update the packages
 RUN apk update && apk upgrade && apk add bash tzdata ca-certificates
