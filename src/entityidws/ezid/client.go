@@ -27,7 +27,7 @@ func GetDoi( doi string ) ( api.Request, int ) {
 
     // issue the request
     start := time.Now( )
-    resp, body, errs := gorequest.New( ).
+    resp, responseBody, errs := gorequest.New( ).
         SetDebug( config.Configuration.Debug ).
         Get( url  ).
         Timeout( time.Duration( config.Configuration.Timeout ) * time.Second ).
@@ -45,14 +45,14 @@ func GetDoi( doi string ) ( api.Request, int ) {
 
     logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
-    // check the body for errors
-    if !statusIsOk( body ) {
-        logger.Log( fmt.Sprintf( "Error response body: [%s]", body ) )
+    // check the response body for errors
+    if !statusIsOk( responseBody ) {
+        logger.Log( fmt.Sprintf( "Error response body: [%s]", responseBody ) )
         return blankResponse( ), http.StatusBadRequest
     }
 
     // all good...
-    return makeEntityFromBody( body ), http.StatusOK
+    return makeEntityFromBody( responseBody ), http.StatusOK
 }
 
 //
@@ -67,7 +67,7 @@ func CreateDoi( shoulder string, request api.Request, status string ) ( api.Requ
     url := fmt.Sprintf( "%s/shoulder/%s", config.Configuration.EzidServiceUrl, shoulder )
 
     // build the request body
-    body, err := makeBodyFromRequest( request, status )
+    requestBody, err := makeBodyFromRequest( request, status )
 
     // check for errors
     if err != nil {
@@ -77,11 +77,11 @@ func CreateDoi( shoulder string, request api.Request, status string ) ( api.Requ
 
     // issue the request
     start := time.Now( )
-    resp, body, errs := gorequest.New( ).
+    resp, responseBody, errs := gorequest.New( ).
         SetDebug( config.Configuration.Debug ).
         SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Post( url  ).
-        Send( body ).
+        Send( requestBody ).
         Timeout( time.Duration( config.Configuration.Timeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
@@ -98,14 +98,15 @@ func CreateDoi( shoulder string, request api.Request, status string ) ( api.Requ
 
     logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
-    // check the body for errors
-    if !statusIsOk( body ) {
-        logger.Log( fmt.Sprintf( "Error response body: [%s]", body ) )
+    // check the response body for errors
+    if !statusIsOk( responseBody ) {
+        logger.Log( fmt.Sprintf( "Error response body: [%s]", responseBody ) )
+        logger.Log( fmt.Sprintf( "Original request body: [%s]", requestBody ) )
         return blankResponse( ), http.StatusBadRequest
     }
 
     // all good...
-    return makeEntityFromBody( body ), http.StatusOK
+    return makeEntityFromBody( responseBody ), http.StatusOK
 }
 
 //
@@ -120,7 +121,7 @@ func UpdateDoi( request api.Request, status string ) int {
     url := fmt.Sprintf( "%s/id/%s", config.Configuration.EzidServiceUrl, request.Id )
 
     // build the request body
-    body, err := makeBodyFromRequest( request, status )
+    requestBody, err := makeBodyFromRequest( request, status )
 
     // check for errors
     if err != nil {
@@ -130,11 +131,11 @@ func UpdateDoi( request api.Request, status string ) int {
 
     // issue the request
     start := time.Now( )
-    resp, body, errs := gorequest.New( ).
+    resp, responseBody, errs := gorequest.New( ).
         SetDebug( config.Configuration.Debug ).
         SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Post( url  ).
-        Send( body ).
+        Send( requestBody ).
         Timeout( time.Duration( config.Configuration.Timeout ) * time.Second ).
         Set( "Content-Type", "text/plain" ).
         End( )
@@ -151,9 +152,10 @@ func UpdateDoi( request api.Request, status string ) int {
 
     logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
-    // check the body for errors
-    if !statusIsOk( body ) {
-        logger.Log( fmt.Sprintf( "Error response body: [%s]", body ) )
+    // check the response body for errors
+    if !statusIsOk( responseBody ) {
+        logger.Log( fmt.Sprintf( "Error response body: [%s]", responseBody ) )
+        logger.Log( fmt.Sprintf( "Original request body: [%s]", requestBody ) )
         return http.StatusBadRequest
     }
 
@@ -171,7 +173,7 @@ func DeleteDoi( doi string ) int {
 
     // issue the request
     start := time.Now( )
-    resp, body, errs := gorequest.New( ).
+    resp, responseBody, errs := gorequest.New( ).
         SetDebug( config.Configuration.Debug ).
         SetBasicAuth( config.Configuration.EzidUser, config.Configuration.EzidPassphrase ).
         Delete( url  ).
@@ -190,9 +192,9 @@ func DeleteDoi( doi string ) int {
 
     logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
-    // check the body for errors
-    if !statusIsOk( body ) {
-        logger.Log( fmt.Sprintf( "Error response body: [%s]", body ) )
+    // check the response body for errors
+    if !statusIsOk( responseBody ) {
+        logger.Log( fmt.Sprintf( "Error response body: [%s]", responseBody ) )
         return http.StatusBadRequest
     }
 
@@ -210,7 +212,7 @@ func GetStatus( ) int {
 
     // issue the request
     start := time.Now( )
-    resp, body, errs := gorequest.New( ).
+    resp, responseBody, errs := gorequest.New( ).
         SetDebug( config.Configuration.Debug ).
         Get( url  ).
         Timeout( time.Duration( config.Configuration.Timeout ) * time.Second ).
@@ -228,9 +230,9 @@ func GetStatus( ) int {
 
     logger.Log( fmt.Sprintf( "Service (%s) returns http %d in %s", url, resp.StatusCode, duration ) )
 
-    // check the body for errors
-    if !statusIsOk( body ) {
-        logger.Log( fmt.Sprintf( "Error response body: [%s]", body ) )
+    // check the response body for errors
+    if !statusIsOk( responseBody ) {
+        logger.Log( fmt.Sprintf( "Error response body: [%s]", responseBody ) )
         return http.StatusBadRequest
     }
 
