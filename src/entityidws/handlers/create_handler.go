@@ -10,6 +10,8 @@ import (
     "entityidws/config"
     "entityidws/logger"
     "fmt"
+    "io"
+    "io/ioutil"
 )
 
 func IdCreate( w http.ResponseWriter, r *http.Request ) {
@@ -42,6 +44,9 @@ func IdCreate( w http.ResponseWriter, r *http.Request ) {
         encodeStandardResponse( w, http.StatusBadRequest )
         return
     }
+
+    defer io.Copy( ioutil.Discard, r.Body )
+    defer r.Body.Close( )
 
     entity, status := ezid.CreateDoi( shoulder, request, ezid.STATUS_RESERVED )
     encodeDetailsResponse( w, status, entity )

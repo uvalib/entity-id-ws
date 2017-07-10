@@ -10,6 +10,8 @@ import (
     "entityidws/config"
     "entityidws/logger"
     "fmt"
+    "io"
+    "io/ioutil"
 )
 
 func IdUpdate( w http.ResponseWriter, r *http.Request ) {
@@ -42,6 +44,9 @@ func IdUpdate( w http.ResponseWriter, r *http.Request ) {
         encodeStandardResponse( w, http.StatusBadRequest )
         return
     }
+
+    defer io.Copy( ioutil.Discard, r.Body )
+    defer r.Body.Close( )
 
     request.Id = doi
     status := ezid.UpdateDoi( request, ezid.STATUS_PUBLIC )
