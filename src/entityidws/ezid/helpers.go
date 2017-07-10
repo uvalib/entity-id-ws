@@ -239,6 +239,8 @@ func createDataCiteSchema( request api.Request, status string ) ( string, error 
     }
 
     s := buffer.String( )
+    s = filterUnacceptableCharacters( s )
+
     if config.Configuration.Debug {
         fmt.Printf( "XML:\n%s\n", s )
     }
@@ -298,6 +300,8 @@ func createCrossRefSchema( request api.Request, status string ) ( string, error 
     }
 
     s := buffer.String( )
+    s = filterUnacceptableCharacters( s )
+
     if config.Configuration.Debug {
         fmt.Printf( "XML:\n%s\n", s )
     }
@@ -389,13 +393,20 @@ func addBodyTerm( buffer * bytes.Buffer, term string, value string, defaultValue
 }
 
 //
-// the EZID service requires that embedded newlines and carriage returns be percent encoded.
+// the EZID service requires that embedded newlines be percent encoded.
 //
 func specialEncode( value string ) string {
 
-    // EZID structural element encoding
     value = strings.Replace( value, "\n", "%0A", -1 )
-    value = strings.Replace( value, "\r", "%0B", -1 )
+    return value
+}
+
+//
+// certain characters are unacceptable in the payload.
+//
+func filterUnacceptableCharacters( value string ) string {
+
+    value = strings.Replace( value, "\r", "", -1 )
     return value
 }
 
