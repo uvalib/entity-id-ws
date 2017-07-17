@@ -10,7 +10,7 @@
     <creators>
        {{range $element := .Creators }}
        <creator>
-          {{if $element.FirstName | and $element.LastName }}
+          {{if $element.FirstName | or $element.LastName }}
           <creatorName>{{ $element.LastName }}, {{ $element.FirstName }}</creatorName>
           {{ end }}
           {{if $element.FirstName }}
@@ -56,7 +56,7 @@
     <contributors>
       {{range $element := .Contributors }}
        <contributor contributorType="Other">
-          {{if $element.FirstName | and $element.LastName }}
+          {{if $element.FirstName | or $element.LastName }}
           <contributorName>{{ $element.LastName }}, {{ $element.FirstName }}</contributorName>
           {{ end }}
           {{if $element.FirstName }}
