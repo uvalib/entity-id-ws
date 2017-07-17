@@ -198,7 +198,6 @@ func createDataCiteSchema( request api.Request, status string ) ( string, error 
     // parse the publication date
     YYYY, _, _ := splitDate( request.DataCite.PublicationDate )
 
-    //xx := [] {"this", "that" }
     // create our template data structure
     data := struct {
         Identifier       string
@@ -217,12 +216,12 @@ func createDataCiteSchema( request api.Request, status string ) ( string, error 
 
     } {
         request.Id,
-        htmlEncodeString( request.DataCite.Title ),
-        htmlEncodeString( request.DataCite.Abstract ),
+        htmlEncodeString( orUnavailable( request.DataCite.Title ) ),
+        htmlEncodeString( orUnavailable( request.DataCite.Abstract ) ),
         htmlEncodePersonArray( api.SortPeople( request.DataCite.Creators ) ),
         htmlEncodePersonArray( api.SortPeople( request.DataCite.Contributors ) ),
-        htmlEncodeString( request.DataCite.Rights ),
-        htmlEncodeString( request.DataCite.Publisher ),
+        htmlEncodeString( orUnavailable( request.DataCite.Rights ) ),
+        htmlEncodeString( orUnavailable( request.DataCite.Publisher ) ),
         request.DataCite.PublicationDate,
         YYYY,
         htmlEncodeStringArray( request.DataCite.Keywords ),
@@ -531,4 +530,15 @@ func splitDate( date string ) ( string, string, string ) {
         DD = tokens[ 2 ]
     }
     return YYYY, MM, DD
+}
+
+//
+// helper to return a standard code for a blank field. In this case, the unavailable one
+//
+func orUnavailable( field string ) string {
+
+    if len( field ) != 0 {
+        return( field )
+    }
+    return( "(:unav)" )
 }
