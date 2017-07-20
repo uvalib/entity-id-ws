@@ -1,26 +1,26 @@
 package main
 
 import (
-    "net/http"
-    "time"
-    "fmt"
-    "entityidws/logger"
+	"entityidws/logger"
+	"fmt"
+	"net/http"
+	"time"
 )
 
 func HandlerLogger(inner http.Handler, name string) http.Handler {
 
-   return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-      start := time.Now( )
+		start := time.Now()
 
-      inner.ServeHTTP( w, r )
+		inner.ServeHTTP(w, r)
 
-       logger.Log( fmt.Sprintf(
-           "%s (%s) -> method %s, time %s",
-           r.Method,
-           r.RequestURI,
-           name,
-           time.Since( start ),
-       ) )
-   } )
+		logger.Log(fmt.Sprintf(
+			"%s (%s) -> method %s, time %s",
+			r.Method,
+			r.RequestURI,
+			name,
+			time.Since(start),
+		))
+	})
 }
