@@ -1,53 +1,53 @@
 package handlers
 
 import (
-    "encoding/json"
-    "net/http"
-    "github.com/gorilla/mux"
-    "entityidws/api"
-    "entityidws/ezid"
-    "entityidws/authtoken"
-    "entityidws/config"
-    "entityidws/logger"
-    "fmt"
-    "io"
-    "io/ioutil"
+	"encoding/json"
+	"entityidws/api"
+	"entityidws/authtoken"
+	"entityidws/config"
+	"entityidws/ezid"
+	"entityidws/logger"
+	"fmt"
+	"github.com/gorilla/mux"
+	"io"
+	"io/ioutil"
+	"net/http"
 )
 
-func IdCreate( w http.ResponseWriter, r *http.Request ) {
+func IdCreate(w http.ResponseWriter, r *http.Request) {
 
-    vars := mux.Vars( r )
-    shoulder := vars[ "shoulder" ]
-    token := r.URL.Query( ).Get( "auth" )
+	vars := mux.Vars(r)
+	shoulder := vars["shoulder"]
+	token := r.URL.Query().Get("auth")
 
-    // update the statistics
-    Statistics.RequestCount++
-    Statistics.CreateCount++
+	// update the statistics
+	Statistics.RequestCount++
+	Statistics.CreateCount++
 
-    // validate inbound parameters
-    if parameterOK( shoulder ) == false || parameterOK( token ) == false {
-        encodeStandardResponse( w, http.StatusBadRequest )
-        return
-    }
+	// validate inbound parameters
+	if parameterOK(shoulder) == false || parameterOK(token) == false {
+		encodeStandardResponse(w, http.StatusBadRequest)
+		return
+	}
 
-    // validate the token
-    if authtoken.Validate( config.Configuration.AuthTokenEndpoint, "create", token, config.Configuration.Timeout ) == false {
-        encodeStandardResponse( w, http.StatusForbidden )
-        return
-    }
+	// validate the token
+	if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "create", token, config.Configuration.Timeout) == false {
+		encodeStandardResponse(w, http.StatusForbidden)
+		return
+	}
 
-    decoder := json.NewDecoder( r.Body )
-    request := api.Request{ }
+	decoder := json.NewDecoder(r.Body)
+	request := api.Request{}
 
-    if err := decoder.Decode( &request ); err != nil {
-        logger.Log( fmt.Sprintf( "ERROR: decoding request payload %s", err ) )
-        encodeStandardResponse( w, http.StatusBadRequest )
-        return
-    }
+	if err := decoder.Decode(&request); err != nil {
+		logger.Log(fmt.Sprintf("ERROR: decoding request payload %s", err))
+		encodeStandardResponse(w, http.StatusBadRequest)
+		return
+	}
 
-    defer io.Copy( ioutil.Discard, r.Body )
-    defer r.Body.Close( )
+	defer io.Copy(ioutil.Discard, r.Body)
+	defer r.Body.Close()
 
-    entity, status := ezid.CreateDoi( shoulder, request, ezid.STATUS_RESERVED )
-    encodeDetailsResponse( w, status, entity )
+	entity, status := ezid.CreateDoi(shoulder, request, ezid.STATUS_RESERVED)
+	encodeDetailsResponse(w, status, entity)
 }

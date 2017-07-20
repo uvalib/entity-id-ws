@@ -1,6 +1,5 @@
 package api
 
 type VersionResponse struct {
-	Version      string `json:"version"`
+	Version string `json:"version"`
 }
-

@@ -1,13 +1,13 @@
 package handlers
 
 import (
-    "net/http"
-    "entityidws/api"
+	"entityidws/api"
+	"net/http"
 )
 
-var Statistics = api.Statistics{ }
+var Statistics = api.Statistics{}
 
-func StatsGet( w http.ResponseWriter, r *http.Request ) {
-    // create response
-    encodeStatsResponse( w, Statistics )
+func StatsGet(w http.ResponseWriter, r *http.Request) {
+	// create response
+	encodeStatsResponse(w, Statistics)
 }

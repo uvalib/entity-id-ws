@@ -1,9 +1,9 @@
 package logger
 
 import (
-    "log"
+	"log"
 )
 
-func Log( msg string ) {
-    log.Printf( "%s", msg )
+func Log(msg string) {
+	log.Printf("%s", msg)
 }

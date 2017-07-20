@@ -3,7 +3,7 @@ if [ -z "$GOPATH" ]; then
    exit 1
 fi
 
-go fmt entityidws
+go fmt entityidws/...
 res=$?
 
 echo "Exiting with status $res"

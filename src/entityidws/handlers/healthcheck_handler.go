@@ -1,17 +1,17 @@
 package handlers
 
 import (
-    "net/http"
-    "entityidws/ezid"
+	"entityidws/ezid"
+	"net/http"
 )
 
-func HealthCheck( w http.ResponseWriter, r *http.Request ) {
+func HealthCheck(w http.ResponseWriter, r *http.Request) {
 
-    // update the statistics
-    Statistics.RequestCount++
-    Statistics.HeartbeatCount++
+	// update the statistics
+	Statistics.RequestCount++
+	Statistics.HeartbeatCount++
 
-    status := ezid.GetStatus( )
-    message := ""
-    encodeHealthCheckResponse( w, status, message )
+	status := ezid.GetStatus()
+	message := ""
+	encodeHealthCheckResponse(w, status, message)
 }
