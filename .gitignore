@@ -1,7 +1,7 @@
-.idea
-src/github.com
-bin
-pkg
-src/entityidws/service_test.yml
-env.*
-buildtag.build-0
+/.idea
+/src/github.com
+/bin
+/pkg
+/src/entityidws/service_test.yml
+/env.*
+/buildtag.build-0
