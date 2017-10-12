@@ -6,6 +6,7 @@ fi
 cd $GOPATH/src
 rm -fr vendor
 
+go get -u github.com/golang/lint/golint
 go get -u github.com/FiloSottile/gvt
 
 gvt fetch github.com/gorilla/mux
