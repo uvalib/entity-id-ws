@@ -52,7 +52,7 @@ func encodeVersionResponse(w http.ResponseWriter, status int, version string) {
 func encodeRuntimeResponse(w http.ResponseWriter, status int, version string, cpus int, goroutines int, heapcount uint64, alloc uint64) {
 	jsonAttributes(w)
 	w.WriteHeader(status)
-	if err := json.NewEncoder(w).Encode(api.RuntimeResponse{Version: version, CpuCount: cpus, GoRoutineCount: goroutines, ObjectCount: heapcount, AllocatedMemory: alloc}); err != nil {
+	if err := json.NewEncoder(w).Encode(api.RuntimeResponse{Version: version, CPUCount: cpus, GoRoutineCount: goroutines, ObjectCount: heapcount, AllocatedMemory: alloc}); err != nil {
 		log.Fatal(err)
 	}
 }

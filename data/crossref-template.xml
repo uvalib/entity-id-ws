@@ -52,12 +52,12 @@
    <degree>{{ . }}</degree>
    {{- end }}
 
-   {{if .Identifier | or .PublicUrl }}
+   {{if .Identifier | or .PublicURL }}
    <doi_data>
       {{- with .Identifier }}
       <doi>{{ . }}</doi>
       {{- end }}
-      {{- with .PublicUrl }}
+      {{- with .PublicURL }}
       <resource>{{ . }}</resource>
       {{- end }}
    </doi_data>

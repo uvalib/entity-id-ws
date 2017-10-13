@@ -1,102 +1,109 @@
 package main
 
 import (
-	"entityidws/handlers"
-	"github.com/gorilla/mux"
-	"net/http"
+   "entityidws/handlers"
+   "github.com/gorilla/mux"
+   "net/http"
 )
 
-type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc http.HandlerFunc
+type route struct {
+   Name        string
+   Method      string
+   Pattern     string
+   HandlerFunc http.HandlerFunc
 }
 
-type Routes []Route
+type routeSlice []route
 
-var routes = Routes{
+var routes = routeSlice {
 
-	Route{
-		"HealthCheck",
-		"GET",
-		"/healthcheck",
-		handlers.HealthCheck,
-	},
+   route{
+      "HealthCheck",
+      "GET",
+      "/healthcheck",
+      handlers.HealthCheck,
+   },
 
-	Route{
-		"VersionInfo",
-		"GET",
-		"/version",
-		handlers.VersionInfo,
-	},
+   route{
+      "VersionInfo",
+      "GET",
+      "/version",
+      handlers.VersionInfo,
+   },
 
-	Route{
-		"RuntimeInfo",
-		"GET",
-		"/runtime",
-		handlers.RuntimeInfo,
-	},
+   route{
+      "RuntimeInfo",
+      "GET",
+      "/runtime",
+      handlers.RuntimeInfo,
+   },
 
-	Route{
-		"StatsGet",
-		"GET",
-		"/statistics",
-		handlers.StatsGet,
-	},
+   route{
+      "StatsGet",
+      "GET",
+      "/statistics",
+      handlers.StatsGet,
+   },
 
-	Route{
-		"IdLookup",
-		"GET",
-		"/{doi:.*}",
-		handlers.IdLookup,
-	},
+   route{
+      "IDLookup",
+      "GET",
+      "/{doi:.*}",
+      handlers.IDLookup,
+   },
 
-	Route{
-		"IdCreate",
-		"POST",
-		"/{shoulder:.*}",
-		handlers.IdCreate,
-	},
+   route{
+      "IDCreate",
+      "POST",
+      "/{shoulder:.*}",
+      handlers.IDCreate,
+   },
 
-	Route{
-		"IdRevoke",
-		"PUT",
-		"/revoke/{doi:.*}",
-		handlers.IdRevoke,
-	},
+   route{
+      "IDRevoke",
+      "PUT",
+      "/revoke/{doi:.*}",
+      handlers.IDRevoke,
+   },
 
-	Route{
-		"IdUpdate",
-		"PUT",
-		"/{doi:.*}",
-		handlers.IdUpdate,
-	},
+   route{
+      "IDUpdate",
+      "PUT",
+      "/{doi:.*}",
+      handlers.IDUpdate,
+   },
 
-	Route{
-		"IdDelete",
-		"DELETE",
-		"/{doi:.*}",
-		handlers.IdDelete,
-	},
+   route{
+      "IDDelete",
+      "DELETE",
+      "/{doi:.*}",
+      handlers.IDDelete,
+   },
 }
 
+//
+// NewRouter -- build and return the router
+//
 func NewRouter() *mux.Router {
 
-	router := mux.NewRouter().StrictSlash(true)
-	for _, route := range routes {
+   router := mux.NewRouter().StrictSlash(true)
+   for _, route := range routes {
 
-		var handler http.Handler
+      var handler http.Handler
 
-		handler = route.HandlerFunc
-		handler = HandlerLogger(handler, route.Name)
+      handler = route.HandlerFunc
+      handler = HandlerLogger(handler, route.Name)
 
-		router.
-			Methods(route.Method).
-			Path(route.Pattern).
-			Name(route.Name).
-			Handler(handler)
-	}
+      router.
+         Methods(route.Method).
+         Path(route.Pattern).
+         Name(route.Name).
+         Handler(handler)
+   }
 
-	return router
+   return router
 }
+
+//
+// end of file
+//

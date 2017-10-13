@@ -5,7 +5,6 @@ import (
 	"entityidws/api"
 	"entityidws/config"
 	"entityidws/logger"
-	"errors"
 	"fmt"
 	"gopkg.in/xmlpath.v1"
 	"html"
@@ -14,9 +13,9 @@ import (
 	//"path"
 )
 
-const PLACEHOLDER_TBA = "(:tba)"
-const CROSSREF_SCHEMA = "crossref"
-const DATACITE_SCHEMA = "datacite"
+const placeholderTba = "(:tba)"
+const crossrefSchema = "crossref"
+const dataciteSchema = "datacite"
 
 //
 // log the contents of a request record
@@ -25,12 +24,12 @@ func logRequest(request api.Request) {
 
 	if config.Configuration.Debug {
 		fmt.Println("Schema:", request.Schema)
-		fmt.Println("Id:", request.Id)
+		fmt.Println("Id:", request.ID)
 
-		if request.Schema == CROSSREF_SCHEMA {
+		if request.Schema == crossrefSchema {
 			logCrossRefRequest(request.CrossRef)
 		}
-		if request.Schema == DATACITE_SCHEMA {
+		if request.Schema == dataciteSchema {
 			logDataCiteRequest(request.DataCite)
 		}
 	}
@@ -41,7 +40,7 @@ func logRequest(request api.Request) {
 //
 func logCrossRefRequest(request api.CrossRefSchema) {
 
-	fmt.Println("Url:", request.Url)
+	fmt.Println("URL:", request.URL)
 	fmt.Println("Title:", request.Title)
 	fmt.Println("Publisher:", request.Publisher)
 	fmt.Println("CreatorFirstName:", request.CreatorFirstName)
@@ -58,7 +57,7 @@ func logCrossRefRequest(request api.CrossRefSchema) {
 //
 func logDataCiteRequest(request api.DataCiteSchema) {
 
-	fmt.Println("Url:", request.Url)
+	fmt.Println("URL:", request.URL)
 	fmt.Println("Title:", request.Title)
 	fmt.Println("Abstract:", request.Abstract)
 	fmt.Println("Creators:", request.Creators)
@@ -90,16 +89,16 @@ func makeEntityFromBody(body string) api.Request {
 			s := strings.TrimSpace(tokens[1])
 			switch tokens[0] {
 			case "success":
-				response.Id = strings.TrimSpace(strings.Split(s, "|")[0])
+				response.ID = strings.TrimSpace(strings.Split(s, "|")[0])
 			case "_profile":
 				response.Schema = s
-			case DATACITE_SCHEMA:
+			case dataciteSchema:
 				// our payload is a DataCite XML schema, process as appropriate
-				response.Schema = DATACITE_SCHEMA
+				response.Schema = dataciteSchema
 				extractDataCitePayload(&response, s)
-			case CROSSREF_SCHEMA:
+			case crossrefSchema:
 				// our payload is a CrossRef XML schema, process as appropriate
-				response.Schema = CROSSREF_SCHEMA
+				response.Schema = crossrefSchema
 				extractCrossRefPayload(&response, s)
 			}
 		}
@@ -118,12 +117,12 @@ func makeBodyFromRequest(request api.Request, status string) (string, error) {
 
 	// check the schema type and build the body as appropriate
 	switch request.Schema {
-	case CROSSREF_SCHEMA:
+	case crossrefSchema:
 		body, err = makeCrossRefBodyFromEntity(request, status)
-	case DATACITE_SCHEMA:
+	case dataciteSchema:
 		body, err = makeDataCiteBodyFromEntity(request, status)
 	default:
-		return "", errors.New(fmt.Sprintf("unregognized schema name: %s", request.Schema))
+		return "", fmt.Errorf("unregognized schema name: %s", request.Schema)
 	}
 
 	if err != nil {
@@ -151,7 +150,7 @@ func makeDataCiteBodyFromEntity(request api.Request, status string) (string, err
 	var buffer bytes.Buffer
 	addBodyTerm(&buffer, "_profile", "datacite", "")
 	addBodyTerm(&buffer, "_status", status, "reserved")
-	addBodyTerm(&buffer, "_target", request.DataCite.Url, "https://virginia.edu")
+	addBodyTerm(&buffer, "_target", request.DataCite.URL, "https://virginia.edu")
 	addBodyTerm(&buffer, "datacite", xml, "")
 	s := buffer.String()
 	return s, nil
@@ -172,7 +171,7 @@ func makeCrossRefBodyFromEntity(request api.Request, status string) (string, err
 	addBodyTerm(&buffer, "_crossref", "yes", "")
 	addBodyTerm(&buffer, "_profile", "crossref", "")
 	addBodyTerm(&buffer, "_status", status, "reserved")
-	addBodyTerm(&buffer, "_target", request.CrossRef.Url, "https://virginia.edu")
+	addBodyTerm(&buffer, "_target", request.CrossRef.URL, "https://virginia.edu")
 	addBodyTerm(&buffer, "crossref", xml, "")
 	s := buffer.String()
 	return s, nil
@@ -190,9 +189,9 @@ func createDataCiteSchema(request api.Request, status string) (string, error) {
 	}
 
 	// add placeholders if we are reserving a DOI
-	if status == STATUS_RESERVED {
-		request.Id = PLACEHOLDER_TBA
-		request.DataCite.Url = PLACEHOLDER_TBA
+	if status == StatusReserved {
+		request.ID = placeholderTba
+		request.DataCite.URL = placeholderTba
 	}
 
 	// parse the publication date
@@ -214,7 +213,7 @@ func createDataCiteSchema(request api.Request, status string) (string, error) {
 		GeneralType     string
 		ResourceType    string
 	}{
-		request.Id,
+		request.ID,
 		htmlEncodeString(orUnavailable(request.DataCite.Title)),
 		htmlEncodeString(orUnavailable(request.DataCite.Abstract)),
 		htmlEncodePersonArray(api.SortPeople(request.DataCite.Creators)),
@@ -257,9 +256,9 @@ func createCrossRefSchema(request api.Request, status string) (string, error) {
 	}
 
 	// add placeholders if we are reserving a DOI
-	if status == STATUS_RESERVED {
-		request.Id = PLACEHOLDER_TBA
-		request.CrossRef.Url = PLACEHOLDER_TBA
+	if status == StatusReserved {
+		request.ID = placeholderTba
+		request.CrossRef.URL = placeholderTba
 	}
 
 	// parse the publication date
@@ -277,7 +276,7 @@ func createCrossRefSchema(request api.Request, status string) (string, error) {
 		Department  string
 		Degree      string
 		Identifier  string
-		PublicUrl   string
+		PublicURL   string
 	}{htmlEncodeString(request.CrossRef.CreatorFirstName),
 		htmlEncodeString(request.CrossRef.CreatorLastName),
 		htmlEncodeString(request.CrossRef.CreatorInstitution),
@@ -287,8 +286,8 @@ func createCrossRefSchema(request api.Request, status string) (string, error) {
 		DD,
 		htmlEncodeString(request.CrossRef.CreatorDepartment),
 		htmlEncodeString(request.CrossRef.PublicationMilestone),
-		request.Id,
-		request.CrossRef.Url}
+		request.ID,
+		request.CrossRef.URL}
 
 	var buffer bytes.Buffer
 	err = t.Execute(&buffer, data)
@@ -322,8 +321,8 @@ func extractDataCitePayload(payload *api.Request, xml string) {
 	// pull out the data from the XML schema
 	//
 	val := extractStringFromSchema(xmlroot, "/resource/identifier")
-	if val != PLACEHOLDER_TBA {
-		payload.Id = val
+	if val != placeholderTba {
+		payload.ID = val
 	}
 
 	payload.DataCite.Title = extractStringFromSchema(xmlroot, "/resource/titles/title")
@@ -356,12 +355,12 @@ func extractCrossRefPayload(payload *api.Request, xml string) {
 	// pull out the data from the XML schema
 	//
 	val := extractStringFromSchema(xmlroot, "/dissertation/doi_data/doi")
-	if val != PLACEHOLDER_TBA {
-		payload.Id = val
+	if val != placeholderTba {
+		payload.ID = val
 	}
 	val = extractStringFromSchema(xmlroot, "/dissertation/doi_data/resource")
-	if val != PLACEHOLDER_TBA {
-		payload.CrossRef.Url = val
+	if val != placeholderTba {
+		payload.CrossRef.URL = val
 	}
 	payload.CrossRef.Title = extractStringFromSchema(xmlroot, "/dissertation/titles/title")
 	payload.CrossRef.CreatorFirstName = extractStringFromSchema(xmlroot, "/dissertation/person_name/given_name")
@@ -488,7 +487,7 @@ func extractPersonListFromSchema(xmlroot *xmlpath.Node, xpath string) []api.Pers
 	path := xmlpath.MustCompile(xpath)
 	iter := path.Iter(xmlroot)
 	for iter.Next() {
-		found += 1
+		found++
 	}
 	if found > 0 {
 		for i := 0; i < found; i++ {
