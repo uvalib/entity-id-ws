@@ -25,10 +25,10 @@ RUNNER=scripts/entry.sh
 build: build-darwin build-linux
 
 build-darwin:
-	GOPATH=$(GOPATH) GOOS=darwin $(GOBUILD) -a -o $(BIN)/$(BASE_NAME).darwin $(SRC_TREE)
+	GOPATH=$(GOPATH) GOOS=darwin GOARCH=amd64 $(GOBUILD) -a -o $(BIN)/$(BASE_NAME).darwin $(SRC_TREE)
 
 build-linux:
-	GOPATH=$(GOPATH) CGO_ENABLED=0 GOOS=linux $(GOBUILD) -a -installsuffix cgo -o $(BIN)/$(BASE_NAME).linux $(SRC_TREE)
+	GOPATH=$(GOPATH) CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -a -installsuffix cgo -o $(BIN)/$(BASE_NAME).linux $(SRC_TREE)
 
 test:
 	GOPATH=$(GOPATH) $(GOTEST) -v $(SRC_TREE)/tests $(if $(TEST),-run $(TEST),)
