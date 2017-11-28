@@ -1,20 +1,20 @@
 package handlers
 
 import (
-   "path/filepath"
-   "strings"
+	"path/filepath"
+	"strings"
 )
 
 //
 // Version -- get the version information
 //
 func Version() string {
-   files, _ := filepath.Glob("buildtag.*")
-   if len(files) == 1 {
-      return strings.Replace(files[0], "buildtag.", "", 1)
-   }
+	files, _ := filepath.Glob("buildtag.*")
+	if len(files) == 1 {
+		return strings.Replace(files[0], "buildtag.", "", 1)
+	}
 
-   return "unknown"
+	return "unknown"
 }
 
 //
