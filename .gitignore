@@ -2,6 +2,6 @@
 /src/github.com
 /bin
 /pkg
-/src/entityidws/service_test.yml
+/src/entityidws/tests/service_test.yml
 /env.*
 /buildtag.build-0
