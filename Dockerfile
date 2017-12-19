@@ -7,7 +7,7 @@ RUN apk update && apk upgrade && apk add bash tzdata ca-certificates
 RUN addgroup webservice && adduser webservice -G webservice -D
 
 # set the timezone appropriatly
-ENV TZ=EST5EDT
+ENV TZ=UTC
 RUN cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Specify home 
