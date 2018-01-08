@@ -1,24 +1,24 @@
 # set blank options variables
-EZIDURL_OPT=""
-EZIDUSER_OPT=""
-EZIDPASSWD_OPT=""
+IDSERVICE_URL_OPT=""
+IDSERVICE_USER_OPT=""
+IDSERVICE_PASSWD_OPT=""
 TOKENURL_OPT=""
 TIMEOUT_OPT=""
 DEBUG_OPT=""
 
-# EZID endpoint URL
-if [ -n "$EZID_URL" ]; then
-   EZIDURL_OPT="--ezidurl $EZID_URL"
+# ID service endpoint URL
+if [ -n "$ID_SERVICE_URL" ]; then
+   IDSERVICE_URL_OPT="--idserviceurl $ID_SERVICE_URL"
 fi
 
-# EZID user name
-if [ -n "$EZID_USER" ]; then
-   EZIDUSER_OPT="--eziduser $EZID_USER"
+# ID service user name
+if [ -n "$ID_SERVICE_USER" ]; then
+   IDSERVICE_USER_OPT="--idserviceuser $ID_SERVICE_USER"
 fi
 
-# EZID password
-if [ -n "$EZID_PASSWD" ]; then
-   EZIDPASSWD_OPT="--ezidpassword $EZID_PASSWD"
+# ID service password
+if [ -n "$ID_SERVICE_PASSWD" ]; then
+   IDSERVICE_PASSWD_OPT="--idservicepasswd $ID_SERVICE_PASSWD"
 fi
 
 # token authentication service URL
@@ -36,7 +36,7 @@ if [ -n "$ENTITYID_DEBUG" ]; then
    DEBUG_OPT="--debug"
 fi
 
-bin/entity-id-ws $EZIDURL_OPT $EZIDUSER_OPT $EZIDPASSWD_OPT $TOKENURL_OPT $TIMEOUT_OPT $DEBUG_OPT
+bin/entity-id-ws $IDSERVICE_URL_OPT $IDSERVICE_USER_OPT $IDSERVICE_PASSWD_OPT $TOKENURL_OPT $TIMEOUT_OPT $DEBUG_OPT
 
 #
 # end of file

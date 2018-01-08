@@ -29,7 +29,7 @@ const StatusUnavailable = "unavailable|withdrawn by Library"
 func GetDoi(doi string) (api.Request, int) {
 
 	// construct target URL
-	url := fmt.Sprintf("%s/id/%s", config.Configuration.EzidServiceURL, doi)
+	url := fmt.Sprintf("%s/id/%s", config.Configuration.IDServiceURL, doi)
 
 	// issue the request
 	start := time.Now()
@@ -70,7 +70,7 @@ func CreateDoi(shoulder string, request api.Request, status string) (api.Request
 	logRequest(request)
 
 	// construct target URL
-	url := fmt.Sprintf("%s/shoulder/%s", config.Configuration.EzidServiceURL, shoulder)
+	url := fmt.Sprintf("%s/shoulder/%s", config.Configuration.IDServiceURL, shoulder)
 
 	// build the request body
 	requestBody, err := makeBodyFromRequest(request, status)
@@ -85,7 +85,7 @@ func CreateDoi(shoulder string, request api.Request, status string) (api.Request
 	start := time.Now()
 	resp, responseBody, errs := gorequest.New().
 		SetDebug(config.Configuration.Debug).
-		SetBasicAuth(config.Configuration.EzidUser, config.Configuration.EzidPassphrase).
+		SetBasicAuth(config.Configuration.IDServiceUser, config.Configuration.IDServicePassphrase).
 		Post(url).
 		Send(requestBody).
 		Timeout(time.Duration(config.Configuration.Timeout)*time.Second).
@@ -124,7 +124,7 @@ func UpdateDoi(request api.Request, status string) int {
 	logRequest(request)
 
 	// construct target URL
-	url := fmt.Sprintf("%s/id/%s", config.Configuration.EzidServiceURL, request.ID)
+	url := fmt.Sprintf("%s/id/%s", config.Configuration.IDServiceURL, request.ID)
 
 	// build the request body
 	requestBody, err := makeBodyFromRequest(request, status)
@@ -139,7 +139,7 @@ func UpdateDoi(request api.Request, status string) int {
 	start := time.Now()
 	resp, responseBody, errs := gorequest.New().
 		SetDebug(config.Configuration.Debug).
-		SetBasicAuth(config.Configuration.EzidUser, config.Configuration.EzidPassphrase).
+		SetBasicAuth(config.Configuration.IDServiceUser, config.Configuration.IDServicePassphrase).
 		Post(url).
 		Send(requestBody).
 		Timeout(time.Duration(config.Configuration.Timeout)*time.Second).
@@ -175,13 +175,13 @@ func UpdateDoi(request api.Request, status string) int {
 func DeleteDoi(doi string) int {
 
 	// construct target URL
-	url := fmt.Sprintf("%s/id/%s", config.Configuration.EzidServiceURL, doi)
+	url := fmt.Sprintf("%s/id/%s", config.Configuration.IDServiceURL, doi)
 
 	// issue the request
 	start := time.Now()
 	resp, responseBody, errs := gorequest.New().
 		SetDebug(config.Configuration.Debug).
-		SetBasicAuth(config.Configuration.EzidUser, config.Configuration.EzidPassphrase).
+		SetBasicAuth(config.Configuration.IDServiceUser, config.Configuration.IDServicePassphrase).
 		Delete(url).
 		Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
 		End()
@@ -214,7 +214,7 @@ func DeleteDoi(doi string) int {
 func GetStatus() int {
 
 	// construct target URL
-	url := fmt.Sprintf("%s/status", config.Configuration.EzidServiceURL)
+	url := fmt.Sprintf("%s/status", config.Configuration.IDServiceURL)
 
 	// issue the request
 	start := time.Now()
