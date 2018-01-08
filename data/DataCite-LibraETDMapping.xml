@@ -1,0 +1,76 @@
+
+<resource xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://datacite.org/schema/kernel-4.1” xsi:schemaLocation="http://datacite.org/schema/kernel-4.1 http://schema.datacite.org/meta/kernel-4.1/metadata.xsd">
+
+<identifier identifierType="DOI”>(:tba)</identifier>
+
+
+<creators>
+<creator>   
+<creatorName>LASTNAME, FIRSTNAME</creatorName>
+<givenName> FIRSTNAME </givenName>
+<familyName> LASTNAME </familyName>
+<!—- nameIdentifier is optional —->
+<nameIdentifier schemeURI="http://orcid.org/" nameIdentifierScheme="ORCID">ORCID - if exists</nameIdentifier>
+<affiliation>DEPARTMENT, INSTITUTION</affiliation>
+</creator>
+</creators>
+
+
+<titles>
+<title>TITLE</title>
+</titles>
+
+<publisher>University of Virginia</publisher>
+<publicationYear>PUBLICATIONDATE, just YYYY</publicationYear>
+
+<!—- subjects block is optional —->
+<subjects>
+<!—- subject is repeatable  —->
+<subject>KEYWORD</subject>
+</subjects>
+
+
+
+<contributors>
+<!—- contributor block is repeatable, use for Advisors; all w/ type RelatedPerson —->
+<contributor contributorType=“RelatedPerson”>
+<contributorName>LASTNAME, FIRSTNAME</contributorName>
+<givenName>FIRSTNAME</givenName>
+<familyName>LASTNAME</familyName>
+
+<!—- affiliation is optional —->
+<affiliation>DEPARTMENT, INSTITUTION</affiliation>
+</contributor>
+</contributors>
+
+
+<dates>
+<!—- date format YYYY-MM-DD, only YYYY is required —->
+<date dateType=“Issued”>PUBLISHED DATE</date>
+</dates>
+
+
+
+<!—- This is set as “Dissertation” —->
+<resourceType resourceTypeGeneral=“Text”>Dissertation</resourceType>
+
+<rightsList>
+<rights>RIGHTS</rights>
+</rightsList>
+
+
+<descriptions>
+<description descriptionType="Abstract">
+ABSTRACT
+</description>
+</descriptions>
+
+<!—- fundingReferences block is optional —->
+<fundingReferences>
+<!—- fundingReference block is repeatable  —->
+<fundingReference>
+<funderName>SPONSORING AGENCY</funderName>
+</fundingReference>
+</fundingReferences>
+
+</resource>
