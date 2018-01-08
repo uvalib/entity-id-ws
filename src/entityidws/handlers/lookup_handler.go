@@ -3,9 +3,10 @@ package handlers
 import (
 	"entityidws/authtoken"
 	"entityidws/config"
-	"entityidws/ezid"
-	"github.com/gorilla/mux"
+	"entityidws/idservice"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 //
@@ -33,7 +34,7 @@ func IDLookup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	entity, status := ezid.GetDoi(doi)
+	entity, status := idservice.GetDoi(doi)
 	encodeDetailsResponse(w, status, entity)
 }
 

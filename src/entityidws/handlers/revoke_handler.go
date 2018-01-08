@@ -3,9 +3,10 @@ package handlers
 import (
 	"entityidws/authtoken"
 	"entityidws/config"
-	"entityidws/ezid"
-	"github.com/gorilla/mux"
+	"entityidws/idservice"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 //
@@ -34,12 +35,12 @@ func IDRevoke(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get the existing metadata
-	entity, status := ezid.GetDoi(doi)
+	entity, status := idservice.GetDoi(doi)
 	if status == http.StatusOK {
 
 		// update the status
 		entity.ID = doi
-		status = ezid.UpdateDoi(entity, ezid.StatusUnavailable)
+		status = idservice.UpdateDoi(entity, idservice.StatusUnavailable)
 	}
 
 	encodeStandardResponse(w, status)

@@ -5,13 +5,14 @@ import (
 	"entityidws/api"
 	"entityidws/authtoken"
 	"entityidws/config"
-	"entityidws/ezid"
+	"entityidws/idservice"
 	"entityidws/logger"
 	"fmt"
-	"github.com/gorilla/mux"
 	"io"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 //
@@ -52,7 +53,7 @@ func IDUpdate(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	request.ID = doi
-	status := ezid.UpdateDoi(request, ezid.StatusPublic)
+	status := idservice.UpdateDoi(request, idservice.StatusPublic)
 	encodeStandardResponse(w, status)
 }
 

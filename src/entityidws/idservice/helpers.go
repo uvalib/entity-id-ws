@@ -1,4 +1,4 @@
-package ezid
+package idservice
 
 import (
 	"bytes"
@@ -6,11 +6,11 @@ import (
 	"entityidws/config"
 	"entityidws/logger"
 	"fmt"
-	"gopkg.in/xmlpath.v1"
 	"html"
 	"strings"
 	"text/template"
 	//"path"
+	"gopkg.in/xmlpath.v1"
 )
 
 const placeholderTba = "(:tba)"

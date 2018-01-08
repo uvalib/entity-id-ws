@@ -3,9 +3,9 @@ package handlers
 import (
 	"entityidws/authtoken"
 	"entityidws/config"
-	"entityidws/ezid"
-	"github.com/gorilla/mux"
+	"entityidws/idservice"
 	"net/http"
+	"github.com/gorilla/mux"
 )
 
 //
@@ -33,7 +33,7 @@ func IDDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	status := ezid.DeleteDoi(doi)
+	status := idservice.DeleteDoi(doi)
 	encodeStandardResponse(w, status)
 }
 

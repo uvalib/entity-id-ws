@@ -5,13 +5,14 @@ import (
 	"entityidws/api"
 	"entityidws/authtoken"
 	"entityidws/config"
-	"entityidws/ezid"
+	"entityidws/idservice"
 	"entityidws/logger"
 	"fmt"
-	"github.com/gorilla/mux"
 	"io"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 //
@@ -51,7 +52,7 @@ func IDCreate(w http.ResponseWriter, r *http.Request) {
 	defer io.Copy(ioutil.Discard, r.Body)
 	defer r.Body.Close()
 
-	entity, status := ezid.CreateDoi(shoulder, request, ezid.StatusReserved)
+	entity, status := idservice.CreateDoi(shoulder, request, idservice.StatusReserved)
 	encodeDetailsResponse(w, status, entity)
 }
 

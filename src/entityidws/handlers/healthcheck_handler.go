@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"entityidws/ezid"
+	"entityidws/idservice"
 	"net/http"
 )
 
@@ -14,7 +14,7 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	Statistics.RequestCount++
 	Statistics.HeartbeatCount++
 
-	status := ezid.GetStatus()
+	status := idservice.GetStatus()
 	message := ""
 	encodeHealthCheckResponse(w, status, message)
 }

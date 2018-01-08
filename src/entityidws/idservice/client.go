@@ -1,15 +1,16 @@
-package ezid
+package idservice
 
 import (
 	"entityidws/api"
 	"entityidws/config"
 	"entityidws/logger"
 	"fmt"
-	"github.com/parnurzeal/gorequest"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/parnurzeal/gorequest"
 )
 
 // status for the EZID objects

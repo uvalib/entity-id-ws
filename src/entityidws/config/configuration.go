@@ -31,7 +31,7 @@ func loadConfig() Config {
 
 	// process command line flags and setup configuration
 	flag.StringVar(&c.ServicePort, "port", "8080", "The service listen port")
-	flag.StringVar(&c.IDServiceURL, "idserviceurl", "https://ezid.cdlib.org", "The ID service URL")
+	flag.StringVar(&c.IDServiceURL, "idserviceurl", "https://not.configured.org", "The ID service URL")
 	flag.StringVar(&c.IDServiceUser, "idserviceuser", "default", "The ID service username")
 	flag.StringVar(&c.IDServicePassphrase, "idservicepasswd", "default", "The ID service passphrase")
 	flag.StringVar(&c.AuthTokenEndpoint, "tokenauth", "http://docker1.lib.virginia.edu:8200", "The token authentication endpoint")
