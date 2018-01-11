@@ -6,6 +6,7 @@ import (
 	"testing"
 )
 
+/*
 func TestGetCrossRef(t *testing.T) {
 
 	doi := createGoodDoi(crossrefSchema, t)
@@ -27,6 +28,7 @@ func TestGetCrossRef(t *testing.T) {
 	}
 	verifyCrossRefSchema(response.CrossRef, t)
 }
+*/
 
 func TestGetDataCite(t *testing.T) {
 

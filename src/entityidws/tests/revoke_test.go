@@ -6,6 +6,7 @@ import (
 	"testing"
 )
 
+/*
 func TestRevokeCrossRef(t *testing.T) {
 
 	expected := http.StatusOK
@@ -23,6 +24,7 @@ func TestRevokeCrossRef(t *testing.T) {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 }
+*/
 
 func TestRevokeDataSite(t *testing.T) {
 
@@ -42,10 +44,11 @@ func TestRevokeDataSite(t *testing.T) {
 	}
 }
 
+/*
 func TestRevokeBadSchema(t *testing.T) {
 
 	expected := http.StatusBadRequest
-	doi := createGoodDoi(crossrefSchema, t)
+	doi := createGoodDoi(dataciteSchema, t)
 	entity := createTestRequest(badSchema)
 	entity.ID = doi
 
@@ -59,6 +62,7 @@ func TestRevokeBadSchema(t *testing.T) {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 }
+*/
 
 func TestRevokeEmptyId(t *testing.T) {
 	expected := http.StatusBadRequest

@@ -6,6 +6,7 @@ import (
 	"testing"
 )
 
+/*
 func TestUpdateCrossRef(t *testing.T) {
 
 	doi := createGoodDoi(crossrefSchema, t)
@@ -18,6 +19,7 @@ func TestUpdateCrossRef(t *testing.T) {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 }
+*/
 
 func TestUpdateDataCite(t *testing.T) {
 
@@ -34,7 +36,7 @@ func TestUpdateDataCite(t *testing.T) {
 
 func TestUpdateBadSchema(t *testing.T) {
 
-	doi := createGoodDoi(crossrefSchema, t)
+	doi := createGoodDoi(dataciteSchema, t)
 	entity := createTestRequest(badSchema)
 	entity.ID = doi
 
@@ -46,7 +48,7 @@ func TestUpdateBadSchema(t *testing.T) {
 }
 
 func TestUpdateEmptyId(t *testing.T) {
-	entity := createTestRequest(crossrefSchema)
+	entity := createTestRequest(dataciteSchema)
 	entity.ID = empty
 	expected := http.StatusBadRequest
 	status := client.Update(cfg.Endpoint, entity, goodToken)
@@ -56,7 +58,7 @@ func TestUpdateEmptyId(t *testing.T) {
 }
 
 func TestUpdateBadId(t *testing.T) {
-	entity := createTestRequest(crossrefSchema)
+	entity := createTestRequest(dataciteSchema)
 	entity.ID = badDoi
 	expected := http.StatusBadRequest
 	status := client.Update(cfg.Endpoint, entity, goodToken)
@@ -66,7 +68,7 @@ func TestUpdateBadId(t *testing.T) {
 }
 
 func TestUpdateEmptyToken(t *testing.T) {
-	entity := createTestRequest(crossrefSchema)
+	entity := createTestRequest(dataciteSchema)
 	entity.ID = plausableDoi
 	expected := http.StatusBadRequest
 	status := client.Update(cfg.Endpoint, entity, empty)
@@ -76,7 +78,7 @@ func TestUpdateEmptyToken(t *testing.T) {
 }
 
 func TestUpdateBadToken(t *testing.T) {
-	entity := createTestRequest(crossrefSchema)
+	entity := createTestRequest(dataciteSchema)
 	entity.ID = plausableDoi
 	expected := http.StatusForbidden
 	status := client.Update(cfg.Endpoint, entity, badToken)
