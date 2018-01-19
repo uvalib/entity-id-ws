@@ -9,23 +9,25 @@
     {{if .Creators }}
     <creators>
        {{range $element := .Creators }}
-       <creator>
-          {{if $element.FirstName | or $element.LastName }}
-          <creatorName>{{ $element.LastName }}, {{ $element.FirstName }}</creatorName>
-          {{ end }}
-          {{if $element.FirstName }}
-          <givenName>{{ $element.FirstName }}</givenName>
-          {{ end }}
-          {{if $element.LastName }}
-          <familyName>{{ $element.LastName }}</familyName>
-          {{ end }}
-          {{if false }}
-          <nameIdentifier schemeURI="http://orcid.org/" nameIdentifierScheme="ORCID">{{ $element.Orcid }}</nameIdentifier>
-          {{ end }}
-          {{if $element.Department | and $element.Institution }}
-          <affiliation>{{ $element.Department }}, {{ $element.Institution }}</affiliation>
-          {{ end }}
-       </creator>
+           {{if $element.FirstName | or $element.LastName }}
+           <creator>
+              {{if $element.FirstName | or $element.LastName }}
+              <creatorName>{{ $element.LastName }}, {{ $element.FirstName }}</creatorName>
+              {{ end }}
+              {{if $element.FirstName }}
+              <givenName>{{ $element.FirstName }}</givenName>
+              {{ end }}
+              {{if $element.LastName }}
+              <familyName>{{ $element.LastName }}</familyName>
+              {{ end }}
+              {{if false }}
+              <nameIdentifier schemeURI="http://orcid.org/" nameIdentifierScheme="ORCID">{{ $element.Orcid }}</nameIdentifier>
+              {{ end }}
+              {{if $element.Department | or $element.Institution }}
+              <affiliation>{{ $element.Department }}, {{ $element.Institution }}</affiliation>
+              {{ end }}
+           </creator>
+           {{ end }}
        {{ end }}
     </creators>
     {{ end }}
@@ -55,20 +57,22 @@
     {{if .Contributors }}
     <contributors>
       {{range $element := .Contributors }}
-       <contributor contributorType="Other">
           {{if $element.FirstName | or $element.LastName }}
-          <contributorName>{{ $element.LastName }}, {{ $element.FirstName }}</contributorName>
-          {{ end }}
-          {{if $element.FirstName }}
-          <givenName>{{ $element.FirstName }}</givenName>
-          {{ end }}
-          {{if $element.LastName }}
-          <familyName>{{ $element.LastName }}</familyName>
-          {{ end }}
-          {{if $element.Institution }}
-          <affiliation>{{ $element.Institution }}</affiliation>
-          {{ end }}
-       </contributor>
+           <contributor contributorType="Other">
+              {{if $element.FirstName | or $element.LastName }}
+              <contributorName>{{ $element.LastName }}, {{ $element.FirstName }}</contributorName>
+              {{ end }}
+              {{if $element.FirstName }}
+              <givenName>{{ $element.FirstName }}</givenName>
+              {{ end }}
+              {{if $element.LastName }}
+              <familyName>{{ $element.LastName }}</familyName>
+              {{ end }}
+              {{if $element.Institution }}
+              <affiliation>{{ $element.Institution }}</affiliation>
+              {{ end }}
+           </contributor>
+           {{ end }}
        {{ end }}
     </contributors>
     {{ end }}
