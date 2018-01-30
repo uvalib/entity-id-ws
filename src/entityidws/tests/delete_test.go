@@ -6,6 +6,7 @@ import (
 	"testing"
 )
 
+/*
 func TestDeleteCrossRef(t *testing.T) {
 	expected := http.StatusOK
 	doi := createGoodDoi(crossrefSchema, t)
@@ -14,6 +15,7 @@ func TestDeleteCrossRef(t *testing.T) {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 }
+*/
 
 func TestDeleteDataCite(t *testing.T) {
 	expected := http.StatusOK
