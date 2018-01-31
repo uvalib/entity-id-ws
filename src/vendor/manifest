@@ -146,7 +146,7 @@
 			"vcs": "git",
 			"revision": "e19ae1496984b1c655b8044a65c0300a3c878dd3",
 			"branch": "master",
-			"path": "secure/bidirule",
+			"path": "/secure/bidirule",
 			"notests": true
 		},
 		{
@@ -164,7 +164,7 @@
 			"vcs": "git",
 			"revision": "e19ae1496984b1c655b8044a65c0300a3c878dd3",
 			"branch": "master",
-			"path": "/unicode/bidi",
+			"path": "unicode/bidi",
 			"notests": true
 		},
 		{
