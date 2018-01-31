@@ -87,6 +87,11 @@ var routes = routeSlice{
 func NewRouter() *mux.Router {
 
 	router := mux.NewRouter().StrictSlash(true)
+
+	// add the route for the expvars endpoint
+	router.Handle("/debug/vars", http.DefaultServeMux )
+
+	// then add the remaining routes
 	for _, route := range routes {
 
 		var handler http.Handler
@@ -100,9 +105,6 @@ func NewRouter() *mux.Router {
 			Name(route.Name).
 			Handler(handler)
 	}
-
-	// add the route for the expvars endpoint
-	router.Handle("/debug/vars", http.DefaultServeMux )
 
 	return router
 }
