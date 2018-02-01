@@ -41,7 +41,7 @@ func main() {
       doi := scanner.Text( )
       status := client.Revoke( cfg.Endpoint, doi, cfg.Token )
       if status != expected {
-         fmt.Printf("Expected %v, got %v\n", expected, status)
+         fmt.Printf("ERROR: revoking %s. Expected %v, got %v\n", doi, expected, status)
          os.Exit( status )
       }
 

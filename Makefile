@@ -49,6 +49,7 @@ clean:
 tools:
 	GOPATH=$(GOPATH) GOOS=darwin GOARCH=amd64 $(GOBUILD) -a -o $(BIN)/mint $(SRC_TREE)/tools/mint
 	GOPATH=$(GOPATH) GOOS=darwin GOARCH=amd64 $(GOBUILD) -a -o $(BIN)/revoke $(SRC_TREE)/tools/revoke
+	GOPATH=$(GOPATH) GOOS=darwin GOARCH=amd64 $(GOBUILD) -a -o $(BIN)/update $(SRC_TREE)/tools/update
 
 run:
 	rm -f $(BIN)/$(BASE_NAME)

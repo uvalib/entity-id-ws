@@ -8,14 +8,13 @@ import (
    "net/http"
    "entityidws/client"
    "fmt"
+   "bufio"
    "entityidws/api"
-   "strconv"
 )
 
 type testConfig struct {
    Endpoint string
    Token    string
-   Shoulder string
 }
 
 var cfg = loadConfig()
@@ -23,23 +22,32 @@ var cfg = loadConfig()
 func main() {
 
    if len( os.Args ) == 1 {
-      fmt.Printf( "Mint a new block of DOI's\n" )
-      fmt.Printf( "use: %s <count>\n", os.Args[ 0 ] )
+      fmt.Printf( "Update metadata for a set of DOI's\n" )
+      fmt.Printf( "use: %s <file>\n", os.Args[ 0 ] )
       os.Exit( 0 )
    }
 
-   count, _ := strconv.Atoi( os.Args[ 1 ] )
-   for current := 0; current < count; current ++ {
+   file, err := os.Open( os.Args[ 1 ] )
+   if err != nil {
+      fmt.Printf("%s\n", err )
+      os.Exit( 1 )
+   }
 
+   defer file.Close()
+   scanner := bufio.NewScanner( file )
+
+   for scanner.Scan( ) {
       expected := http.StatusOK
 
-      status, entity := client.Create( cfg.Endpoint, cfg.Shoulder, api.Request{ Schema: "datacite" }, cfg.Token )
+      doi := scanner.Text( )
+      entity := api.Request{ ID: doi, Schema: "datacite", DataCite: api.DataCiteSchema{ Title: "The title" } }
+      status := client.Update( cfg.Endpoint, entity, cfg.Token )
       if status != expected {
-         fmt.Printf("ERROR minting. Expected %v, got %v\n", expected, status)
+         fmt.Printf("ERROR: updating %s. Expected %v, got %v\n", doi, expected, status)
          os.Exit( status )
       }
 
-      fmt.Printf( "%03d -> %s\n", current + 1, entity.ID )
+      fmt.Printf( "Updated %s\n", doi )
 
    }
    os.Exit( 0 )
@@ -47,7 +55,7 @@ func main() {
 
 func loadConfig() testConfig {
 
-   data, err := ioutil.ReadFile("src/entityidws/tools/mint/config.yml")
+   data, err := ioutil.ReadFile("src/entityidws/tools/revoke/config.yml")
    if err != nil {
       log.Fatal(err)
    }
@@ -59,7 +67,6 @@ func loadConfig() testConfig {
 
    fmt.Printf("endpoint [%s]\n", c.Endpoint )
    fmt.Printf("token    [%s]\n", c.Token )
-   fmt.Printf("shoulder [%s]\n", c.Shoulder )
 
    return c
 }
