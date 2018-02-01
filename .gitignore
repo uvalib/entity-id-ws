@@ -3,5 +3,6 @@
 /bin
 /pkg
 /src/entityidws/tests/service_test.yml
+/src/entityidws/tools/*/config.yml
 /env.*
 /buildtag.build-0

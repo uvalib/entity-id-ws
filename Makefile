@@ -46,6 +46,10 @@ clean:
 	GOPATH=$(GOPATH) $(GOCLEAN)
 	rm -f $(BIN)/$(BASE_NAME).*
 
+tools:
+	GOPATH=$(GOPATH) GOOS=darwin GOARCH=amd64 $(GOBUILD) -a -o $(BIN)/mint $(SRC_TREE)/tools/mint
+	GOPATH=$(GOPATH) GOOS=darwin GOARCH=amd64 $(GOBUILD) -a -o $(BIN)/revoke $(SRC_TREE)/tools/revoke
+
 run:
 	rm -f $(BIN)/$(BASE_NAME)
 	ln -s $(BIN)/$(BASE_NAME).darwin $(BIN)/$(BASE_NAME)
