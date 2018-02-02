@@ -10,6 +10,7 @@ import (
    "fmt"
    "entityidws/api"
    "strconv"
+   "flag"
 )
 
 type testConfig struct {
@@ -24,9 +25,13 @@ func main() {
 
    if len( os.Args ) == 1 {
       fmt.Printf( "Mint a new block of DOI's\n" )
-      fmt.Printf( "use: %s <count>\n", os.Args[ 0 ] )
+      fmt.Printf( "use: %s <count> [-ignore]\n", os.Args[ 0 ] )
       os.Exit( 0 )
    }
+
+   ignoreError := false
+   flag.BoolVar( &ignoreError, "ignore", true, "Ignore errors")
+   flag.Parse( )
 
    count, _ := strconv.Atoi( os.Args[ 1 ] )
    for current := 0; current < count; current ++ {
@@ -34,13 +39,14 @@ func main() {
       expected := http.StatusOK
 
       status, entity := client.Create( cfg.Endpoint, cfg.Shoulder, api.Request{ Schema: "datacite" }, cfg.Token )
-      if status != expected {
+      if status == expected {
+         fmt.Printf( "%03d -> %s\n", current + 1, entity.ID )
+      } else {
          fmt.Printf("ERROR minting. Expected %v, got %v\n", expected, status)
-         os.Exit( status )
+         if ignoreError == false {
+            os.Exit(status)
+         }
       }
-
-      fmt.Printf( "%03d -> %s\n", current + 1, entity.ID )
-
    }
    os.Exit( 0 )
 }
@@ -58,7 +64,7 @@ func loadConfig() testConfig {
    }
 
    fmt.Printf("endpoint [%s]\n", c.Endpoint )
-   fmt.Printf("token    [%s]\n", c.Token )
+   //fmt.Printf("token    [%s]\n", c.Token )
    fmt.Printf("shoulder [%s]\n", c.Shoulder )
 
    return c

@@ -10,6 +10,7 @@ import (
    "fmt"
    "bufio"
    "entityidws/api"
+   "flag"
 )
 
 type testConfig struct {
@@ -23,9 +24,13 @@ func main() {
 
    if len( os.Args ) == 1 {
       fmt.Printf( "Update metadata for a set of DOI's\n" )
-      fmt.Printf( "use: %s <file>\n", os.Args[ 0 ] )
+      fmt.Printf( "use: %s <file> [-ignore]\n", os.Args[ 0 ] )
       os.Exit( 0 )
    }
+
+   ignoreError := false
+   flag.BoolVar( &ignoreError, "ignore", true, "Ignore errors")
+   flag.Parse( )
 
    file, err := os.Open( os.Args[ 1 ] )
    if err != nil {
@@ -42,13 +47,14 @@ func main() {
       doi := scanner.Text( )
       entity := api.Request{ ID: doi, Schema: "datacite", DataCite: api.DataCiteSchema{ Title: "The title" } }
       status := client.Update( cfg.Endpoint, entity, cfg.Token )
-      if status != expected {
+      if status == expected {
+         fmt.Printf( "Updated %s\n", doi )
+      } else {
          fmt.Printf("ERROR: updating %s. Expected %v, got %v\n", doi, expected, status)
-         os.Exit( status )
+         if ignoreError == false {
+            os.Exit(status)
+         }
       }
-
-      fmt.Printf( "Updated %s\n", doi )
-
    }
    os.Exit( 0 )
 }
@@ -66,7 +72,7 @@ func loadConfig() testConfig {
    }
 
    fmt.Printf("endpoint [%s]\n", c.Endpoint )
-   fmt.Printf("token    [%s]\n", c.Token )
+   //fmt.Printf("token    [%s]\n", c.Token )
 
    return c
 }
