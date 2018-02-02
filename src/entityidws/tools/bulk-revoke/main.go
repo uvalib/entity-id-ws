@@ -23,15 +23,15 @@ func main() {
 
    if len( os.Args ) == 1 {
       fmt.Printf( "Revoke a set of DOI's\n" )
-      fmt.Printf( "use: %s <file> [-ignore]\n", os.Args[ 0 ] )
+      fmt.Printf( "use: %s [-ignore] <file>\n", os.Args[ 0 ] )
       os.Exit( 0 )
    }
 
-   ignoreError := false
-   flag.BoolVar( &ignoreError, "ignore", true, "Ignore errors")
+   var ignoreError bool
+   flag.BoolVar( &ignoreError, "ignore", false, "Ignore errors")
    flag.Parse( )
 
-   file, err := os.Open( os.Args[ 1 ] )
+   file, err := os.Open( os.Args[ len( os.Args ) - 1 ] )
    if err != nil {
       fmt.Printf("%s\n", err )
       os.Exit( 1 )

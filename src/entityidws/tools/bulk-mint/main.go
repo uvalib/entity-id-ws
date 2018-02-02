@@ -25,20 +25,21 @@ func main() {
 
    if len( os.Args ) == 1 {
       fmt.Printf( "Mint a new block of DOI's\n" )
-      fmt.Printf( "use: %s <count> [-ignore]\n", os.Args[ 0 ] )
+      fmt.Printf( "use: %s [-ignore] <count>\n", os.Args[ 0 ] )
       os.Exit( 0 )
    }
 
-   ignoreError := false
-   flag.BoolVar( &ignoreError, "ignore", true, "Ignore errors")
+   var ignoreError bool
+   flag.BoolVar( &ignoreError, "ignore", false, "Ignore errors")
    flag.Parse( )
 
-   count, _ := strconv.Atoi( os.Args[ 1 ] )
+   count, _ := strconv.Atoi( os.Args[ len( os.Args ) - 1 ] )
    for current := 0; current < count; current ++ {
 
       expected := http.StatusOK
 
-      status, entity := client.Create( cfg.Endpoint, cfg.Shoulder, api.Request{ Schema: "datacite" }, cfg.Token )
+      request := api.Request{ Schema: "datacite", DataCite: makeMintPayload( ) }
+      status, entity := client.Create( cfg.Endpoint, cfg.Shoulder, request, cfg.Token )
       if status == expected {
          fmt.Printf( "%03d -> %s\n", current + 1, entity.ID )
       } else {
@@ -49,6 +50,27 @@ func main() {
       }
    }
    os.Exit( 0 )
+}
+
+func makeMintPayload( ) api.DataCiteSchema {
+
+   person1 := api.Person{FirstName: "John", LastName: "Smith", Department: "Biology", Institution: "UVa"}
+   person2 := api.Person{FirstName: "Joe", LastName: "Blow", Department: "History", Institution: "UVa"}
+
+   return api.DataCiteSchema{
+      Title:           "my datacite title",
+      URL:             "http://google.com",
+      Abstract:        "my interesting abstract",
+      Creators:        []api.Person{person1},
+      Contributors:    []api.Person{person2},
+      Rights:          "All rights reserved",
+      Keywords:        []string{"keyword1", "keyword2"},
+      Sponsors:        []string{"sponsor1", "sponsor2"},
+      Publisher:       "UVa Press",
+      PublicationDate: "2002-02-02",
+      GeneralType:     "Sound",
+      ResourceType:    "Audio",
+   }
 }
 
 func loadConfig() testConfig {
