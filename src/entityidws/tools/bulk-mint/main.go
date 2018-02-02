@@ -47,7 +47,7 @@ func main() {
 
 func loadConfig() testConfig {
 
-   data, err := ioutil.ReadFile("src/entityidws/tools/mint/config.yml")
+   data, err := ioutil.ReadFile("src/entityidws/tools/bulk-mint/config.yml")
    if err != nil {
       log.Fatal(err)
    }

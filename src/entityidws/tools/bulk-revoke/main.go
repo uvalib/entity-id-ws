@@ -53,7 +53,7 @@ func main() {
 
 func loadConfig() testConfig {
 
-   data, err := ioutil.ReadFile("src/entityidws/tools/revoke/config.yml")
+   data, err := ioutil.ReadFile("src/entityidws/tools/bulk-revoke/config.yml")
    if err != nil {
       log.Fatal(err)
    }

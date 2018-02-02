@@ -9,7 +9,6 @@ import (
    "entityidws/client"
    "fmt"
    "bufio"
-   "entityidws/api"
 )
 
 type testConfig struct {
@@ -22,7 +21,7 @@ var cfg = loadConfig()
 func main() {
 
    if len( os.Args ) == 1 {
-      fmt.Printf( "Update metadata for a set of DOI's\n" )
+      fmt.Printf( "Delete a set of DOI's\n" )
       fmt.Printf( "use: %s <file>\n", os.Args[ 0 ] )
       os.Exit( 0 )
    }
@@ -40,14 +39,13 @@ func main() {
       expected := http.StatusOK
 
       doi := scanner.Text( )
-      entity := api.Request{ ID: doi, Schema: "datacite", DataCite: api.DataCiteSchema{ Title: "The title" } }
-      status := client.Update( cfg.Endpoint, entity, cfg.Token )
+      status := client.Delete( cfg.Endpoint, doi, cfg.Token )
       if status != expected {
-         fmt.Printf("ERROR: updating %s. Expected %v, got %v\n", doi, expected, status)
+         fmt.Printf("ERROR: deleting %s. Expected %v, got %v\n", doi, expected, status)
          os.Exit( status )
       }
 
-      fmt.Printf( "Updated %s\n", doi )
+      fmt.Printf( "Deleted %s\n", doi )
 
    }
    os.Exit( 0 )
@@ -55,7 +53,7 @@ func main() {
 
 func loadConfig() testConfig {
 
-   data, err := ioutil.ReadFile("src/entityidws/tools/bulk-update/config.yml")
+   data, err := ioutil.ReadFile("src/entityidws/tools/bulk-delete/config.yml")
    if err != nil {
       log.Fatal(err)
    }
