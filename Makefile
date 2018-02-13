@@ -64,6 +64,7 @@ deps:
 	cd $(SRC); $(GOGET) -u github.com/FiloSottile/gvt
 	cd $(SRC); $(GVT) fetch github.com/gorilla/mux
 	cd $(SRC); $(GVT) fetch gopkg.in/xmlpath.v1
+	cd $(SRC); $(GVT) fetch github.com/prometheus/client_golang/prometheus
 	# for tests
 	cd $(SRC); $(GVT) fetch gopkg.in/yaml.v2
 	cd $(SRC); $(GVT) fetch github.com/parnurzeal/gorequest

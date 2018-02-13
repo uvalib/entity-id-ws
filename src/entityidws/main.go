@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	_ "expvar"
 )
 
 func main() {
