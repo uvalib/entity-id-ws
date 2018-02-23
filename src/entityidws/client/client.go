@@ -69,11 +69,11 @@ func VersionCheck(endpoint string) (int, string) {
 }
 
 //
-// RuntimeCheck -- calls the service runtime method
+// MetricsCheck -- calls the service metrics method
 //
-func RuntimeCheck(endpoint string) (int, *api.RuntimeResponse) {
+func MetricsCheck(endpoint string) (int, string) {
 
-	url := fmt.Sprintf("%s/runtime", endpoint)
+	url := fmt.Sprintf("%s/metrics", endpoint)
 	//fmt.Printf( "%s\n", url )
 
 	resp, body, errs := gorequest.New().
@@ -83,19 +83,13 @@ func RuntimeCheck(endpoint string) (int, *api.RuntimeResponse) {
 		End()
 
 	if errs != nil {
-		return http.StatusInternalServerError, nil
+		return http.StatusInternalServerError, ""
 	}
 
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
 
-	r := api.RuntimeResponse{}
-	err := json.Unmarshal([]byte(body), &r)
-	if err != nil {
-		return http.StatusInternalServerError, nil
-	}
-
-	return resp.StatusCode, &r
+	return resp.StatusCode, body
 }
 
 //

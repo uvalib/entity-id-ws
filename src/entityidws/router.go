@@ -34,13 +34,6 @@ var routes = routeSlice{
 	},
 
 	route{
-		"RuntimeInfo",
-		"GET",
-		"/runtime",
-		handlers.RuntimeInfo,
-	},
-
-	route{
 		"StatsGet",
 		"GET",
 		"/statistics",
