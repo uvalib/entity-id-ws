@@ -6,4 +6,5 @@
 /src/entityidws/tests/service_test.yml
 /src/entityidws/tools/*/config.yml
 /env.*
+/scripts/load/env.*
 /buildtag.build-0
