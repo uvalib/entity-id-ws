@@ -31,7 +31,7 @@ build-linux:
 	GOPATH=$(GOPATH) CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -a -installsuffix cgo -o $(BIN)/$(BASE_NAME).linux $(SRC_TREE)
 
 test:
-	GOPATH=$(GOPATH) $(GOTEST) -v $(SRC_TREE)/tests $(if $(TEST),-run $(TEST),)
+	GOPATH=$(GOPATH) GOCACHE=off $(GOTEST) -v $(SRC_TREE)/tests $(if $(TEST),-run $(TEST),)
 
 fmt:
 	GOPATH=$(GOPATH) $(GOFMT) $(SRC_TREE)/...
