@@ -4,8 +4,8 @@ import (
 	"entityidws/authtoken"
 	"entityidws/config"
 	"entityidws/idservice"
-	"net/http"
 	"github.com/gorilla/mux"
+	"net/http"
 )
 
 //

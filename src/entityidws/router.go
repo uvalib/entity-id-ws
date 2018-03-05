@@ -3,9 +3,9 @@ package main
 import (
 	"entityidws/handlers"
 	"github.com/gorilla/mux"
-	"net/http"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"net/http"
 )
 
 type route struct {
@@ -77,14 +77,14 @@ func NewRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 
 	// add the route for the prometheus metrics
-	router.Handle("/metrics", HandlerLogger( promhttp.Handler( ), "promhttp.Handler" ) )
+	router.Handle("/metrics", HandlerLogger(promhttp.Handler(), "promhttp.Handler"))
 
 	// then add the remaining routes
 	for _, route := range routes {
 
 		var handler http.Handler = route.HandlerFunc
 		handler = HandlerLogger(handler, route.Name)
-		handler = prometheus.InstrumentHandler( route.Name, handler )
+		handler = prometheus.InstrumentHandler(route.Name, handler)
 
 		router.
 			Methods(route.Method).
