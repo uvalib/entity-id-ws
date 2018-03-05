@@ -34,13 +34,6 @@ var routes = routeSlice{
 	},
 
 	route{
-		"StatsGet",
-		"GET",
-		"/statistics",
-		handlers.StatsGet,
-	},
-
-	route{
 		"IDLookup",
 		"GET",
 		"/{doi:.*}",

@@ -17,10 +17,6 @@ func IDDelete(w http.ResponseWriter, r *http.Request) {
 	doi := vars["doi"]
 	token := r.URL.Query().Get("auth")
 
-	// update the statistics
-	Statistics.RequestCount++
-	Statistics.DeleteCount++
-
 	// validate inbound parameters
 	if parameterOK(doi) == false || parameterOK(token) == false {
 		encodeStandardResponse(w, http.StatusBadRequest)

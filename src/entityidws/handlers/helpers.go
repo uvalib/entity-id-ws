@@ -49,18 +49,6 @@ func encodeVersionResponse(w http.ResponseWriter, status int, version string) {
 	}
 }
 
-func encodeStatsResponse(w http.ResponseWriter, Statistics api.Statistics) {
-
-	status := http.StatusOK
-
-	jsonAttributes(w)
-	w.WriteHeader(status)
-
-	if err := json.NewEncoder(w).Encode(api.StatisticsResponse{Status: status, Message: http.StatusText(status), Details: Statistics}); err != nil {
-		log.Fatal(err)
-	}
-}
-
 func jsonAttributes(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 }

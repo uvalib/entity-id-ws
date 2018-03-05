@@ -24,10 +24,6 @@ func IDUpdate(w http.ResponseWriter, r *http.Request) {
 	doi := vars["doi"]
 	token := r.URL.Query().Get("auth")
 
-	// update the statistics
-	Statistics.RequestCount++
-	Statistics.UpdateCount++
-
 	// validate inbound parameters
 	if parameterOK(doi) == false || parameterOK(token) == false {
 		encodeStandardResponse(w, http.StatusBadRequest)
