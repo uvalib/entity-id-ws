@@ -122,7 +122,7 @@ func makeBodyFromRequest(request api.Request, status string) (string, error) {
 	case dataciteSchema:
 		body, err = makeDataCiteBodyFromEntity(request, status)
 	default:
-		return "", fmt.Errorf("unregognized schema name: %s", request.Schema)
+		return "", fmt.Errorf("unrecognized schema name: %s", request.Schema)
 	}
 
 	if err != nil {
