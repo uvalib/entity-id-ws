@@ -31,7 +31,7 @@ func IDCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validate the token
-	if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "create", token, config.Configuration.Timeout) == false {
+	if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "create", token, config.Configuration.ServiceTimeout) == false {
 		encodeStandardResponse(w, http.StatusForbidden)
 		return
 	}

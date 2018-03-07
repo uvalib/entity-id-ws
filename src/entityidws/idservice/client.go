@@ -37,7 +37,7 @@ func GetDoi(doi string) (api.Request, int) {
 	resp, responseBody, errs := gorequest.New().
 		SetDebug(config.Configuration.Debug).
 		Get(url).
-		Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
 		End()
 	duration := time.Since(start)
 
@@ -89,7 +89,7 @@ func CreateDoi(shoulder string, request api.Request, status string) (api.Request
 		SetBasicAuth(config.Configuration.IDServiceUser, config.Configuration.IDServicePassphrase).
 		Post(url).
 		Send(requestBody).
-		Timeout(time.Duration(config.Configuration.Timeout)*time.Second).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout)*time.Second).
 		Set("Content-Type", "text/plain").
 		End()
 	duration := time.Since(start)
@@ -143,7 +143,7 @@ func UpdateDoi(request api.Request, status string) int {
 		SetBasicAuth(config.Configuration.IDServiceUser, config.Configuration.IDServicePassphrase).
 		Post(url).
 		Send(requestBody).
-		Timeout(time.Duration(config.Configuration.Timeout)*time.Second).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout)*time.Second).
 		Set("Content-Type", "text/plain").
 		End()
 	duration := time.Since(start)
@@ -184,7 +184,7 @@ func DeleteDoi(doi string) int {
 		SetDebug(config.Configuration.Debug).
 		SetBasicAuth(config.Configuration.IDServiceUser, config.Configuration.IDServicePassphrase).
 		Delete(url).
-		Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
 		End()
 	duration := time.Since(start)
 
@@ -222,7 +222,7 @@ func GetStatus() int {
 	resp, responseBody, errs := gorequest.New().
 		SetDebug(config.Configuration.Debug).
 		Get(url).
-		Timeout(time.Duration(config.Configuration.Timeout) * time.Second).
+		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
 		End()
 	duration := time.Since(start)
 

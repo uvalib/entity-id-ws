@@ -16,7 +16,7 @@ type Config struct {
 	IDServiceUser       string
 	IDServicePassphrase string
 	AuthTokenEndpoint   string
-	Timeout             int
+	ServiceTimeout      int
 	Debug               bool
 }
 
@@ -35,7 +35,7 @@ func loadConfig() Config {
 	flag.StringVar(&c.IDServiceUser, "idserviceuser", "default", "The ID service username")
 	flag.StringVar(&c.IDServicePassphrase, "idservicepasswd", "default", "The ID service passphrase")
 	flag.StringVar(&c.AuthTokenEndpoint, "tokenauth", "http://docker1.lib.virginia.edu:8200", "The token authentication endpoint")
-	flag.IntVar(&c.Timeout, "timeout", 15, "The external service timeout in seconds")
+	flag.IntVar(&c.ServiceTimeout, "timeout", 15, "The external service timeout in seconds")
 	flag.BoolVar(&c.Debug, "debug", false, "Enable debugging")
 
 	flag.Parse()
@@ -45,7 +45,7 @@ func loadConfig() Config {
 	logger.Log(fmt.Sprintf("IDServiceUser:       %s", c.IDServiceUser))
 	logger.Log(fmt.Sprintf("IDServicePassphrase: %s", strings.Repeat("*", len(c.IDServicePassphrase))))
 	logger.Log(fmt.Sprintf("AuthTokenEndpoint    %s", c.AuthTokenEndpoint))
-	logger.Log(fmt.Sprintf("Timeout:             %d", c.Timeout))
+	logger.Log(fmt.Sprintf("ServiceTimeout:      %d", c.ServiceTimeout))
 	logger.Log(fmt.Sprintf("Debug                %t", c.Debug))
 
 	return c
