@@ -20,6 +20,13 @@ type routeSlice []route
 var routes = routeSlice{
 
 	route{
+		"FaveIcon",
+		"GET",
+		"/favicon.ico",
+		handlers.FavIconHandler,
+	},
+
+	route{
 		"HealthCheck",
 		"GET",
 		"/healthcheck",

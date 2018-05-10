@@ -15,7 +15,7 @@ ENV APP_HOME /entity-id-ws
 WORKDIR $APP_HOME
 
 # Create necessary directories
-RUN mkdir -p $APP_HOME/scripts $APP_HOME/bin $APP_HOME/data
+RUN mkdir -p $APP_HOME/scripts $APP_HOME/bin $APP_HOME/data $APP_HOME/assets
 RUN chown -R webservice $APP_HOME && chgrp -R webservice $APP_HOME
 
 # Specify the user
@@ -31,6 +31,7 @@ COPY scripts/entry.sh $APP_HOME/scripts/entry.sh
 COPY bin/entity-id-ws.linux $APP_HOME/bin/entity-id-ws
 COPY data/crossref-template.xml $APP_HOME/data/crossref-template.xml
 COPY data/datacite-template.xml $APP_HOME/data/datacite-template.xml
+COPY assets/* $APP_HOME/assets/
 
 # Add the build tag
 COPY buildtag.* $APP_HOME/
