@@ -9,66 +9,40 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOVET=$(GOCMD) vet
 GOFMT=$(GOCMD) fmt
-GOGET=$(GOCMD) get
-GOPATH=$(shell pwd)
-SRC=$(GOPATH)/src
-VENDOR=$(SRC)/vendor
-GVT=$(GOPATH)/bin/gvt
-LINT=$(GOPATH)/bin/golint
-BIN=$(GOPATH)/bin
+BIN=bin
 
 # project specific definitions
 BASE_NAME=entity-id-ws
 SRC_TREE=entityidws
 RUNNER=scripts/entry.sh
+PACKAGE=github.com/uvalib/$(BASE_NAME)
 
-build: build-darwin build-linux
+all: build-darwin build-linux
 
 build-darwin:
-	GOPATH=$(GOPATH) GOOS=darwin GOARCH=amd64 $(GOBUILD) -a -o $(BIN)/$(BASE_NAME).darwin $(SRC_TREE)
+	GOOS=darwin GOARCH=amd64 $(GOBUILD) -a -o $(BIN)/$(BASE_NAME).darwin $(PACKAGE)/$(SRC_TREE)
 
 build-linux:
-	GOPATH=$(GOPATH) CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -a -installsuffix cgo -o $(BIN)/$(BASE_NAME).linux $(SRC_TREE)
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -a -installsuffix cgo -o $(BIN)/$(BASE_NAME).linux $(PACKAGE)/$(SRC_TREE)
 
 test:
-	GOPATH=$(GOPATH) GOCACHE=off $(GOTEST) -v $(SRC_TREE)/tests $(if $(TEST),-run $(TEST),)
+	$(GOCLEAN) -testcache $(PACKAGE)/...
+	$(GOTEST) -v $(PACKAGE)/$(SRC_TREE)/tests $(if $(TEST),-run $(TEST),)
 
 fmt:
-	GOPATH=$(GOPATH) $(GOFMT) $(SRC_TREE)/...
+	$(GOFMT) $(PACKAGE)/...
 
 vet:
-	GOPATH=$(GOPATH) $(GOVET) $(SRC_TREE)/...
-
-lint:
-	GOPATH=$(GOPATH) $(LINT) $(SRC_TREE)/...
+	$(GOVET) $(PACKAGE)/...
 
 clean:
-	GOPATH=$(GOPATH) $(GOCLEAN)
+	$(GOCLEAN) $(PACKAGE)/...
 	rm -f $(BIN)/$(BASE_NAME).*
 
-tools:
-	GOPATH=$(GOPATH) GOOS=darwin GOARCH=amd64 $(GOBUILD) -a -o $(BIN)/bulk-delete $(SRC_TREE)/tools/bulk-delete
-	GOPATH=$(GOPATH) GOOS=darwin GOARCH=amd64 $(GOBUILD) -a -o $(BIN)/bulk-get $(SRC_TREE)/tools/bulk-get
-	GOPATH=$(GOPATH) GOOS=darwin GOARCH=amd64 $(GOBUILD) -a -o $(BIN)/bulk-mint $(SRC_TREE)/tools/bulk-mint
-	GOPATH=$(GOPATH) GOOS=darwin GOARCH=amd64 $(GOBUILD) -a -o $(BIN)/bulk-revoke $(SRC_TREE)/tools/bulk-revoke
-	GOPATH=$(GOPATH) GOOS=darwin GOARCH=amd64 $(GOBUILD) -a -o $(BIN)/bulk-update $(SRC_TREE)/tools/bulk-update
-
 run:
-	rm -f $(BIN)/$(BASE_NAME)
-	ln -s $(BIN)/$(BASE_NAME).darwin $(BIN)/$(BASE_NAME)
+	cd $(BIN); rm -f $(BASE_NAME)
+	cd $(BIN); ln -s $(BASE_NAME).darwin $(BASE_NAME)
 	$(RUNNER)
-
-deps:
-	rm -fr $(VENDOR)
-	cd $(SRC); GOPATH=$(GOPATH) $(GOGET) -u github.com/golang/lint/golint
-	cd $(SRC); GOPATH=$(GOPATH) $(GOGET) -u github.com/FiloSottile/gvt
-	cd $(SRC); GOPATH=$(GOPATH) $(GOGET) -u github.com/codesenberg/bombardier
-	cd $(SRC); GOPATH=$(GOPATH) $(GVT) fetch github.com/gorilla/mux
-	cd $(SRC); GOPATH=$(GOPATH) $(GVT) fetch gopkg.in/xmlpath.v1
-	cd $(SRC); GOPATH=$(GOPATH) $(GVT) fetch github.com/prometheus/client_golang/prometheus
-	# for tests
-	cd $(SRC); GOPATH=$(GOPATH) $(GVT) fetch gopkg.in/yaml.v2
-	cd $(SRC); GOPATH=$(GOPATH) $(GVT) fetch github.com/parnurzeal/gorequest
 
 #
 # end of file

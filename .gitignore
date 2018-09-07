@@ -1,10 +1,8 @@
 /.idea
-/src/github.com
-/src/golang.org
 /bin
 /pkg
-/src/entityidws/tests/service_test.yml
-/src/entityidws/tools/*/config.yml
+/entityidws/tests/service_test.yml
+/entityidws/tools/*/config.yml
 /env.*
 /scripts/load/env.*
 /buildtag.build-0
