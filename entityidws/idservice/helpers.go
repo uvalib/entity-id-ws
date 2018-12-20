@@ -89,7 +89,7 @@ func makeEntityFromBody(body string) api.Request {
 			s := strings.TrimSpace(tokens[1])
 			switch tokens[0] {
 			case "success":
-				response.ID = strings.TrimSpace(strings.Split(s, "|")[0])
+				response.ID = s
 			case "_profile":
 				response.Schema = s
 			case dataciteSchema:
@@ -310,6 +310,11 @@ func createCrossRefSchema(request api.Request, status string) (string, error) {
 //
 func extractDataCitePayload(payload *api.Request, xml string) {
 
+	if len( xml ) == 0 {
+		logger.Log(fmt.Sprintf("WARNING: encountered unexpected blank XML"))
+		return
+	}
+
 	reader := strings.NewReader(xml)
 	xmlroot, err := xmlpath.Parse(reader)
 	if err != nil {
@@ -343,6 +348,11 @@ func extractDataCitePayload(payload *api.Request, xml string) {
 // extract data from the CrossRef schema
 //
 func extractCrossRefPayload(payload *api.Request, xml string) {
+
+	if len( xml ) == 0 {
+		logger.Log(fmt.Sprintf("WARNING: encountered unexpected blank XML"))
+		return
+	}
 
 	reader := strings.NewReader(xml)
 	xmlroot, err := xmlpath.Parse(reader)
