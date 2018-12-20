@@ -20,7 +20,7 @@ var serviceTimeout = 5
 func HealthCheck(endpoint string) int {
 
 	url := fmt.Sprintf("%s/healthcheck", endpoint)
-	//fmt.Printf( "%s\n", url )
+	//fmt.Printf( "URL: %s\n", url )
 
 	resp, _, errs := gorequest.New().
 		SetDebug(debugHTTP).
@@ -29,6 +29,7 @@ func HealthCheck(endpoint string) int {
 		End()
 
 	if errs != nil {
+		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
 		return http.StatusInternalServerError
 	}
 
@@ -44,7 +45,7 @@ func HealthCheck(endpoint string) int {
 func VersionCheck(endpoint string) (int, string) {
 
 	url := fmt.Sprintf("%s/version", endpoint)
-	//fmt.Printf( "%s\n", url )
+	//fmt.Printf( "URL: %s\n", url )
 
 	resp, body, errs := gorequest.New().
 		SetDebug(debugHTTP).
@@ -53,15 +54,19 @@ func VersionCheck(endpoint string) (int, string) {
 		End()
 
 	if errs != nil {
+		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
 		return http.StatusInternalServerError, ""
 	}
 
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
 
+	//fmt.Printf( "Received BODY: [%s]\n", body )
+
 	r := api.VersionResponse{}
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
+		fmt.Printf( "ERROR: unmarshal (%s) returns %s\n", body, err )
 		return http.StatusInternalServerError, ""
 	}
 
@@ -74,7 +79,7 @@ func VersionCheck(endpoint string) (int, string) {
 func MetricsCheck(endpoint string) (int, string) {
 
 	url := fmt.Sprintf("%s/metrics", endpoint)
-	//fmt.Printf( "%s\n", url )
+	//fmt.Printf( "URL: %s\n", url )
 
 	resp, body, errs := gorequest.New().
 		SetDebug(false).
@@ -83,11 +88,14 @@ func MetricsCheck(endpoint string) (int, string) {
 		End()
 
 	if errs != nil {
+		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
 		return http.StatusInternalServerError, ""
 	}
 
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
+
+	//fmt.Printf( "Received BODY: [%s]\n", body )
 
 	return resp.StatusCode, body
 }
@@ -98,7 +106,7 @@ func MetricsCheck(endpoint string) (int, string) {
 func Get(endpoint string, doi string, token string) (int, *api.Request) {
 
 	url := fmt.Sprintf("%s/%s?auth=%s", endpoint, doi, token)
-	//fmt.Printf( "%s\n", url )
+	//fmt.Printf( "URL: %s\n", url )
 
 	resp, body, errs := gorequest.New().
 		SetDebug(debugHTTP).
@@ -107,15 +115,19 @@ func Get(endpoint string, doi string, token string) (int, *api.Request) {
 		End()
 
 	if errs != nil {
+		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
 		return http.StatusInternalServerError, nil
 	}
 
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
 
+	//fmt.Printf( "Received BODY: [%s]\n", body )
+
 	r := api.StandardResponse{}
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
+		fmt.Printf( "ERROR: unmarshal (%s) returns %s\n", body, err )
 		return http.StatusInternalServerError, nil
 	}
 
@@ -128,7 +140,7 @@ func Get(endpoint string, doi string, token string) (int, *api.Request) {
 func Create(endpoint string, shoulder string, entity api.Request, token string) (int, *api.Request) {
 
 	url := fmt.Sprintf("%s/%s?auth=%s", endpoint, shoulder, token)
-	//fmt.Printf( "%s\n", url )
+	//fmt.Printf( "URL: %s\n", url )
 
 	resp, body, errs := gorequest.New().
 		SetDebug(debugHTTP).
@@ -139,15 +151,19 @@ func Create(endpoint string, shoulder string, entity api.Request, token string) 
 		End()
 
 	if errs != nil {
+		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
 		return http.StatusInternalServerError, nil
 	}
 
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
 
+	//fmt.Printf( "Received BODY: [%s]\n", body )
+
 	r := api.StandardResponse{}
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
+		fmt.Printf( "ERROR: unmarshal (%s) returns %s\n", body, err )
 		return http.StatusInternalServerError, nil
 	}
 
@@ -160,7 +176,7 @@ func Create(endpoint string, shoulder string, entity api.Request, token string) 
 func Update(endpoint string, entity api.Request, token string) int {
 
 	url := fmt.Sprintf("%s/%s?auth=%s", endpoint, entity.ID, token)
-	//fmt.Printf( "%s\n", url )
+	//fmt.Printf( "URL: %s\n", url )
 
 	resp, _, errs := gorequest.New().
 		SetDebug(debugHTTP).
@@ -171,6 +187,7 @@ func Update(endpoint string, entity api.Request, token string) int {
 		End()
 
 	if errs != nil {
+		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
 		return http.StatusInternalServerError
 	}
 
@@ -186,7 +203,7 @@ func Update(endpoint string, entity api.Request, token string) int {
 func Delete(endpoint string, doi string, token string) int {
 
 	url := fmt.Sprintf("%s/%s?auth=%s", endpoint, doi, token)
-	//fmt.Printf( "%s\n", url )
+	//fmt.Printf( "URL: %s\n", url )
 
 	resp, _, errs := gorequest.New().
 		SetDebug(debugHTTP).
@@ -195,6 +212,7 @@ func Delete(endpoint string, doi string, token string) int {
 		End()
 
 	if errs != nil {
+		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
 		return http.StatusInternalServerError
 	}
 
@@ -211,7 +229,7 @@ func Revoke(endpoint string, doi string, token string) int {
 
 	// construct target URL
 	url := fmt.Sprintf("%s/revoke/%s?auth=%s", endpoint, doi, token)
-	//fmt.Printf( "%s\n", url )
+	//fmt.Printf( "URL: %s\n", url )
 
 	resp, _, errs := gorequest.New().
 		SetDebug(debugHTTP).
@@ -220,6 +238,7 @@ func Revoke(endpoint string, doi string, token string) int {
 		End()
 
 	if errs != nil {
+		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
 		return http.StatusInternalServerError
 	}
 
