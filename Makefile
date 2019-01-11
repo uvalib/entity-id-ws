@@ -9,6 +9,8 @@ GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOVET=$(GOCMD) vet
 GOFMT=$(GOCMD) fmt
+GOGET=$(GOCMD) get
+GOMOD=$(GOCMD) mod
 BIN=bin
 
 # project specific definitions
@@ -43,6 +45,10 @@ run:
 	cd $(BIN); rm -f $(BASE_NAME)
 	cd $(BIN); ln -s $(BASE_NAME).darwin $(BASE_NAME)
 	$(RUNNER)
+
+deps:
+	$(GOGET) -u
+	$(GOMOD) tidy
 
 #
 # end of file
