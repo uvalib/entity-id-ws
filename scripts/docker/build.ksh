@@ -12,7 +12,7 @@ INSTANCE=entity-id-ws
 NAMESPACE=uvadave
 
 # pull base image to ensure we have the latest
-docker pull alpine:3.9
+docker pull alpine:3.10
 
 # build the image
 docker build -t $NAMESPACE/$INSTANCE .
