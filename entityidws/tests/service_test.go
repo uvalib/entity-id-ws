@@ -18,9 +18,9 @@ type testConfig struct {
 
 var cfg = loadConfig()
 
-var plausableDoi = "doi:10.5072/FK2QJ7DN9V"
+var plausableDoi = "doi:10.70020J7DN9V"
 var badDoi = "badness"
-var goodShoulder = "doi:10.5072/FK2"
+var goodShoulder = "doi:10.70020"
 var badShoulder = "abc:/blablabla"
 var goodToken = cfg.Token
 var badToken = "badness"
