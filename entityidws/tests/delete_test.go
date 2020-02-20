@@ -10,7 +10,7 @@ import (
 func TestDeleteCrossRef(t *testing.T) {
 	expected := http.StatusOK
 	doi := createGoodDoi(crossrefSchema, t)
-	status := client.Delete(cfg.Endpoint, doi, goodToken)
+	status := client.Delete(cfg.Endpoint, doi, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -20,7 +20,7 @@ func TestDeleteCrossRef(t *testing.T) {
 func TestDeleteDataCite(t *testing.T) {
 	expected := http.StatusOK
 	doi := createGoodDoi(dataciteSchema, t)
-	status := client.Delete(cfg.Endpoint, doi, goodToken)
+	status := client.Delete(cfg.Endpoint, doi, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -28,7 +28,7 @@ func TestDeleteDataCite(t *testing.T) {
 
 func TestDeleteEmptyId(t *testing.T) {
 	expected := http.StatusBadRequest
-	status := client.Delete(cfg.Endpoint, empty, goodToken)
+	status := client.Delete(cfg.Endpoint, empty, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -36,7 +36,7 @@ func TestDeleteEmptyId(t *testing.T) {
 
 func TestDeleteBadId(t *testing.T) {
 	expected := http.StatusBadRequest
-	status := client.Delete(cfg.Endpoint, badDoi, goodToken)
+	status := client.Delete(cfg.Endpoint, badDoi, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -52,7 +52,7 @@ func TestDeleteEmptyToken(t *testing.T) {
 
 func TestDeleteBadToken(t *testing.T) {
 	expected := http.StatusForbidden
-	status := client.Delete(cfg.Endpoint, plausableDoi, badToken)
+	status := client.Delete(cfg.Endpoint, plausableDoi, badToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}

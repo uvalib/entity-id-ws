@@ -25,7 +25,7 @@ func IDRevoke(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// validate the token
-	if authtoken.Validate(config.Configuration.AuthTokenEndpoint, "delete", token, config.Configuration.ServiceTimeout) == false {
+	if authtoken.Validate(config.Configuration.SharedSecret, token) == false {
 		encodeStandardResponse(w, http.StatusForbidden)
 		return
 	}

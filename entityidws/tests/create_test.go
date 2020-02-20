@@ -10,7 +10,7 @@ import (
 func TestCreateCrossRef(t *testing.T) {
 	expected := http.StatusOK
 
-	status, entity := client.Create(cfg.Endpoint, goodShoulder, createTestRequest(crossrefSchema), goodToken)
+	status, entity := client.Create(cfg.Endpoint, goodShoulder, createTestRequest(crossrefSchema), goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -28,7 +28,7 @@ func TestCreateCrossRef(t *testing.T) {
 func TestCreateDataCite(t *testing.T) {
 	expected := http.StatusOK
 
-	status, entity := client.Create(cfg.Endpoint, goodShoulder, createTestRequest(dataciteSchema), goodToken)
+	status, entity := client.Create(cfg.Endpoint, goodShoulder, createTestRequest(dataciteSchema), goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -45,7 +45,7 @@ func TestCreateDataCite(t *testing.T) {
 func TestCreateBadSchema(t *testing.T) {
 	expected := http.StatusBadRequest
 
-	status, _ := client.Create(cfg.Endpoint, goodShoulder, createTestRequest(badSchema), goodToken)
+	status, _ := client.Create(cfg.Endpoint, goodShoulder, createTestRequest(badSchema), goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -63,7 +63,7 @@ func TestCreateEmptyToken(t *testing.T) {
 func TestCreateBadToken(t *testing.T) {
 	expected := http.StatusForbidden
 
-	status, _ := client.Create(cfg.Endpoint, goodShoulder, createTestRequest(dataciteSchema), badToken)
+	status, _ := client.Create(cfg.Endpoint, goodShoulder, createTestRequest(dataciteSchema), badToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}

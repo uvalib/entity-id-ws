@@ -14,12 +14,12 @@ func TestRevokeCrossRef(t *testing.T) {
 	entity := createTestRequest(crossrefSchema)
 	entity.ID = doi
 
-	status := client.Update(cfg.Endpoint, entity, goodToken)
+	status := client.Update(cfg.Endpoint, entity, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 
-	status = client.Revoke(cfg.Endpoint, entity.ID, goodToken)
+	status = client.Revoke(cfg.Endpoint, entity.ID, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -33,12 +33,12 @@ func TestRevokeDataSite(t *testing.T) {
 	entity := createTestRequest(dataciteSchema)
 	entity.ID = doi
 
-	status := client.Update(cfg.Endpoint, entity, goodToken)
+	status := client.Update(cfg.Endpoint, entity, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 
-	status = client.Revoke(cfg.Endpoint, entity.ID, goodToken)
+	status = client.Revoke(cfg.Endpoint, entity.ID, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -52,12 +52,12 @@ func TestRevokeBadSchema(t *testing.T) {
 	entity := createTestRequest(badSchema)
 	entity.ID = doi
 
-	status := client.Update(cfg.Endpoint, entity, goodToken)
+	status := client.Update(cfg.Endpoint, entity, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
 
-	status = client.Revoke(cfg.Endpoint, entity.ID, goodToken)
+	status = client.Revoke(cfg.Endpoint, entity.ID, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -66,7 +66,7 @@ func TestRevokeBadSchema(t *testing.T) {
 
 func TestRevokeEmptyId(t *testing.T) {
 	expected := http.StatusBadRequest
-	status := client.Revoke(cfg.Endpoint, empty, goodToken)
+	status := client.Revoke(cfg.Endpoint, empty, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -74,7 +74,7 @@ func TestRevokeEmptyId(t *testing.T) {
 
 func TestRevokeBadId(t *testing.T) {
 	expected := http.StatusBadRequest
-	status := client.Revoke(cfg.Endpoint, badDoi, goodToken)
+	status := client.Revoke(cfg.Endpoint, badDoi, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -90,7 +90,7 @@ func TestRevokeEmptyToken(t *testing.T) {
 
 func TestRevokeBadToken(t *testing.T) {
 	expected := http.StatusForbidden
-	status := client.Revoke(cfg.Endpoint, plausableDoi, badToken)
+	status := client.Revoke(cfg.Endpoint, plausableDoi, badToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}

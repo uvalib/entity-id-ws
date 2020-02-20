@@ -14,7 +14,7 @@ func TestUpdateCrossRef(t *testing.T) {
 	entity.ID = doi
 
 	expected := http.StatusOK
-	status := client.Update(cfg.Endpoint, entity, goodToken)
+	status := client.Update(cfg.Endpoint, entity, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -28,7 +28,7 @@ func TestUpdateDataCite(t *testing.T) {
 	entity.ID = doi
 
 	expected := http.StatusOK
-	status := client.Update(cfg.Endpoint, entity, goodToken)
+	status := client.Update(cfg.Endpoint, entity, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -41,7 +41,7 @@ func TestUpdateBadSchema(t *testing.T) {
 	entity.ID = doi
 
 	expected := http.StatusBadRequest
-	status := client.Update(cfg.Endpoint, entity, goodToken)
+	status := client.Update(cfg.Endpoint, entity, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -51,7 +51,7 @@ func TestUpdateEmptyId(t *testing.T) {
 	entity := createTestRequest(dataciteSchema)
 	entity.ID = empty
 	expected := http.StatusBadRequest
-	status := client.Update(cfg.Endpoint, entity, goodToken)
+	status := client.Update(cfg.Endpoint, entity, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -61,7 +61,7 @@ func TestUpdateBadId(t *testing.T) {
 	entity := createTestRequest(dataciteSchema)
 	entity.ID = badDoi
 	expected := http.StatusBadRequest
-	status := client.Update(cfg.Endpoint, entity, goodToken)
+	status := client.Update(cfg.Endpoint, entity, goodToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}
@@ -81,7 +81,7 @@ func TestUpdateBadToken(t *testing.T) {
 	entity := createTestRequest(dataciteSchema)
 	entity.ID = plausableDoi
 	expected := http.StatusForbidden
-	status := client.Update(cfg.Endpoint, entity, badToken)
+	status := client.Update(cfg.Endpoint, entity, badToken(cfg.Secret))
 	if status != expected {
 		t.Fatalf("Expected %v, got %v\n", expected, status)
 	}

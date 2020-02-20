@@ -15,7 +15,7 @@ type Config struct {
 	IDServiceURL        string
 	IDServiceUser       string
 	IDServicePassphrase string
-	AuthTokenEndpoint   string
+	SharedSecret        string
 	ServiceTimeout      int
 	Debug               bool
 }
@@ -34,7 +34,7 @@ func loadConfig() Config {
 	flag.StringVar(&c.IDServiceURL, "idserviceurl", "https://not.configured.org", "The ID service URL")
 	flag.StringVar(&c.IDServiceUser, "idserviceuser", "default", "The ID service username")
 	flag.StringVar(&c.IDServicePassphrase, "idservicepasswd", "default", "The ID service passphrase")
-	flag.StringVar(&c.AuthTokenEndpoint, "tokenauth", "http://docker1.lib.virginia.edu:8200", "The token authentication endpoint")
+	flag.StringVar(&c.SharedSecret, "secret", "", "The JWT shared secret")
 	flag.IntVar(&c.ServiceTimeout, "timeout", 15, "The external service timeout in seconds")
 	flag.BoolVar(&c.Debug, "debug", false, "Enable debugging")
 
@@ -44,9 +44,9 @@ func loadConfig() Config {
 	logger.Log(fmt.Sprintf("IDServiceURL:        %s", c.IDServiceURL))
 	logger.Log(fmt.Sprintf("IDServiceUser:       %s", c.IDServiceUser))
 	logger.Log(fmt.Sprintf("IDServicePassphrase: %s", strings.Repeat("*", len(c.IDServicePassphrase))))
-	logger.Log(fmt.Sprintf("AuthTokenEndpoint    %s", c.AuthTokenEndpoint))
+	logger.Log(fmt.Sprintf("SharedSecret:        %s", strings.Repeat("*", len(c.SharedSecret))))
 	logger.Log(fmt.Sprintf("ServiceTimeout:      %d", c.ServiceTimeout))
-	logger.Log(fmt.Sprintf("Debug                %t", c.Debug))
+	logger.Log(fmt.Sprintf("Debug:               %t", c.Debug))
 
 	return c
 }
