@@ -20,12 +20,12 @@ func Validate(sharedSecret string, token string) bool {
 	})
 
 	if err != nil {
-		logger.Log(fmt.Sprintf("ERROR: JWS parse returns: %s", err.Error()))
+		logger.Log(fmt.Sprintf("ERROR: JWT parse returns: %s", err.Error()))
 		return false
 	}
 
 	if !tkn.Valid {
-		logger.Log(fmt.Sprintf("ERROR: JWS is INVALID"))
+		logger.Log(fmt.Sprintf("ERROR: JWT is INVALID"))
 		return false
 	} else {
 		logger.Log(fmt.Sprintf("INFO: token is valid, Expires %s", time.Unix(claims.ExpiresAt, 0)))
