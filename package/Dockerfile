@@ -15,7 +15,7 @@ RUN make build-linux
 FROM alpine:3.11
 
 # update the packages
-RUN apk update && apk upgrade && apk add bash tzdata ca-certificates && rm -fr /var/cache/apk/*
+RUN apk update && apk upgrade && apk add bash tzdata ca-certificates curl && rm -fr /var/cache/apk/*
 
 # Create the run user and group
 RUN addgroup --gid 18570 sse && adduser --uid 1984 docker -G sse -D
