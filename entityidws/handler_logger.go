@@ -19,9 +19,10 @@ func HandlerLogger(inner http.Handler, name string) http.Handler {
 		inner.ServeHTTP(w, r)
 
 		logger.Log(fmt.Sprintf(
-			"%s (%s) -> method %s, time %s",
+			"%s %s (%s) -> method %s, time %s",
 			r.Method,
 			r.RequestURI,
+			r.RemoteAddr,
 			name,
 			time.Since(start),
 		))
