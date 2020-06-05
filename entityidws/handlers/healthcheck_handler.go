@@ -10,9 +10,10 @@ import (
 //
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 
-	status := idservice.GetStatus()
-	message := ""
-	encodeHealthCheckResponse(w, status, message)
+	// se have decided that because this is an external service, we do not report a healthcheck error
+	// (which results in a service restart)
+	_, message := idservice.GetStatus()
+	encodeHealthCheckResponse(w, http.StatusOK, message)
 }
 
 //

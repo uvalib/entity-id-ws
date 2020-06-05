@@ -24,6 +24,9 @@ const StatusReserved = "reserved"
 // StatusUnavailable -- the item is unavailable
 const StatusUnavailable = "unavailable|withdrawn by Library"
 
+// we want to handle this differently from other requests because it is used as part of healthchecking
+var statusTimeout = 5 * time.Second
+
 //
 // GetDoi -- get entity details when provided a DOI
 //
@@ -212,7 +215,7 @@ func DeleteDoi(doi string) int {
 //
 // GetStatus -- get the status of the endpoint
 //
-func GetStatus() int {
+func GetStatus() ( int, string ) {
 
 	// construct target URL
 	url := fmt.Sprintf("%s/status", config.Configuration.IDServiceURL)
@@ -222,14 +225,14 @@ func GetStatus() int {
 	resp, responseBody, errs := gorequest.New().
 		SetDebug(config.Configuration.Debug).
 		Get(url).
-		Timeout(time.Duration(config.Configuration.ServiceTimeout) * time.Second).
+		Timeout( statusTimeout ).
 		End()
 	duration := time.Since(start)
 
 	// check for errors
 	if errs != nil {
 		logger.Log(fmt.Sprintf("ERROR: service (%s) returns %s in %s", url, errs, duration))
-		return http.StatusInternalServerError
+		return http.StatusInternalServerError, errs[0].Error()
 	}
 
 	defer io.Copy(ioutil.Discard, resp.Body)
@@ -240,11 +243,11 @@ func GetStatus() int {
 	// check the response body for errors
 	if !statusIsOk(responseBody) {
 		logger.Log(fmt.Sprintf("Error response body: [%s]", responseBody))
-		return http.StatusBadRequest
+		return http.StatusBadRequest, fmt.Sprintf( "service reports failure (%s)", responseBody )
 	}
 
 	// all good...
-	return http.StatusOK
+	return http.StatusOK, ""
 }
 
 //
