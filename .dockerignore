@@ -4,3 +4,4 @@ env.*
 pkg/*
 src/*
 LICENSE.md
+bin
