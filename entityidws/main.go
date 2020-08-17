@@ -1,10 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"github.com/uvalib/entity-id-ws/entityidws/config"
 	"github.com/uvalib/entity-id-ws/entityidws/handlers"
 	"github.com/uvalib/entity-id-ws/entityidws/logger"
-	"fmt"
 	"log"
 	"net/http"
 	"time"

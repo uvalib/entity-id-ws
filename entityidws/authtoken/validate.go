@@ -1,9 +1,9 @@
 package authtoken
 
 import (
-	"github.com/uvalib/entity-id-ws/entityidws/logger"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"github.com/uvalib/entity-id-ws/entityidws/logger"
 	"time"
 )
 

@@ -2,12 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/uvalib/entity-id-ws/entityidws/api"
 	"github.com/uvalib/entity-id-ws/entityidws/authtoken"
 	"github.com/uvalib/entity-id-ws/entityidws/config"
 	"github.com/uvalib/entity-id-ws/entityidws/idservice"
 	"github.com/uvalib/entity-id-ws/entityidws/logger"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"

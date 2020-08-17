@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/uvalib/entity-id-ws/entityidws/logger"
 	"fmt"
+	"github.com/uvalib/entity-id-ws/entityidws/logger"
 	"net/http"
 	"time"
 )

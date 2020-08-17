@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"github.com/gorilla/mux"
 	"github.com/uvalib/entity-id-ws/entityidws/authtoken"
 	"github.com/uvalib/entity-id-ws/entityidws/config"
 	"github.com/uvalib/entity-id-ws/entityidws/idservice"
-	"github.com/gorilla/mux"
 	"net/http"
 )
 

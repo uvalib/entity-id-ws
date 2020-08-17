@@ -1,9 +1,9 @@
 package config
 
 import (
-	"github.com/uvalib/entity-id-ws/entityidws/logger"
 	"flag"
 	"fmt"
+	"github.com/uvalib/entity-id-ws/entityidws/logger"
 	"strings"
 )
 

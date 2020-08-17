@@ -2,9 +2,9 @@ package client
 
 import (
 	"encoding/json"
-	"github.com/uvalib/entity-id-ws/entityidws/api"
 	"fmt"
 	"github.com/parnurzeal/gorequest"
+	"github.com/uvalib/entity-id-ws/entityidws/api"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -29,7 +29,7 @@ func HealthCheck(endpoint string) int {
 		End()
 
 	if errs != nil {
-		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
+		fmt.Printf("ERROR: request (%s) returns %s\n", url, errs)
 		return http.StatusInternalServerError
 	}
 
@@ -54,7 +54,7 @@ func VersionCheck(endpoint string) (int, string) {
 		End()
 
 	if errs != nil {
-		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
+		fmt.Printf("ERROR: request (%s) returns %s\n", url, errs)
 		return http.StatusInternalServerError, ""
 	}
 
@@ -66,7 +66,7 @@ func VersionCheck(endpoint string) (int, string) {
 	r := api.VersionResponse{}
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
-		fmt.Printf( "ERROR: unmarshal (%s) returns %s\n", body, err )
+		fmt.Printf("ERROR: unmarshal (%s) returns %s\n", body, err)
 		return http.StatusInternalServerError, ""
 	}
 
@@ -88,7 +88,7 @@ func MetricsCheck(endpoint string) (int, string) {
 		End()
 
 	if errs != nil {
-		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
+		fmt.Printf("ERROR: request (%s) returns %s\n", url, errs)
 		return http.StatusInternalServerError, ""
 	}
 
@@ -115,7 +115,7 @@ func Get(endpoint string, doi string, token string) (int, *api.Request) {
 		End()
 
 	if errs != nil {
-		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
+		fmt.Printf("ERROR: request (%s) returns %s\n", url, errs)
 		return http.StatusInternalServerError, nil
 	}
 
@@ -127,7 +127,7 @@ func Get(endpoint string, doi string, token string) (int, *api.Request) {
 	r := api.StandardResponse{}
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
-		fmt.Printf( "ERROR: unmarshal (%s) returns %s\n", body, err )
+		fmt.Printf("ERROR: unmarshal (%s) returns %s\n", body, err)
 		return http.StatusInternalServerError, nil
 	}
 
@@ -151,7 +151,7 @@ func Create(endpoint string, shoulder string, entity api.Request, token string) 
 		End()
 
 	if errs != nil {
-		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
+		fmt.Printf("ERROR: request (%s) returns %s\n", url, errs)
 		return http.StatusInternalServerError, nil
 	}
 
@@ -163,7 +163,7 @@ func Create(endpoint string, shoulder string, entity api.Request, token string) 
 	r := api.StandardResponse{}
 	err := json.Unmarshal([]byte(body), &r)
 	if err != nil {
-		fmt.Printf( "ERROR: unmarshal (%s) returns %s\n", body, err )
+		fmt.Printf("ERROR: unmarshal (%s) returns %s\n", body, err)
 		return http.StatusInternalServerError, nil
 	}
 
@@ -187,7 +187,7 @@ func Update(endpoint string, entity api.Request, token string) int {
 		End()
 
 	if errs != nil {
-		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
+		fmt.Printf("ERROR: request (%s) returns %s\n", url, errs)
 		return http.StatusInternalServerError
 	}
 
@@ -212,7 +212,7 @@ func Delete(endpoint string, doi string, token string) int {
 		End()
 
 	if errs != nil {
-		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
+		fmt.Printf("ERROR: request (%s) returns %s\n", url, errs)
 		return http.StatusInternalServerError
 	}
 
@@ -238,7 +238,7 @@ func Revoke(endpoint string, doi string, token string) int {
 		End()
 
 	if errs != nil {
-		fmt.Printf( "ERROR: request (%s) returns %s\n", url, errs )
+		fmt.Printf("ERROR: request (%s) returns %s\n", url, errs)
 		return http.StatusInternalServerError
 	}
 

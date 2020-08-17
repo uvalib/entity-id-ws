@@ -2,10 +2,10 @@ package main
 
 import (
 	"bufio"
-	"github.com/uvalib/entity-id-ws/entityidws/api"
-	"github.com/uvalib/entity-id-ws/entityidws/client"
 	"flag"
 	"fmt"
+	"github.com/uvalib/entity-id-ws/entityidws/api"
+	"github.com/uvalib/entity-id-ws/entityidws/client"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"

@@ -2,10 +2,10 @@ package idservice
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/uvalib/entity-id-ws/entityidws/api"
 	"github.com/uvalib/entity-id-ws/entityidws/config"
 	"github.com/uvalib/entity-id-ws/entityidws/logger"
-	"fmt"
 	"html"
 	"strings"
 	"text/template"
@@ -310,7 +310,7 @@ func createCrossRefSchema(request api.Request, status string) (string, error) {
 //
 func extractDataCitePayload(payload *api.Request, xml string) {
 
-	if len( xml ) == 0 {
+	if len(xml) == 0 {
 		logger.Log(fmt.Sprintf("WARNING: encountered unexpected blank XML"))
 		return
 	}
@@ -349,7 +349,7 @@ func extractDataCitePayload(payload *api.Request, xml string) {
 //
 func extractCrossRefPayload(payload *api.Request, xml string) {
 
-	if len( xml ) == 0 {
+	if len(xml) == 0 {
 		logger.Log(fmt.Sprintf("WARNING: encountered unexpected blank XML"))
 		return
 	}

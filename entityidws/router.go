@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/uvalib/entity-id-ws/entityidws/handlers"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/uvalib/entity-id-ws/entityidws/handlers"
 	"net/http"
 )
 

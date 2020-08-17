@@ -1,10 +1,10 @@
 package idservice
 
 import (
+	"fmt"
 	"github.com/uvalib/entity-id-ws/entityidws/api"
 	"github.com/uvalib/entity-id-ws/entityidws/config"
 	"github.com/uvalib/entity-id-ws/entityidws/logger"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -215,7 +215,7 @@ func DeleteDoi(doi string) int {
 //
 // GetStatus -- get the status of the endpoint
 //
-func GetStatus() ( int, string ) {
+func GetStatus() (int, string) {
 
 	// construct target URL
 	url := fmt.Sprintf("%s/status", config.Configuration.IDServiceURL)
@@ -225,7 +225,7 @@ func GetStatus() ( int, string ) {
 	resp, responseBody, errs := gorequest.New().
 		SetDebug(config.Configuration.Debug).
 		Get(url).
-		Timeout( statusTimeout ).
+		Timeout(statusTimeout).
 		End()
 	duration := time.Since(start)
 
@@ -243,7 +243,7 @@ func GetStatus() ( int, string ) {
 	// check the response body for errors
 	if !statusIsOk(responseBody) {
 		logger.Log(fmt.Sprintf("Error response body: [%s]", responseBody))
-		return http.StatusBadRequest, fmt.Sprintf( "service reports failure (%s)", responseBody )
+		return http.StatusBadRequest, fmt.Sprintf("service reports failure (%s)", responseBody)
 	}
 
 	// all good...
