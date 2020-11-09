@@ -40,13 +40,13 @@ func loadConfig() Config {
 
 	flag.Parse()
 
-	logger.Log(fmt.Sprintf("ServicePort:         %s", c.ServicePort))
-	logger.Log(fmt.Sprintf("IDServiceURL:        %s", c.IDServiceURL))
-	logger.Log(fmt.Sprintf("IDServiceUser:       %s", c.IDServiceUser))
-	logger.Log(fmt.Sprintf("IDServicePassphrase: %s", strings.Repeat("*", len(c.IDServicePassphrase))))
-	logger.Log(fmt.Sprintf("SharedSecret:        %s", strings.Repeat("*", len(c.SharedSecret))))
-	logger.Log(fmt.Sprintf("ServiceTimeout:      %d", c.ServiceTimeout))
-	logger.Log(fmt.Sprintf("Debug:               %t", c.Debug))
+	logger.Log(fmt.Sprintf("INFO: ServicePort:         %s", c.ServicePort))
+	logger.Log(fmt.Sprintf("INFO: IDServiceURL:        %s", c.IDServiceURL))
+	logger.Log(fmt.Sprintf("INFO: IDServiceUser:       %s", c.IDServiceUser))
+	logger.Log(fmt.Sprintf("INFO: IDServicePassphrase: %s", strings.Repeat("*", len(c.IDServicePassphrase))))
+	logger.Log(fmt.Sprintf("INFO: SharedSecret:        %s", strings.Repeat("*", len(c.SharedSecret))))
+	logger.Log(fmt.Sprintf("INFO: ServiceTimeout:      %d", c.ServiceTimeout))
+	logger.Log(fmt.Sprintf("INFO: Debug:               %t", c.Debug))
 
 	return c
 }

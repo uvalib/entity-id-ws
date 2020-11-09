@@ -53,11 +53,11 @@ func GetDoi(doi string) (api.Request, int) {
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
 
-	logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
+	logger.Log(fmt.Sprintf("INFO: service (%s) returns http %d in %s", url, resp.StatusCode, duration))
 
 	// check the response body for errors
 	if !statusIsOk(responseBody) {
-		logger.Log(fmt.Sprintf("Error response body: [%s]", responseBody))
+		logger.Log(fmt.Sprintf("WARNING: error response body: [%s]", responseBody))
 		return blankResponse(), http.StatusBadRequest
 	}
 
@@ -106,12 +106,12 @@ func CreateDoi(shoulder string, request api.Request, status string) (api.Request
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
 
-	logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
+	logger.Log(fmt.Sprintf("INFO: service (%s) returns http %d in %s", url, resp.StatusCode, duration))
 
 	// check the response body for errors
 	if !statusIsOk(responseBody) {
-		logger.Log(fmt.Sprintf("Error response body: [%s]", responseBody))
-		logger.Log(fmt.Sprintf("Original request body: [%s]", requestBody))
+		logger.Log(fmt.Sprintf("WARNING: error response body: [%s]", responseBody))
+		logger.Log(fmt.Sprintf("WARNING: original request body: [%s]", requestBody))
 		return blankResponse(), http.StatusBadRequest
 	}
 
@@ -160,12 +160,12 @@ func UpdateDoi(request api.Request, status string) int {
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
 
-	logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
+	logger.Log(fmt.Sprintf("INFO: service (%s) returns http %d in %s", url, resp.StatusCode, duration))
 
 	// check the response body for errors
 	if !statusIsOk(responseBody) {
-		logger.Log(fmt.Sprintf("Error response body: [%s]", responseBody))
-		logger.Log(fmt.Sprintf("Original request body: [%s]", requestBody))
+		logger.Log(fmt.Sprintf("WARNING: error response body: [%s]", responseBody))
+		logger.Log(fmt.Sprintf("WARNING original request body: [%s]", requestBody))
 		return http.StatusBadRequest
 	}
 
@@ -200,11 +200,11 @@ func DeleteDoi(doi string) int {
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
 
-	logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
+	logger.Log(fmt.Sprintf("INFO: service (%s) returns http %d in %s", url, resp.StatusCode, duration))
 
 	// check the response body for errors
 	if !statusIsOk(responseBody) {
-		logger.Log(fmt.Sprintf("Error response body: [%s]", responseBody))
+		logger.Log(fmt.Sprintf("WARNING: error response body: [%s]", responseBody))
 		return http.StatusBadRequest
 	}
 
@@ -238,11 +238,11 @@ func GetStatus() (int, string) {
 	defer io.Copy(ioutil.Discard, resp.Body)
 	defer resp.Body.Close()
 
-	logger.Log(fmt.Sprintf("Service (%s) returns http %d in %s", url, resp.StatusCode, duration))
+	logger.Log(fmt.Sprintf("INFO: service (%s) returns http %d in %s", url, resp.StatusCode, duration))
 
 	// check the response body for errors
 	if !statusIsOk(responseBody) {
-		logger.Log(fmt.Sprintf("Error response body: [%s]", responseBody))
+		logger.Log(fmt.Sprintf("WARNING: error response body: [%s]", responseBody))
 		return http.StatusBadRequest, fmt.Sprintf("service reports failure (%s)", responseBody)
 	}
 
